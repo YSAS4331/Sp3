@@ -106,6 +106,8 @@ async function navigate(path, push = true) {
 
     main.replaceWith(nextMain);
 
+    console.log(doc.documentElement.outerHTML);
+
     document.title = doc.title;
 
     loadStyles(doc, baseUrl);
