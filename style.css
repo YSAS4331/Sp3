@@ -180,3 +180,11 @@ select:focus {
 .btn-primary:hover {
   background: var(--primary-hover);
 }
+
+a {
+   color: #1d9bf0;
+   text-decoration: none;
+}
+a:hover {
+   text-decoration: underline;
+}
