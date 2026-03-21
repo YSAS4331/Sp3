@@ -1,152 +1,83 @@
-// ===============================
-// グローバル変数（最低限）
-// ===============================
-let db = null;
+// script.js — UI ロジック（各ページ共通の初期化フレーム）
 
-const DB_NAME = "sp3_battle_log";
-const STORE_NAME = "battle_records";
-const DB_VERSION = 1;
+// DB 初期化完了を待ってから UI.init() を実行
+window.addEventListener("sp3db-ready", () => {
+  init();
+});
 
-// ===============================
-// init() — ページ側が呼ぶ
-// ===============================
-export async function init() {
-
-  /* ============================================================
-     IndexedDB を開く（ローカル関数）
-  ============================================================ */
-  async function openDB() {
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-      request.onupgradeneeded = (event) => {
-        const db = event.target.result;
-
-        const store = db.createObjectStore(STORE_NAME, {
-          keyPath: "id",
-          autoIncrement: true
-        });
-
-        store.createIndex("weapon", "weapon");
-        store.createIndex("stage", "stage");
-        store.createIndex("rule", "rule");
-        store.createIndex("result", "result");
-
-        store.createIndex("weapon_stage", ["weapon", "stage"]);
-        store.createIndex("weapon_rule", ["weapon", "rule"]);
-        store.createIndex("stage_rule", ["stage", "rule"]);
-        store.createIndex("weapon_stage_rule", ["weapon", "stage", "rule"]);
-      };
-
-      request.onsuccess = (event) => {
-        db = event.target.result;
-        resolve(db);
-      };
-
-      request.onerror = (event) => reject(event.target.error);
-    });
+// SPA 遷移時にも再実行される
+export function init() {
+  const db = window.Sp3DB;
+  if (!db) {
+    console.warn("Sp3DB がまだ初期化されていません");
+    return;
   }
 
-  /* ============================================================
-     DB 操作 API（ローカル関数）
-  ============================================================ */
-  function addRecord(record) {
-    return new Promise((resolve) => {
-      const tx = db.transaction(STORE_NAME, "readwrite");
-      tx.objectStore(STORE_NAME).add(record).onsuccess = () => resolve(true);
-    });
+  // ページごとの init を自動判定
+  runPageLogic();
+
+  // lucide アイコン描画（UI が描画された後に必ず実行）
+  import("https://cdn.skypack.dev/lucide").then(({ createIcons, icons }) => {
+    createIcons({ icons });
+  });
+}
+
+/* ============================================================
+   ページごとの処理を自動判定
+============================================================ */
+function runPageLogic() {
+  const path = location.pathname;
+
+  if (path.includes("/weapons/")) {
+    import("./weapons.js").then(mod => mod.init?.());
+    return;
   }
 
-  function getAllRecords() {
-    return new Promise((resolve) => {
-      const tx = db.transaction(STORE_NAME, "readonly");
-      tx.objectStore(STORE_NAME).getAll().onsuccess =
-        (e) => resolve(e.target.result);
-    });
+  if (path.includes("/stages/")) {
+    import("./stages.js").then(mod => mod.init?.());
+    return;
   }
 
-  function getByIndex(indexName, key) {
-    return new Promise((resolve) => {
-      const tx = db.transaction(STORE_NAME, "readonly");
-      tx.objectStore(STORE_NAME).index(indexName).getAll(key).onsuccess =
-        (e) => resolve(e.target.result);
-    });
+  if (path.includes("/rules/")) {
+    import("./rules.js").then(mod => mod.init?.());
+    return;
   }
 
-  function getByMultiIndex(indexName, keys) {
-    return new Promise((resolve) => {
-      const tx = db.transaction(STORE_NAME, "readonly");
-      tx.objectStore(STORE_NAME).index(indexName).getAll(keys).onsuccess =
-        (e) => resolve(e.target.result);
-    });
+  // トップページ（フォーム）
+  if (document.getElementById("battleForm")) {
+    setupForm();
   }
+}
 
-  function summarize(records) {
-    if (!records.length) {
-      return {
-        count: 0,
-        win: 0,
-        lose: 0,
-        winRate: 0,
-        avgKills: 0,
-        avgDeaths: 0,
-        avgSpecial: 0
-      };
+/* ============================================================
+   トップページのフォーム処理
+============================================================ */
+function setupForm() {
+  const form = document.getElementById("battleForm");
+  if (!form) return;
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const db = window.Sp3DB;
+    if (!db) {
+      alert("DB がまだ初期化されていません");
+      return;
     }
 
-    const win = records.filter(r => r.result === "win").length;
-    const lose = records.length - win;
-
-    const avg = (sum) => sum / records.length;
-
-    return {
-      count: records.length,
-      win,
-      lose,
-      winRate: win / records.length,
-      avgKills: avg(records.reduce((a, b) => a + b.kills, 0)),
-      avgDeaths: avg(records.reduce((a, b) => a + b.deaths, 0)),
-      avgSpecial: avg(records.reduce((a, b) => a + b.special, 0))
+    const record = {
+      kills: Number(document.getElementById("kills").value),
+      deaths: Number(document.getElementById("deaths").value),
+      special: Number(document.getElementById("special").value),
+      weapon: document.getElementById("weapon").value,
+      stage: document.getElementById("stage").value,
+      rule: document.getElementById("rule").value,
+      result: document.getElementById("result").value,
+      timestamp: Date.now()
     };
-  }
 
-  /* ============================================================
-     DB 初期化
-  ============================================================ */
-  await openDB();
-
-  /* ============================================================
-     フォーム保存処理（フォームがあるページのみ）
-  ============================================================ */
-  const form = document.getElementById("battleForm");
-  if (form) {
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const record = {
-        kills: Number(document.getElementById("kills").value),
-        deaths: Number(document.getElementById("deaths").value),
-        special: Number(document.getElementById("special").value),
-        weapon: document.getElementById("weapon").value,
-        stage: document.getElementById("stage").value,
-        rule: document.getElementById("rule").value,
-        result: document.getElementById("result").value,
-        timestamp: Date.now()
-      };
-
-      await addRecord(record);
-      alert("保存しました！");
-      form.reset();
-    });
-  }
-
-  /* ============================================================
-     API を公開（UI 側が使う）
-  ============================================================ */
-  window.Sp3DB = {
-    getAllRecords,
-    getByIndex,
-    getByMultiIndex,
-    summarize
-  };
+    await db.addRecord(record);
+    alert("保存しました！");
+    form.reset();
+  });
 }
