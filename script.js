@@ -1,18 +1,10 @@
-/* ============================================================
-   Splatoon3 Battle Logger - 共通 IndexedDB 管理スクリプト
-   全ページ（トップ / weapons / stages / rules）で動作
-============================================================ */
-
+export function init() {
 const DB_NAME = "sp3_battle_log";
 const STORE_NAME = "battle_records";
 const DB_VERSION = 1;
 
 let db = null;
-
-/* ============================================================
-   IndexedDB 初期化
-============================================================ */
-
+   
 const openDB = () => {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -192,3 +184,4 @@ window.Sp3DB = {
   getByMultiIndex,
   summarize
 };
+}
