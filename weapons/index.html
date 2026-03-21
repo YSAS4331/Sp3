@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>武器別サマリー - Splatoon3 Battle Logger</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header glass">
+  <div class="header-inner">
+    <i data-lucide="sword"></i>
+    <span>武器別サマリー</span>
+  </div>
+</header>
+
+<div class="container card glass">
+
+  <h2 class="section-title">
+    <i data-lucide="list"></i>
+    武器一覧
+  </h2>
+
+  <div id="weaponList" class="weapon-list">
+    <!-- JS で武器一覧を生成 -->
+  </div>
+
+</div>
+
+<script type="module">
+  import { createIcons, icons } from "https://cdn.skypack.dev/lucide";
+  createIcons({ icons });
+</script>
+
+<script src="../script.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
