@@ -31,7 +31,7 @@ export function init() {
       card.innerHTML = `
         <div class="stage-name">
           <i data-lucide="map"></i>
-          <a href="./?stage="${encodeURIComponent(stage)}">${stage}</a>
+          <a href="./?stage=${encodeURIComponent(stage)}">${stage}</a>
         </div>
 
         <div class="stage-stats">
