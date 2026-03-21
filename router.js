@@ -170,6 +170,7 @@ async function loadPageScripts(doc, base) {
 
     activeModules.push(mod);
     mod.init?.();
+    console.log('正常に実行されました', mod, scripts);
 
     if (isOnce) {
       executedOnceScripts.add(url);
