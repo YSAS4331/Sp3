@@ -72,10 +72,10 @@ export function init() {
           ${rule}
         </h2>
         <p>このルールの記録はありません。</p>
-        <button class="btn-primary" onclick="location.href='./index.html'">
+        <a class="btn-primary" href="./">
           <i data-lucide="arrow-left"></i>
           戻る
-        </button>
+        </a>
       `;
       return;
     }
