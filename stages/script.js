@@ -105,7 +105,7 @@ export function init() {
       <a class="btn-primary" href="./">
         <i data-lucide="arrow-left"></i>
         一覧に戻る
-      </button>
+      </a>
 
       <div class="stage-card" style="margin-top:20px;">
         <div class="stage-name">
