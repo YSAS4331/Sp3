@@ -1,9 +1,4 @@
-/* ============================================================
-   weapons/index.html 用スクリプト
-   一覧モード / 詳細モード 両対応
-============================================================ */
-
-document.addEventListener("DOMContentLoaded", async () => {
+export function init() {
   if (!window.Sp3DB) {
     console.error("Sp3DB が読み込まれていません");
     return;
@@ -23,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // -----------------------------
     renderWeaponList();
   }
-});
+};
 
 /* ============================================================
    一覧モード
