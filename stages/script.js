@@ -72,10 +72,10 @@ export function init() {
           ${stage}
         </h2>
         <p>このステージの記録はありません。</p>
-        <button class="btn-primary" onclick="location.href='./index.html'">
+        <a class="btn-primary" href="./">
           <i data-lucide="arrow-left"></i>
           戻る
-        </button>
+        </a>
       `;
       return;
     }
