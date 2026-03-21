@@ -1,5 +1,6 @@
 /* ============================================================
-   IndexedDB 初期化
+   Splatoon3 Battle Logger - 共通 IndexedDB 管理スクリプト
+   全ページ（トップ / weapons / stages / rules）で動作
 ============================================================ */
 
 const DB_NAME = "sp3_battle_log";
@@ -8,7 +9,10 @@ const DB_VERSION = 1;
 
 let db = null;
 
-// DB を開く
+/* ============================================================
+   IndexedDB 初期化
+============================================================ */
+
 const openDB = () => {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -78,7 +82,7 @@ const getAllRecords = () => {
 };
 
 /* ============================================================
-   条件付き取得（index 使用）
+   単一 index 取得
 ============================================================ */
 
 const getByIndex = (indexName, key) => {
@@ -94,6 +98,10 @@ const getByIndex = (indexName, key) => {
   });
 };
 
+/* ============================================================
+   複合 index 取得
+============================================================ */
+
 const getByMultiIndex = (indexName, keys) => {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readonly");
@@ -108,11 +116,11 @@ const getByMultiIndex = (indexName, keys) => {
 };
 
 /* ============================================================
-   集計ロジック（平均・勝率など）
+   集計ロジック
 ============================================================ */
 
 const summarize = (records) => {
-  if (records.length === 0) {
+  if (!records.length) {
     return {
       count: 0,
       win: 0,
@@ -141,7 +149,7 @@ const summarize = (records) => {
 };
 
 /* ============================================================
-   フォーム送信 → IndexedDB 保存
+   DOMContentLoaded → フォームがあるページだけ保存処理を実行
 ============================================================ */
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -149,8 +157,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const form = document.getElementById("battleForm");
 
+  // フォームが無いページ（weapons/stages/rules）はここで終了
   if (!form) return;
 
+  // フォームがあるページ（トップページ）だけ保存処理を実行
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
