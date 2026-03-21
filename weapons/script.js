@@ -72,10 +72,10 @@ export function init() {
           ${weapon}
         </h2>
         <p>この武器の記録はありません。</p>
-        <button class="btn-primary" onclick="location.href='./index.html'">
+        <a class="btn-primary" href="./">
           <i data-lucide="arrow-left"></i>
           戻る
-        </button>
+        </a>
       `;
       return;
     }
@@ -105,7 +105,7 @@ export function init() {
       <a class="btn-primary" href="./">
         <i data-lucide="arrow-left"></i>
         一覧に戻る
-      </button>
+      </a>
 
       <div class="weapon-card" style="margin-top:20px;">
         <div class="weapon-name">
