@@ -1,11 +1,16 @@
-export function init() {
+// ===============================
+// グローバル変数（init の外）
+// ===============================
+let db = null;
+
 const DB_NAME = "sp3_battle_log";
 const STORE_NAME = "battle_records";
 const DB_VERSION = 1;
 
-let db = null;
-   
-const openDB = () => {
+// ===============================
+// IndexedDB を開く
+// ===============================
+function openDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
@@ -17,13 +22,11 @@ const openDB = () => {
         autoIncrement: true
       });
 
-      // 単体 index
       store.createIndex("weapon", "weapon");
       store.createIndex("stage", "stage");
       store.createIndex("rule", "rule");
       store.createIndex("result", "result");
 
-      // 複合 index
       store.createIndex("weapon_stage", ["weapon", "stage"]);
       store.createIndex("weapon_rule", ["weapon", "rule"]);
       store.createIndex("stage_rule", ["stage", "rule"]);
@@ -35,83 +38,44 @@ const openDB = () => {
       resolve(db);
     };
 
-    request.onerror = (event) => {
-      reject(event.target.error);
-    };
+    request.onerror = (event) => reject(event.target.error);
   });
-};
+}
 
-/* ============================================================
-   レコード追加
-============================================================ */
-
-const addRecord = (record) => {
+// ===============================
+// DB 操作 API
+// ===============================
+function addRecord(record) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readwrite");
-    const store = tx.objectStore(STORE_NAME);
-
-    const request = store.add(record);
-
-    request.onsuccess = () => resolve(true);
-    request.onerror = (e) => reject(e);
+    tx.objectStore(STORE_NAME).add(record).onsuccess = () => resolve(true);
   });
-};
+}
 
-/* ============================================================
-   全件取得
-============================================================ */
-
-const getAllRecords = () => {
-  return new Promise((resolve, reject) => {
+function getAllRecords() {
+  return new Promise((resolve) => {
     const tx = db.transaction(STORE_NAME, "readonly");
-    const store = tx.objectStore(STORE_NAME);
-
-    const request = store.getAll();
-
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = (e) => reject(e);
+    tx.objectStore(STORE_NAME).getAll().onsuccess = (e) => resolve(e.target.result);
   });
-};
+}
 
-/* ============================================================
-   単一 index 取得
-============================================================ */
-
-const getByIndex = (indexName, key) => {
-  return new Promise((resolve, reject) => {
+function getByIndex(indexName, key) {
+  return new Promise((resolve) => {
     const tx = db.transaction(STORE_NAME, "readonly");
-    const store = tx.objectStore(STORE_NAME);
-    const index = store.index(indexName);
-
-    const request = index.getAll(key);
-
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = (e) => reject(e);
+    tx.objectStore(STORE_NAME).index(indexName).getAll(key).onsuccess =
+      (e) => resolve(e.target.result);
   });
-};
+}
 
-/* ============================================================
-   複合 index 取得
-============================================================ */
-
-const getByMultiIndex = (indexName, keys) => {
-  return new Promise((resolve, reject) => {
+function getByMultiIndex(indexName, keys) {
+  return new Promise((resolve) => {
     const tx = db.transaction(STORE_NAME, "readonly");
-    const store = tx.objectStore(STORE_NAME);
-    const index = store.index(indexName);
-
-    const request = index.getAll(keys);
-
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = (e) => reject(e);
+    tx.objectStore(STORE_NAME).index(indexName).getAll(keys).onsuccess =
+      (e) => resolve(e.target.result);
   });
-};
+}
 
-/* ============================================================
-   集計ロジック
-============================================================ */
-
-const summarize = (records) => {
+function summarize(records) {
   if (!records.length) {
     return {
       count: 0,
@@ -125,7 +89,7 @@ const summarize = (records) => {
   }
 
   const win = records.filter(r => r.result === "win").length;
-  const lose = records.filter(r => r.result === "lose").length;
+  const lose = records.length - win;
 
   const avg = (sum) => sum / records.length;
 
@@ -138,50 +102,42 @@ const summarize = (records) => {
     avgDeaths: avg(records.reduce((a, b) => a + b.deaths, 0)),
     avgSpecial: avg(records.reduce((a, b) => a + b.special, 0))
   };
-};
+}
 
-/* ============================================================
-   DOMContentLoaded → フォームがあるページだけ保存処理を実行
-============================================================ */
-
-document.addEventListener("DOMContentLoaded", async () => {
+// ===============================
+// init() — ページ側が呼ぶ
+// ===============================
+export async function init() {
   await openDB();
 
+  // フォームがあるページだけ保存処理を付ける
   const form = document.getElementById("battleForm");
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-  // フォームが無いページ（weapons/stages/rules）はここで終了
-  if (!form) return;
+      const record = {
+        kills: Number(document.getElementById("kills").value),
+        deaths: Number(document.getElementById("deaths").value),
+        special: Number(document.getElementById("special").value),
+        weapon: document.getElementById("weapon").value,
+        stage: document.getElementById("stage").value,
+        rule: document.getElementById("rule").value,
+        result: document.getElementById("result").value,
+        timestamp: Date.now()
+      };
 
-  // フォームがあるページ（トップページ）だけ保存処理を実行
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+      await addRecord(record);
+      alert("保存しました！");
+      form.reset();
+    });
+  }
 
-    const record = {
-      kills: Number(document.getElementById("kills").value),
-      deaths: Number(document.getElementById("deaths").value),
-      special: Number(document.getElementById("special").value),
-      weapon: document.getElementById("weapon").value,
-      stage: document.getElementById("stage").value,
-      rule: document.getElementById("rule").value,
-      result: document.getElementById("result").value,
-      timestamp: Date.now()
-    };
-
-    await addRecord(record);
-
-    alert("保存しました！");
-    form.reset();
-  });
-});
-
-/* ============================================================
-   外部ページ用 API
-============================================================ */
-
-window.Sp3DB = {
-  getAllRecords,
-  getByIndex,
-  getByMultiIndex,
-  summarize
-};
+  // API を公開
+  window.Sp3DB = {
+    getAllRecords,
+    getByIndex,
+    getByMultiIndex,
+    summarize
+  };
 }
