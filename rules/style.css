@@ -1,0 +1,66 @@
+/* ============================================================
+   rules/index.html 専用スタイル
+   shadcn/ui 風 + ガラスUI + カードレイアウト
+============================================================ */
+
+/* ルール一覧のグリッド */
+.rule-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* ルールカード */
+.rule-card {
+  padding: 18px;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rule-card:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.75);
+}
+
+/* ルール名 */
+.rule-name {
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* サマリー情報 */
+.rule-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+/* 勝率バー */
+.winrate-bar {
+  height: 8px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.winrate-fill {
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.3s ease;
+}
