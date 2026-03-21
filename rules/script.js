@@ -31,7 +31,7 @@ export function init() {
       card.innerHTML = `
         <div class="rule-name">
           <i data-lucide="list"></i>
-          ${rule}
+          <a href="./?rule=${encodeURIComponent(rule)}">${rule}</a>
         </div>
 
         <div class="rule-stats">
@@ -47,11 +47,6 @@ export function init() {
           <div class="winrate-fill" style="width: ${(summary.winRate * 100)}%"></div>
         </div>
       `;
-
-      card.addEventListener("click", () => {
-        const encoded = encodeURIComponent(rule);
-        location.href = `./index.html?rule=${encoded}`;
-      });
 
       list.appendChild(card);
     });
