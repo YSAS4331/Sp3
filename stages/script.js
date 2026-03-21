@@ -102,7 +102,7 @@ export function init() {
         ${stage} の詳細
       </h2>
 
-      <button class="btn-primary" onclick="location.href='./index.html'">
+      <a class="btn-primary" href="./">
         <i data-lucide="arrow-left"></i>
         一覧に戻る
       </button>
