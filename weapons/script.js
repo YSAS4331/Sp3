@@ -31,7 +31,7 @@ export function init() {
       card.innerHTML = `
         <div class="weapon-name">
           <i data-lucide="sword"></i>
-          ${weapon}
+          <a href="./?weapon=${encodeURIComponent(weapon)}">${weapon}</a>
         </div>
 
         <div class="weapon-stats">
@@ -47,11 +47,6 @@ export function init() {
           <div class="winrate-fill" style="width: ${(summary.winRate * 100)}%"></div>
         </div>
       `;
-
-      card.addEventListener("click", () => {
-        const encoded = encodeURIComponent(weapon);
-        location.href = `./index.html?weapon=${encoded}`;
-      });
 
       list.appendChild(card);
     });
