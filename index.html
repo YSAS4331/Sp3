@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Splatoon3 Battle Logger</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+  Splatoon3 バトルログ
+</header>
+
+<div class="container">
+
+  <h2>サマリー画面へ</h2>
+  <nav class="nav-links">
+    <a href="weapons/index.html">武器別</a>
+    <a href="stages/index.html">ステージ別</a>
+    <a href="rules/index.html">ルール別</a>
+  </nav>
+
+  <h2>バトル記録を追加</h2>
+
+  <form id="battleForm" class="battle-form">
+
+    <div class="form-group">
+      <label for="kills">キル数</label>
+      <input type="number" id="kills" required>
+    </div>
+
+    <div class="form-group">
+      <label for="deaths">デス数</label>
+      <input type="number" id="deaths" required>
+    </div>
+
+    <div class="form-group">
+      <label for="special">スペシャル使用回数</label>
+      <input type="number" id="special" required>
+    </div>
+
+    <div class="form-group">
+      <label for="weapon">武器（自由入力）</label>
+      <input type="text" id="weapon" placeholder="例: スシコラ" required>
+    </div>
+
+    <div class="form-group">
+      <label for="stage">ステージ（自由入力）</label>
+      <input type="text" id="stage" placeholder="例: ユノハナ大渓谷" required>
+    </div>
+
+    <div class="form-group">
+      <label for="rule">ルール</label>
+      <select id="rule" required>
+        <option value="">選択してください</option>
+        <option>ナワバリ</option>
+        <option>ガチエリア</option>
+        <option>ガチヤグラ</option>
+        <option>ガチホコ</option>
+        <option>ガチアサリ</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="result">勝敗</label>
+      <select id="result" required>
+        <option value="">選択してください</option>
+        <option value="win">勝ち</option>
+        <option value="lose">負け</option>
+      </select>
+    </div>
+
+    <button type="submit" class="submit-btn">記録を保存</button>
+  </form>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
