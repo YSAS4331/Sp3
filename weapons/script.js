@@ -1,15 +1,42 @@
 /* ============================================================
    weapons/index.html 用スクリプト
+   一覧モード / 詳細モード 両対応
 ============================================================ */
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // DB 初期化（script.js の openDB を使用）
   if (!window.Sp3DB) {
     console.error("Sp3DB が読み込まれていません");
     return;
   }
 
+  const params = new URLSearchParams(location.search);
+  const weaponParam = params.get("weapon");
+
+  if (weaponParam) {
+    // -----------------------------
+    // 詳細モード
+    // -----------------------------
+    renderWeaponDetail(weaponParam);
+  } else {
+    // -----------------------------
+    // 一覧モード
+    // -----------------------------
+    renderWeaponList();
+  }
+});
+
+/* ============================================================
+   一覧モード
+============================================================ */
+
+async function renderWeaponList() {
   const records = await Sp3DB.getAllRecords();
+  const list = document.getElementById("weaponList");
+
+  if (!records.length) {
+    list.innerHTML = `<p>まだ記録がありません。</p>`;
+    return;
+  }
 
   // 武器名でグループ化
   const groups = {};
@@ -18,9 +45,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     groups[r.weapon].push(r);
   }
 
-  const list = document.getElementById("weaponList");
-
-  // 武器ごとにカード生成
   Object.keys(groups).forEach((weapon) => {
     const summary = Sp3DB.summarize(groups[weapon]);
 
@@ -47,10 +71,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       </div>
     `;
 
-    // クリックで詳細ページへ
+    // クリックで詳細表示
     card.addEventListener("click", () => {
       const encoded = encodeURIComponent(weapon);
-      location.href = `./detail.html?weapon=${encoded}`;
+      location.href = `./index.html?weapon=${encoded}`;
     });
 
     list.appendChild(card);
@@ -60,4 +84,166 @@ document.addEventListener("DOMContentLoaded", async () => {
   import("https://cdn.skypack.dev/lucide").then(({ createIcons, icons }) => {
     createIcons({ icons });
   });
-});
+}
+
+/* ============================================================
+   詳細モード
+============================================================ */
+
+async function renderWeaponDetail(weapon) {
+  const container = document.querySelector(".container");
+  container.innerHTML = ""; // 一覧を消す
+
+  const records = await Sp3DB.getByIndex("weapon", weapon);
+
+  if (!records.length) {
+    container.innerHTML = `
+      <h2 class="section-title">
+        <i data-lucide="sword"></i>
+        ${weapon}
+      </h2>
+      <p>この武器の記録はありません。</p>
+      <button class="btn-primary" onclick="location.href='./index.html'">
+        <i data-lucide="arrow-left"></i>
+        戻る
+      </button>
+    `;
+    return;
+  }
+
+  const summary = Sp3DB.summarize(records);
+
+  // -----------------------------
+  // ルール別集計
+  // -----------------------------
+  const ruleGroups = {};
+  for (const r of records) {
+    if (!ruleGroups[r.rule]) ruleGroups[r.rule] = [];
+    ruleGroups[r.rule].push(r);
+  }
+
+  // -----------------------------
+  // ステージ別集計
+  // -----------------------------
+  const stageGroups = {};
+  for (const r of records) {
+    if (!stageGroups[r.stage]) stageGroups[r.stage] = [];
+    stageGroups[r.stage].push(r);
+  }
+
+  // -----------------------------
+  // HTML 生成
+  // -----------------------------
+  const html = [];
+
+  html.push(`
+    <h2 class="section-title">
+      <i data-lucide="sword"></i>
+      ${weapon} の詳細
+    </h2>
+
+    <button class="btn-primary" onclick="location.href='./index.html'">
+      <i data-lucide="arrow-left"></i>
+      一覧に戻る
+    </button>
+
+    <div class="weapon-card" style="margin-top:20px;">
+      <div class="weapon-name">
+        <i data-lucide="bar-chart-3"></i>
+        全体サマリー
+      </div>
+
+      <div class="weapon-stats">
+        <div>試合数: ${summary.count}</div>
+        <div>勝ち: ${summary.win} / 負け: ${summary.lose}</div>
+        <div>勝率: ${(summary.winRate * 100).toFixed(1)}%</div>
+        <div>平均キル: ${summary.avgKills.toFixed(2)}</div>
+        <div>平均デス: ${summary.avgDeaths.toFixed(2)}</div>
+        <div>平均スペ: ${summary.avgSpecial.toFixed(2)}</div>
+      </div>
+
+      <div class="winrate-bar">
+        <div class="winrate-fill" style="width: ${(summary.winRate * 100)}%"></div>
+      </div>
+    </div>
+  `);
+
+  // -----------------------------
+  // ルール別
+  // -----------------------------
+  html.push(`
+    <h3 class="section-title" style="margin-top:30px;">
+      <i data-lucide="list"></i>
+      ルール別サマリー
+    </h3>
+  `);
+
+  Object.keys(ruleGroups).forEach(rule => {
+    const s = Sp3DB.summarize(ruleGroups[rule]);
+
+    html.push(`
+      <div class="weapon-card">
+        <div class="weapon-name">
+          <i data-lucide="list"></i>
+          ${rule}
+        </div>
+
+        <div class="weapon-stats">
+          <div>試合数: ${s.count}</div>
+          <div>勝ち: ${s.win} / 負け: ${s.lose}</div>
+          <div>勝率: ${(s.winRate * 100).toFixed(1)}%</div>
+          <div>平均キル: ${s.avgKills.toFixed(2)}</div>
+          <div>平均デス: ${s.avgDeaths.toFixed(2)}</div>
+          <div>平均スペ: ${s.avgSpecial.toFixed(2)}</div>
+        </div>
+
+        <div class="winrate-bar">
+          <div class="winrate-fill" style="width: ${(s.winRate * 100)}%"></div>
+        </div>
+      </div>
+    `);
+  });
+
+  // -----------------------------
+  // ステージ別
+  // -----------------------------
+  html.push(`
+    <h3 class="section-title" style="margin-top:30px;">
+      <i data-lucide="map"></i>
+      ステージ別サマリー
+    </h3>
+  `);
+
+  Object.keys(stageGroups).forEach(stage => {
+    const s = Sp3DB.summarize(stageGroups[stage]);
+
+    html.push(`
+      <div class="weapon-card">
+        <div class="weapon-name">
+          <i data-lucide="map"></i>
+          ${stage}
+        </div>
+
+        <div class="weapon-stats">
+          <div>試合数: ${s.count}</div>
+          <div>勝ち: ${s.win} / 負け: ${s.lose}</div>
+          <div>勝率: ${(s.winRate * 100).toFixed(1)}%</div>
+          <div>平均キル: ${s.avgKills.toFixed(2)}</div>
+          <div>平均デス: ${s.avgDeaths.toFixed(2)}</div>
+          <div>平均スペ: ${s.avgSpecial.toFixed(2)}</div>
+        </div>
+
+        <div class="winrate-bar">
+          <div class="winrate-fill" style="width: ${(s.winRate * 100)}%"></div>
+        </div>
+      </div>
+    `);
+  });
+
+  container.innerHTML = html.join("");
+
+  // lucide アイコン再描画
+  import("https://cdn.skypack.dev/lucide").then(({ createIcons, icons }) => {
+    createIcons({ icons });
+  });
+}
