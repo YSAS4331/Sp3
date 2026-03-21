@@ -39,7 +39,7 @@ async function fetchPage(path) {
   controller?.abort();
   controller = new AbortController();
 
-  const res = await fetch(path, { signal: controller.signal });
+  const res = await fetch(`${path}?cache=${performance.now()}`, { signal: controller.signal });
   if (!res.ok) throw new Error(res.status);
 
   const html = await res.text();
