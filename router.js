@@ -149,6 +149,7 @@ function loadStyles(doc, base) {
 /* load page scripts (with once support) */
 async function loadPageScripts(doc, base) {
   const scripts = $$('page-script[src]', doc);
+  console.log(JSON.stringify(scripts))
 
   for (const s of scripts) {
     const rawUrl = new URL(s.getAttribute('src'), base);
