@@ -31,7 +31,7 @@ export function init() {
       card.innerHTML = `
         <div class="stage-name">
           <i data-lucide="map"></i>
-          ${stage}
+          <a href="./?stage=${encodeURIComponent(stage)}>${stage}</a>
         </div>
 
         <div class="stage-stats">
@@ -47,11 +47,6 @@ export function init() {
           <div class="winrate-fill" style="width: ${(summary.winRate * 100)}%"></div>
         </div>
       `;
-
-      card.addEventListener("click", () => {
-        const encoded = encodeURIComponent(stage);
-        location.href = `./index.html?stage=${encoded}`;
-      });
 
       list.appendChild(card);
     });
