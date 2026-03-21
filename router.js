@@ -39,7 +39,10 @@ async function fetchPage(pathWithQuery) {
   controller?.abort();
   controller = new AbortController();
 
-  const res = await fetch(`${pathWithQuery}&_=${performance.now()}`, {
+  // クエリが無い場合は ?、ある場合は &
+  const sep = pathWithQuery.includes('?') ? '&' : '?';
+
+  const res = await fetch(`${pathWithQuery}${sep}_=${performance.now()}`, {
     signal: controller.signal
   });
 
