@@ -4,8 +4,12 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const create = e => document.createElement(e);
 const event = detail => window.dispatchEvent(new CustomEvent('spa:router', { detail }));
 
-/* normalize url */
-const normalize = url => url.replace(/index(\.html)?$/, '');
+/* normalize url (keep query, drop index.html) */
+const normalize = url => {
+  const u = new URL(url, location.origin);
+  u.pathname = u.pathname.replace(/index(\.html)?$/, '');
+  return u.pathname + u.search;
+};
 
 /* state */
 let activeStyles = [];
@@ -14,8 +18,6 @@ let navId = 0;
 let controller;
 const pageCache = new Map();
 const scrollMap = new Map();
-
-/* once scripts registry */
 const executedOnceScripts = new Set();
 
 /* wait for transition */
@@ -33,20 +35,21 @@ const waitTransition = el =>
   });
 
 /* fetch html (with cache + abort) */
-async function fetchPage(path) {
-  // if (pageCache.has(path)) return pageCache.get(path);
-
+async function fetchPage(pathWithQuery) {
   controller?.abort();
   controller = new AbortController();
 
-  const res = await fetch(`${path}?cache=${performance.now()}`, { signal: controller.signal });
+  const res = await fetch(`${pathWithQuery}&_=${performance.now()}`, {
+    signal: controller.signal
+  });
+
   if (!res.ok) throw new Error(res.status);
 
   const html = await res.text();
   const doc = new DOMParser().parseFromString(html, 'text/html');
   const result = { doc, baseUrl: res.url };
 
-  pageCache.set(path, result);
+  pageCache.set(pathWithQuery, result);
   return result;
 }
 
@@ -62,25 +65,27 @@ document.addEventListener('click', e => {
   const to = normalize(url.href);
   const from = normalize(location.href);
 
-  if (to === from && !url.hash) return;
-
-  e.preventDefault();
-
+  // same page, only hash changed → scroll only
   if (url.hash && to === from) {
+    e.preventDefault();
     location.hash = url.hash;
     return;
   }
 
-  navigate(url.pathname);
+  // same page (path + query) → do nothing
+  if (to === from) return;
+
+  e.preventDefault();
+  navigate(url.pathname + url.search);
 });
 
 /* router core */
-async function navigate(path, push = true) {
-  if (!path) return;
+async function navigate(pathWithQuery, push = true) {
+  if (!pathWithQuery) return;
 
   const id = ++navId;
 
-  scrollMap.set(location.pathname, scrollY);
+  scrollMap.set(normalize(location.href), scrollY);
 
   event({ type: 'before' });
 
@@ -88,7 +93,7 @@ async function navigate(path, push = true) {
   document.body.classList.add('load');
 
   const pTransition = waitTransition(main);
-  const pFetch = fetchPage(path);
+  const pFetch = fetchPage(pathWithQuery);
 
   try {
     const [{ doc, baseUrl }] = await Promise.all([pFetch, pTransition]);
@@ -98,7 +103,6 @@ async function navigate(path, push = true) {
     const nextMain = $('main', doc);
     if (!main || !nextMain) {
       document.body.classList.remove('load');
-      console.log(doc)
       return;
     }
 
@@ -106,15 +110,13 @@ async function navigate(path, push = true) {
 
     main.replaceWith(nextMain);
 
-    console.log(doc.documentElement.outerHTML);
-
     document.title = doc.title;
 
     loadStyles(doc, baseUrl);
 
-    if (push) history.pushState(null, '', path);
+    if (push) history.pushState(null, '', pathWithQuery);
 
-    const scroll = scrollMap.get(path) ?? 0;
+    const scroll = scrollMap.get(pathWithQuery) ?? 0;
     window.scrollTo(0, scroll);
 
     requestAnimationFrame(async () => {
@@ -124,7 +126,7 @@ async function navigate(path, push = true) {
 
     event({ type: 'after' });
   } catch (err) {
-    console.error('Nav failed:', err, err.name, err.message, err.stack);
+    console.error('Nav failed:', err);
     showErrorPage();
   }
 }
@@ -151,36 +153,27 @@ function loadStyles(doc, base) {
 /* load page scripts (with once support) */
 async function loadPageScripts(doc, base) {
   const scripts = $$('page-script[src]', doc);
-  console.log(JSON.stringify(scripts))
 
   for (const s of scripts) {
     const rawUrl = new URL(s.getAttribute('src'), base);
     const isOnce = s.hasAttribute('once');
 
-    // once じゃないときだけキャッシュバスターを付ける
     if (!isOnce) {
       rawUrl.searchParams.set('t', performance.now());
     }
 
     const url = rawUrl.href;
 
-    // once かつ実行済みならスキップ
-    if (isOnce && executedOnceScripts.has(url)) {
-      continue;
-    }
+    if (isOnce && executedOnceScripts.has(url)) continue;
 
     const mod = await import(url);
 
     activeModules.push(mod);
     mod.init?.();
-    console.log('正常に実行されました', mod, scripts);
 
-    if (isOnce) {
-      executedOnceScripts.add(url);
-    }
+    if (isOnce) executedOnceScripts.add(url);
   }
 }
-
 
 /* cleanup */
 function cleanup() {
@@ -191,7 +184,7 @@ function cleanup() {
   activeStyles = [];
 }
 
-/* error page (SPA内表示) */
+/* error page */
 function showErrorPage() {
   const main = $('main');
   if (!main) return location.reload();
@@ -209,7 +202,8 @@ function showErrorPage() {
 
 /* back/forward */
 window.addEventListener('popstate', () => {
-  navigate(location.pathname, false);
+  const u = new URL(location.href);
+  navigate(u.pathname + u.search, false);
 });
 
 /* prefetch on hover */
@@ -220,7 +214,7 @@ document.addEventListener('mouseover', e => {
   const url = new URL(a.href);
   if (url.origin !== location.origin) return;
 
-  fetchPage(url.pathname).catch(() => {});
+  fetchPage(url.pathname + url.search).catch(() => {});
 });
 
 /* init */
