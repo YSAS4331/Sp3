@@ -14,7 +14,7 @@
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* 背景に柔らかいグラデーション */
+/* 背景グラデーション */
 body {
   margin: 0;
   padding: 0;
@@ -78,17 +78,16 @@ Section Title
 }
 
 /* ================================
-Navigation Links
+Navigation Links (3列 or 1列のみ)
 ================================ */
 .nav-links {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(3, 1fr); /* PCは3列固定 */
   gap: 20px;
   margin-bottom: 30px;
 }
 
 .nav-item {
-  flex: 1;
   padding: 14px;
   border-radius: var(--radius);
   text-decoration: none;
@@ -100,6 +99,8 @@ Navigation Links
   align-items: center;
   gap: 8px;
   transition: var(--transition);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
 }
 
 .nav-item:hover {
@@ -127,7 +128,7 @@ label {
 }
 
 /* ================================
-Input + Icon (shadcn/ui 風)
+Input + Icon
 ================================ */
 .input-wrap {
   display: flex;
@@ -218,27 +219,13 @@ body.load main::before {
 }
 
 /* ================================
-レスポンシブ対応
+レスポンシブ（1列のみ）
 ================================ */
-
-/* タブレット */
-@media (max-width: 900px) {
-  .container {
-    margin: 20px;
-    padding: 20px;
-  }
-
+@media (max-width: 700px) {
   .nav-links {
-    flex-direction: column;
+    grid-template-columns: 1fr; /* スマホは1列 */
   }
 
-  .nav-item {
-    width: 100%;
-  }
-}
-
-/* スマホ */
-@media (max-width: 600px) {
   .header {
     font-size: 22px;
   }
