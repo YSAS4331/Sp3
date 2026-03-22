@@ -6,10 +6,10 @@
   <title>Splatoon3 Battle Logger</title>
   <link rel="stylesheet" href="style.css">
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" data-page>
   
   <script src="./router.js" type="module"></script>
-  <script src="/Editor/editor.js"></script>
+  <page-script src="/Editor/editor.js" once></page-script>
   <page-script src="db.js" once></page-script>
   <page-script src="script.js"></page-script>
 </head>
@@ -121,7 +121,7 @@
     </div>
     <div class="form-group">
       <label for="memo-text">メモ</label>
-      <div class="input-wrap" style="flex-direction:column;">
+      <div class="input-wrap" style="flex-direction:column;align-items:normal;">
         
         <i data-lucide="notebook-text"></i>
         <com-editor lang="plain" placeholder="メモを入力" id="memo-text" style="min-height: 150px; width: 90%;"></com-editor>
