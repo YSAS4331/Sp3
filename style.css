@@ -1,5 +1,5 @@
 /* ================================
-   基本設定（ライトテーマ）
+基本設定（ライトテーマ）
 ================================ */
 :root {
   --bg: #eef1f5;
@@ -23,7 +23,7 @@ body {
 }
 
 /* ================================
-   ガラスUI
+ガラスUI
 ================================ */
 .glass {
   background: var(--card-bg);
@@ -33,7 +33,7 @@ body {
 }
 
 /* ================================
-   Header
+Header
 ================================ */
 .header {
   padding: 20px;
@@ -50,7 +50,7 @@ body {
 }
 
 /* ================================
-   Container / Card
+Container / Card
 ================================ */
 .container {
   max-width: 900px;
@@ -65,7 +65,7 @@ body {
 }
 
 /* ================================
-   Section Title
+Section Title
 ================================ */
 .section-title {
   display: flex;
@@ -77,7 +77,7 @@ body {
 }
 
 /* ================================
-   Navigation Links
+Navigation Links
 ================================ */
 .nav-links {
   display: flex;
@@ -106,7 +106,7 @@ body {
 }
 
 /* ================================
-   Form
+Form
 ================================ */
 .form {
   display: grid;
@@ -125,17 +125,18 @@ label {
 }
 
 /* ================================
-   Input + Icon (shadcn/ui 風)
+Input + Icon (shadcn/ui 風)
 ================================ */
 .input-wrap {
-  position: relative;
   display: flex;
-  align-items: center;
+  border-radius: var(--radius);
+  border: 1px solid #ccc;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  transition: var(--transition);
 }
 
 .input-wrap i {
-  position: absolute;
-  left: 12px;
   width: 20px;
   height: 20px;
   color: #666;
@@ -143,26 +144,19 @@ label {
 
 input,
 select {
-  width: 100%;
-  padding: 10px 12px 10px 40px;
-  border-radius: var(--radius);
-  border: 1px solid #ccc;
-  font-size: 16px;
-  background: rgba(255, 255, 255, 0.85);
-  transition: var(--transition);
-  position: absolute;
-  left: 32px;
+  flex: 1;
+  padding: 10px 12px 10px 0px;
 }
 
-input:focus,
-select:focus {
+.input-wrap:has(input:focus,
+select:focus) {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
 }
 
 /* ================================
-   Button
+Button
 ================================ */
 .btn-primary {
   padding: 14px;
@@ -184,15 +178,18 @@ select:focus {
 }
 
 a {
-   color: #1d9bf0;
-   text-decoration: none;
+  color: #1d9bf0;
+  text-decoration: none;
 }
+
 a:hover {
-   text-decoration: underline;
+  text-decoration: underline;
 }
+
 main {
   position: relative;
 }
+
 main::before {
   content: '';
   position: absolute;
@@ -203,6 +200,7 @@ main::before {
   transition: opacity .5s ease;
   pointer-events: none;
 }
+
 body.load main::before {
   opacity: 1;
   pointer-events: auto;
