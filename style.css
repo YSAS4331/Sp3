@@ -122,6 +122,7 @@ Form
 label {
   font-weight: 600;
   color: var(--text-light);
+  align-items: center;
 }
 
 /* ================================
@@ -146,6 +147,8 @@ input,
 select {
   flex: 1;
   padding: 10px 12px 10px 0px;
+  border: none;
+  background: transparent;
 }
 
 .input-wrap:has(input:focus,
