@@ -100,7 +100,6 @@ Navigation Links
   align-items: center;
   gap: 8px;
   transition: var(--transition);
-  height: 100%;
 }
 
 .nav-item:hover {
