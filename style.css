@@ -122,7 +122,6 @@ Form
 label {
   font-weight: 600;
   color: var(--text-light);
-  align-items: center;
 }
 
 /* ================================
@@ -130,6 +129,7 @@ Input + Icon (shadcn/ui 風)
 ================================ */
 .input-wrap {
   display: flex;
+  align-items: center;
   border-radius: var(--radius);
   border: 1px solid #ccc;
   font-size: 16px;
@@ -148,6 +148,7 @@ select {
   flex: 1;
   padding: 10px 12px 10px 0px;
   border: none;
+  outline: none;
   background: transparent;
 }
 
