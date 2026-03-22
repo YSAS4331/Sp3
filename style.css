@@ -135,7 +135,7 @@ Input + Icon (shadcn/ui 風)
   font-size: 16px;
   background: rgba(255, 255, 255, 0.85);
   transition: var(--transition);
-  gap: 2px;
+  gap: 5px;
 }
 
 .input-wrap i {
