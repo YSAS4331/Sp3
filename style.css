@@ -81,7 +81,8 @@ Section Title
 Navigation Links
 ================================ */
 .nav-links {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 20px;
   margin-bottom: 30px;
 }
@@ -99,6 +100,7 @@ Navigation Links
   align-items: center;
   gap: 8px;
   transition: var(--transition);
+  height: 100%;
 }
 
 .nav-item:hover {
