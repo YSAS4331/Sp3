@@ -29,7 +29,7 @@ export function init() {
       card.className = "common-card";
 
       card.innerHTML = `
-        <div class="commmon-name">
+        <div class="common-name">
           <i data-lucide="list"></i>
           <a href="./?rule=${encodeURIComponent(rule)}">${rule}</a>
         </div>
