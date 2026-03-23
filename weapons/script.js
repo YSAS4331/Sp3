@@ -26,15 +26,15 @@ export function init() {
       const summary = Sp3DB.summarize(groups[weapon]);
 
       const card = document.createElement("div");
-      card.className = "weapon-card";
+      card.className = "common-card";
 
       card.innerHTML = `
-        <div class="weapon-name">
+        <div class="common-name">
           <i data-lucide="sword"></i>
           <a href="./?weapon=${encodeURIComponent(weapon)}">${weapon}</a>
         </div>
 
-        <div class="weapon-stats">
+        <div class="common-stats">
           <div>試合数: ${summary.count}</div>
           <div>勝ち: ${summary.win} / 負け: ${summary.lose}</div>
           <div>勝率: ${(summary.winRate * 100).toFixed(1)}%</div>
@@ -107,13 +107,13 @@ export function init() {
         一覧に戻る
       </a>
 
-      <div class="weapon-card" style="margin-top:20px;">
-        <div class="weapon-name">
+      <div class="common-card" style="margin-top:20px;">
+        <div class="common-name">
           <i data-lucide="bar-chart-3"></i>
           全体サマリー
         </div>
 
-        <div class="weapon-stats">
+        <div class="common-stats">
           <div>試合数: ${summary.count}</div>
           <div>勝ち: ${summary.win} / 負け: ${summary.lose}</div>
           <div>勝率: ${(summary.winRate * 100).toFixed(1)}%</div>
@@ -139,13 +139,13 @@ export function init() {
       const s = Sp3DB.summarize(ruleGroups[rule]);
 
       html.push(`
-        <div class="weapon-card">
-          <div class="weapon-name">
+        <div class="common-card">
+          <div class="common-name">
             <i data-lucide="list"></i>
             ${rule}
           </div>
 
-          <div class="weapon-stats">
+          <div class="common-stats">
             <div>試合数: ${s.count}</div>
             <div>勝ち: ${s.win} / 負け: ${s.lose}</div>
             <div>勝率: ${(s.winRate * 100).toFixed(1)}%</div>
@@ -172,13 +172,13 @@ export function init() {
       const s = Sp3DB.summarize(stageGroups[stage]);
 
       html.push(`
-        <div class="weapon-card">
-          <div class="weapon-name">
+        <div class="common-card">
+          <div class="common-name">
             <i data-lucide="map"></i>
             ${stage}
           </div>
 
-          <div class="weapon-stats">
+          <div class="common-stats">
             <div>試合数: ${s.count}</div>
             <div>勝ち: ${s.win} / 負け: ${s.lose}</div>
             <div>勝率: ${(s.winRate * 100).toFixed(1)}%</div>
