@@ -101,6 +101,7 @@ export function init() {
           <div>デス: ${record.deaths}</div>
           <div>スペ: ${record.special}</div>
           <div>武器: ${record.weapon}</div>
+          <div>メモ: ${record.note ?? ""}</div>
         </div>
       </div>
     `;
