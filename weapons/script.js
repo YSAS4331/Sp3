@@ -51,7 +51,7 @@ export function init() {
       list.appendChild(card);
     });
 
-    import("https://cdn.skypack.dev/lucide").then(({ createIcons, icons }) => {
+    import("https://esm.sh/lucide").then(({ createIcons, icons }) => {
       createIcons({ icons });
     });
   }
@@ -196,7 +196,7 @@ export function init() {
 
     container.innerHTML = html.join("");
 
-    import("https://cdn.skypack.dev/lucide").then(({ createIcons, icons }) => {
+    import("https://esm.sh/lucide").then(({ createIcons, icons }) => {
       createIcons({ icons });
     });
   }
