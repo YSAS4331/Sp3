@@ -27,17 +27,17 @@ export function init() {
       `;
 
       const card = document.createElement("div");
-      card.className = "rule-card";
+      card.className = "common-card";
 
       card.innerHTML = `
-        <div class="rule-name">
+        <div class="common-name">
           <i data-lucide="list"></i>
           <a href="./?id=${r.id}">
             ${linkText}
           </a>
         </div>
 
-        <div class="rule-stats">
+        <div class="common-stats">
           <div>キル: ${r.kills}</div>
           <div>デス: ${r.deaths}</div>
           <div>スペ: ${r.special}</div>
@@ -90,13 +90,13 @@ export function init() {
         一覧に戻る
       </a>
 
-      <div class="rule-card" style="margin-top:20px;">
-        <div class="rule-name">
+      <div class="common-card" style="margin-top:20px;">
+        <div class="common-name">
           <i data-lucide="list"></i>
           ${record.result.toUpperCase()} ${time} – ${record.rule} / ${record.stage}
         </div>
 
-        <div class="rule-stats">
+        <div class="common-stats">
           <div>キル: ${record.kills}</div>
           <div>デス: ${record.deaths}</div>
           <div>スペ: ${record.special}</div>
