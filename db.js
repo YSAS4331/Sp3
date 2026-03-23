@@ -104,7 +104,30 @@ export async function init() {
       avgSpecial: avg(records.reduce((a, b) => a + b.special, 0))
     };
   }
-
+  function updateRecord(id, newData) {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, "readwrite");
+      const store = tx.objectStore(STORE_NAME);
+  
+      const getReq = store.get(id);
+  
+      getReq.onsuccess = () => {
+        const record = getReq.result;
+  
+        if (!record) {
+          resolve(false); // 見つからない
+          return;
+        }
+  
+        // 既存レコードに newData をマージ
+        const updated = { ...record, ...newData };
+  
+        store.put(updated).onsuccess = () => resolve(true);
+      };
+  
+      getReq.onerror = (e) => reject(e.target.error);
+    });
+  }
   // DB 初期化
   await openDB();
 
@@ -114,7 +137,8 @@ export async function init() {
     getAllRecords,
     getByIndex,
     getByMultiIndex,
-    summarize
+    summarize,
+    updateRecord
   };
 
   // ★★★ DB 初期化完了イベント ★★★
