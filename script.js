@@ -1,11 +1,6 @@
-// script.js — UI ロジック（各ページ共通の初期化フレーム）
+const $ = s => document.getElementById(s);
+let UIs = {};
 
-// DB 初期化完了を待ってから UI.init() を実行
-window.addEventListener("sp3db-ready", () => {
-  init();
-});
-
-// SPA 遷移時にも再実行される
 export function init() {
   const db = window.Sp3DB;
   if (!db) {
@@ -13,8 +8,7 @@ export function init() {
     return;
   }
 
-  // ページごとの init を自動判定
-  runPageLogic();
+  setupForm();
 
   // lucide アイコン描画（UI が描画された後に必ず実行）
   import("https://esm.sh/lucide").then(({ createIcons, icons }) => {
@@ -23,38 +17,24 @@ export function init() {
 }
 
 /* ============================================================
-   ページごとの処理を自動判定
-============================================================ */
-function runPageLogic() {
-  const path = location.pathname;
-
-  if (path.includes("/weapons/")) {
-    import("./weapons.js").then(mod => mod.init?.());
-    return;
-  }
-
-  if (path.includes("/stages/")) {
-    import("./stages.js").then(mod => mod.init?.());
-    return;
-  }
-
-  if (path.includes("/rules/")) {
-    import("./rules.js").then(mod => mod.init?.());
-    return;
-  }
-
-  // トップページ（フォーム）
-  if (document.getElementById("battleForm")) {
-    setupForm();
-  }
-}
-
-/* ============================================================
    トップページのフォーム処理
 ============================================================ */
 function setupForm() {
   const form = document.getElementById("battleForm");
   if (!form) return;
+
+  if (UIs.length === 0) {
+    UIs = {
+      kills: $('kills'),
+      deaths: $('deaths'),
+      special: $('special'),
+      weapon: $('weapon'),
+      stage: $('weapon'),
+      rule: $('rule'),
+      result: $('result'),
+      note: $('memo-text')
+    };
+  }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -66,13 +46,14 @@ function setupForm() {
     }
 
     const record = {
-      kills: Number(document.getElementById("kills").value),
-      deaths: Number(document.getElementById("deaths").value),
-      special: Number(document.getElementById("special").value),
-      weapon: document.getElementById("weapon").value,
-      stage: document.getElementById("stage").value,
-      rule: document.getElementById("rule").value,
-      result: document.getElementById("result").value,
+      kills: Number(UIs.kills.value),
+      deaths: Number(UIs.deaths.value),
+      special: Number(UIs.special.value),
+      weapon: UIs.weapon.value,
+      stage: UIs.stage.value,
+      rule: UIs.rule.value,
+      result: UIs.result.value,
+      note: UIs.note.value,
       timestamp: Date.now()
     };
 
