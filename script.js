@@ -17,7 +17,7 @@ export function init() {
   runPageLogic();
 
   // lucide アイコン描画（UI が描画された後に必ず実行）
-  import("https://cdn.skypack.dev/lucide").then(({ createIcons, icons }) => {
+  import("https://esm.sh/lucide").then(({ createIcons, icons }) => {
     createIcons({ icons });
   });
 }
