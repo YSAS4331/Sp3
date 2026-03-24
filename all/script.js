@@ -79,6 +79,21 @@ export function init() {
     const date = new Date(record.timestamp);
     const time = `${date.getHours()}:${String(date.getMinutes()).padStart(2, "0")}`;
 
+    const params = new URLSearchParams({
+      edit: '',
+      kill: record.kills,
+      death: record.deaths,
+      special: record.special,
+      weapon: record.weapon,
+      stage: record.stage,
+      rule: record.rule,
+      result: record.result,
+      time: record.timestamp,
+      note: record.note ?? ''
+    });
+    
+    const url = `/Sp3/?${params.toString()}`;
+
     container.innerHTML = `
       <h2 class="section-title">
         <i data-lucide="list"></i>
@@ -102,6 +117,7 @@ export function init() {
           <div>スペ: ${record.special}</div>
           <div>武器: ${record.weapon}</div>
           <div>メモ: ${record.note ?? "なし"}</div>
+          <a href="${url}">編集する</a>
         </div>
       </div>
     `;
