@@ -61,7 +61,7 @@ export function init() {
         編集
       </h2>
 
-      <a class="btn-primary" href="../all/?id=${encodeURIComponent(id)}">
+      <a class="btn-primary" href="/Sp3/all/?id=${encodeURIComponent(id)}">
         <i data-lucide="arrow-left"></i>
         詳細に戻る
       </a>
@@ -158,7 +158,7 @@ export function init() {
   /* ============================================================
      init 本体
   ============================================================ */
-  const id = location.hash.replace("#", "");
+  const id = new URL(location.href).searchParams.get("id");
   if (!id) {
     console.error("ID が指定されていません");
     return;
