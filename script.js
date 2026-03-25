@@ -29,7 +29,7 @@ function setupForm() {
       deaths: $('deaths'),
       special: $('special'),
       weapon: $('weapon'),
-      stage: $('stage'), // ← 修正
+      stage: $('stage'),
       rule: $('rule'),
       result: $('result'),
       note: $('memo-text')
