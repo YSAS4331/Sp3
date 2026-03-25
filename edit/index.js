@@ -115,7 +115,7 @@ export function init() {
           <label>メモ</label>
           <div class="input-wrap" style="align-items:flex-start;">
             <i data-lucide="file-text"></i>
-            <textarea name="note" hidden>${escapeHTML(record.note ?? "")}</textarea>
+            <textarea name="note" hidden></textarea>
           </div>
         </div>
 
@@ -136,6 +136,7 @@ export function init() {
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
+      form.querySelector('textarea').value = form.querySelector('com-editor').value;
       const formData = new FormData(form);
 
       const updated = {
