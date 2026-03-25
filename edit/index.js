@@ -73,8 +73,8 @@ export function init() {
           <div class="input-wrap">
             <i data-lucide="flag"></i>
             <select name="result">
-              <option value="win" ${record.result === "win" ? "selected" : ""}>WIN</option>
-              <option value="lose" ${record.result === "lose" ? "selected" : ""}>LOSE</option>
+              <option value="win" ${record.result === "win" ? "selected" : ""}>勝ち</option>
+              <option value="lose" ${record.result === "lose" ? "selected" : ""}>負け</option>
             </select>
           </div>
         </div>
