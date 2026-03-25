@@ -115,7 +115,7 @@ export function init() {
           <label>メモ</label>
           <div class="input-wrap" style="align-items:flex-start;">
             <i data-lucide="file-text"></i>
-            <textarea name="note" style="flex:1; padding:10px; background:transparent; border:none; outline:none;">${escapeHTML(record.note ?? "")}</textarea>
+            <textarea name="note" hidden>${escapeHTML(record.note ?? "")}</textarea>
           </div>
         </div>
 
