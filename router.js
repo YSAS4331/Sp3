@@ -4,10 +4,15 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const create = e => document.createElement(e);
 const event = detail => window.dispatchEvent(new CustomEvent('spa:router', { detail }));
 
-/* normalize url (keep query, drop index.html) */
+/* normalize url (force remove trailing slash) */
 const normalize = url => {
   const u = new URL(url, location.origin);
-  return u.pathname + u.search;
+
+  // remove trailing slash except root
+  let path = u.pathname.replace(/\/+$/, '');
+  if (path === '') path = '/';
+
+  return path + u.search;
 };
 
 /* state */
@@ -38,9 +43,10 @@ async function fetchPage(pathWithQuery) {
   controller?.abort();
   controller = new AbortController();
 
-  const sep = pathWithQuery.includes('?') ? '&' : '?';
+  const key = normalize(pathWithQuery);
+  const sep = key.includes('?') ? '&' : '?';
 
-  const res = await fetch(`${pathWithQuery}${sep}_=${performance.now()}`, {
+  const res = await fetch(`${key}${sep}_=${performance.now()}`, {
     signal: controller.signal
   });
 
@@ -50,7 +56,7 @@ async function fetchPage(pathWithQuery) {
   const doc = new DOMParser().parseFromString(html, 'text/html');
   const result = { doc, baseUrl: res.url };
 
-  pageCache.set(pathWithQuery, result);
+  pageCache.set(key, result);
   return result;
 }
 
@@ -84,6 +90,7 @@ document.addEventListener('click', e => {
 async function navigate(pathWithQuery, push = true) {
   if (!pathWithQuery) return;
 
+  const key = normalize(pathWithQuery);
   const id = ++navId;
 
   scrollMap.set(normalize(location.href), scrollY);
@@ -94,7 +101,7 @@ async function navigate(pathWithQuery, push = true) {
   document.body.classList.add('load');
 
   const pTransition = waitTransition(main);
-  const pFetch = fetchPage(pathWithQuery);
+  const pFetch = fetchPage(key);
 
   try {
     const [{ doc, baseUrl }] = await Promise.all([pFetch, pTransition]);
@@ -115,9 +122,9 @@ async function navigate(pathWithQuery, push = true) {
 
     loadStyles(doc, baseUrl);
 
-    if (push) history.pushState(null, '', pathWithQuery);
+    if (push) history.pushState(null, '', key);
 
-    const scroll = scrollMap.get(pathWithQuery) ?? 0;
+    const scroll = scrollMap.get(key) ?? 0;
     window.scrollTo(0, scroll);
 
     requestAnimationFrame(async () => {
