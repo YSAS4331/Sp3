@@ -38,7 +38,6 @@ async function fetchPage(pathWithQuery) {
   controller?.abort();
   controller = new AbortController();
 
-  // クエリが無い場合は ?、ある場合は &
   const sep = pathWithQuery.includes('?') ? '&' : '?';
 
   const res = await fetch(`${pathWithQuery}${sep}_=${performance.now()}`, {
@@ -67,8 +66,6 @@ document.addEventListener('click', e => {
   const to = normalize(url.href);
   const from = normalize(location.href);
 
-  alert("from:"+ from);
-  alert("to:"+ to);
   // same page, only hash changed → scroll only
   if (url.hash && to === from) {
     e.preventDefault();
@@ -80,7 +77,7 @@ document.addEventListener('click', e => {
   if (to === from) return;
 
   e.preventDefault();
-  navigate(url.pathname + url.search);
+  navigate(to);
 });
 
 /* router core */
@@ -206,8 +203,7 @@ function showErrorPage() {
 
 /* back/forward */
 window.addEventListener('popstate', () => {
-  const u = new URL(location.href);
-  navigate(u.pathname + u.search, false);
+  navigate(normalize(location.href), false);
 });
 
 /* prefetch on hover */
@@ -218,7 +214,7 @@ document.addEventListener('mouseover', e => {
   const url = new URL(a.href);
   if (url.origin !== location.origin) return;
 
-  fetchPage(url.pathname + url.search).catch(() => {});
+  fetchPage(normalize(url.href)).catch(() => {});
 });
 
 /* init */
