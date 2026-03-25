@@ -1,5 +1,6 @@
 const $ = s => document.getElementById(s);
 let UIs = {};
+let formInitialized = false;
 
 export function init() {
   const db = window.Sp3DB;
@@ -10,26 +11,25 @@ export function init() {
 
   setupForm();
 
-  // lucide アイコン描画（UI が描画された後に必ず実行）
   import("https://esm.sh/lucide").then(({ createIcons, icons }) => {
     createIcons({ icons });
   });
 }
 
-/* ============================================================
-   トップページのフォーム処理
-============================================================ */
 function setupForm() {
-  const form = document.getElementById("battleForm");
+  if (formInitialized) return;
+  formInitialized = true;
+
+  const form = $('battleForm');
   if (!form) return;
 
-  if (UIs.length === 0) {
+  if (Object.keys(UIs).length === 0) {
     UIs = {
       kills: $('kills'),
       deaths: $('deaths'),
       special: $('special'),
       weapon: $('weapon'),
-      stage: $('weapon'),
+      stage: $('stage'), // ← 修正
       rule: $('rule'),
       result: $('result'),
       note: $('memo-text')
@@ -57,8 +57,13 @@ function setupForm() {
       timestamp: Date.now()
     };
 
-    await db.addRecord(record);
-    alert("保存しました！");
-    form.reset();
+    try {
+      await db.addRecord(record);
+      alert("保存しました！");
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      alert("保存に失敗しました");
+    }
   });
 }
