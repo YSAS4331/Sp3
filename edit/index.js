@@ -116,6 +116,7 @@ export function init() {
           <div class="input-wrap" style="align-items:flex-start;">
             <i data-lucide="file-text"></i>
             <textarea name="note" hidden></textarea>
+            <com-editor lang="markdown" value="${escapeHTML(record.note ?? "")}"></com-editor>
           </div>
         </div>
 
