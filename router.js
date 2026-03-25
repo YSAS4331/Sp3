@@ -68,8 +68,8 @@ document.addEventListener('click', e => {
   const to = normalize(url.href);
   const from = normalize(location.href);
 
-  alert("from:", from);
-  alert("to:", to);
+  alert("from:"+ from);
+  alert("to:"+ to);
   // same page, only hash changed → scroll only
   if (url.hash && to === from) {
     e.preventDefault();
