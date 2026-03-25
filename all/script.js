@@ -103,7 +103,7 @@ export function init() {
     }
 
     const time = formatTime(record.timestamp);
-    const url = `/Sp3/edit/#${encodeURIComponent(id)}`;
+    const url = `/Sp3/edit/?id=${encodeURIComponent(id)}`;
 
     container.innerHTML = `
       <h2 class="section-title">
