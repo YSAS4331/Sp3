@@ -7,7 +7,6 @@ const event = detail => window.dispatchEvent(new CustomEvent('spa:router', { det
 /* normalize url (keep query, drop index.html) */
 const normalize = url => {
   const u = new URL(url, location.origin);
-  u.pathname = u.pathname.replace(/index(\.html)?$/, '');
   return u.pathname + u.search;
 };
 
