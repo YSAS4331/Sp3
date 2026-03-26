@@ -1,6 +1,3 @@
-/* ---- BASE PATH ---- */
-const BASE = "/Sp3";
-
 /* shortcut utils */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -11,18 +8,8 @@ const event = (detail) =>
 /* normalize url (force remove trailing slash, strip hash) */
 const normalize = (url) => {
   const u = new URL(url, location.origin);
-
-  let path = u.pathname;
-
-  // BASE を強制付与
-  if (!path.startsWith(BASE)) {
-    path = BASE + path;
-  }
-
-  // 末尾スラッシュ除去
-  path = path.replace(/\/+$/, "");
-  if (path === BASE) path = BASE + "/";
-
+  let path = u.pathname.replace(/\/+$/, "");
+  if (path === "") path = "/";
   return path + u.search;
 };
 
@@ -31,17 +18,16 @@ let activeStyles = [];
 let activeModules = [];
 let navId = 0;
 let controller;
-const pageCache = new Map();
+const htmlCache = new Map(); // HTMLテキストをキャッシュ
 const scrollMap = new Map();
 const executedOnceScripts = new Set();
 
-/* ---- BUG FIX #9: transition待機の改善 ---- */
+/* transition timeout (CSSに合わせて調整) */
 const TRANSITION_TIMEOUT = 600;
 
 const waitTransition = (el) =>
   new Promise((resolve) => {
     if (!el) return resolve();
-
     let done = false;
     const finish = () => {
       if (!done) {
@@ -53,39 +39,39 @@ const waitTransition = (el) =>
     setTimeout(finish, TRANSITION_TIMEOUT);
   });
 
-/* ---- BUG FIX #1 & #7: キャッシュを実際に使う ---- */
+/* ---- fetch html (キャッシュはテキスト段階で保存) ---- */
 async function fetchPage(pathWithQuery) {
   const key = normalize(pathWithQuery);
 
-  if (pageCache.has(key)) {
-    return pageCache.get(key);
+  // キャッシュにHTMLテキストがあればパースして返す
+  if (htmlCache.has(key)) {
+    const cached = htmlCache.get(key);
+    const doc = new DOMParser().parseFromString(cached.html, "text/html");
+    return { doc, baseUrl: cached.baseUrl };
   }
 
   controller?.abort();
   controller = new AbortController();
 
-  const sep = key.includes("?") ? "&" : "?";
-
-  const res = await fetch(`${key}${sep}_=${performance.now()}`, {
-    signal: controller.signal,
-  });
-
+  // 元のパスをそのままfetch（余計なパラメータを付けない）
+  const res = await fetch(key, { signal: controller.signal });
   if (!res.ok) throw new Error(res.status);
 
   const html = await res.text();
-  const doc = new DOMParser().parseFromString(html, "text/html");
-  const result = { doc, baseUrl: res.url };
 
-  pageCache.set(key, result);
-  return result;
+  // HTMLテキストとbaseUrlをキャッシュ
+  htmlCache.set(key, { html, baseUrl: res.url });
+
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  return { doc, baseUrl: res.url };
 }
 
-/* ---- キャッシュ破棄 ---- */
+/* キャッシュ破棄ユーティリティ */
 function invalidateCache(pathWithQuery) {
   if (pathWithQuery) {
-    pageCache.delete(normalize(pathWithQuery));
+    htmlCache.delete(normalize(pathWithQuery));
   } else {
-    pageCache.clear();
+    htmlCache.clear();
   }
 }
 
@@ -120,10 +106,18 @@ document.addEventListener("click", (e) => {
   navigate(to, true, url.hash);
 });
 
-/* ---- スクロール保存 ---- */
-function saveCurrentScroll() {
-  scrollMap.set(normalize(location.href), scrollY);
-}
+/* スクロール位置を保存 */
+let scrollTimer;
+window.addEventListener(
+  "scroll",
+  () => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      scrollMap.set(normalize(location.href), scrollY);
+    }, 100);
+  },
+  { passive: true }
+);
 
 /* ---- router core ---- */
 async function navigate(pathWithQuery, push = true, hash = "") {
@@ -132,7 +126,8 @@ async function navigate(pathWithQuery, push = true, hash = "") {
   const key = normalize(pathWithQuery);
   const id = ++navId;
 
-  saveCurrentScroll();
+  // 離脱元のスクロール位置を保存
+  scrollMap.set(normalize(location.href), scrollY);
 
   event({ type: "before" });
 
@@ -153,16 +148,26 @@ async function navigate(pathWithQuery, push = true, hash = "") {
       return;
     }
 
+    // ---- mainをreplaceする前にscripts/stylesを取得 ----
+    const nextScripts = $$("page-script[src]", doc);
+    const nextStyleLinks = $$("link[data-page]", doc);
+
+    // cleanup (前ページのモジュールunmount + 不要スタイル削除)
     cleanup();
 
-    main.replaceWith(nextMain);
-    document.title = doc.title;
+    // ---- adoptNodeでDOMParserのノードを現在のdocumentに取り込む ----
+    const adopted = document.adoptNode(nextMain);
+    main.replaceWith(adopted);
 
+    document.title = doc.title;
     syncMeta(doc);
-    loadStyles(doc, baseUrl);
+
+    // スタイル適用
+    loadStyles(nextStyleLinks, baseUrl);
 
     if (push) history.pushState(null, "", key + hash);
 
+    // スクロール処理
     if (hash) {
       const target = document.getElementById(hash.slice(1));
       if (target) {
@@ -177,38 +182,48 @@ async function navigate(pathWithQuery, push = true, hash = "") {
 
     requestAnimationFrame(async () => {
       document.body.classList.remove("load");
-      await loadPageScripts(doc, baseUrl);
+      await loadPageScripts(nextScripts, baseUrl);
     });
 
     event({ type: "after" });
   } catch (err) {
     if (err.name === "AbortError") return;
-
     console.error("Nav failed:", err);
     showErrorPage();
   }
 }
 
 /* ---- スタイル差分管理 ---- */
-function loadStyles(doc, base) {
-  const nextLinks = $$("link[data-page]", doc);
+function loadStyles(nextStyleLinks, base) {
   const nextHrefs = new Set();
 
-  nextLinks.forEach((l) => {
+  // 次のページに必要なhrefを収集（元のhrefをそのまま解決）
+  nextStyleLinks.forEach((l) => {
     const href = new URL(l.getAttribute("href"), base).href;
     nextHrefs.add(href);
   });
 
-  $$('link[data-page]').forEach((existing) => {
+  // 現在のpage styleで不要なものを削除
+
+  $$("link[data-page]").forEach((existing) => {
     if (!nextHrefs.has(existing.href)) {
       existing.remove();
     }
   });
 
+  // まだDOMにないものを追加
   const newActiveStyles = [];
 
   nextHrefs.forEach((href) => {
-    let existing = $(`link[data-page][href="${CSS.escape(href)}"]`);
+    let existing = null;
+
+    // 既存のlink[data-page]から一致するものを探す
+    for (const el of $$("link[data-page]")) {
+      if (el.href === href) {
+        existing = el;
+        break;
+      }
+    }
 
     if (!existing) {
       existing = create("link");
@@ -224,40 +239,39 @@ function loadStyles(doc, base) {
   activeStyles = newActiveStyles;
 }
 
-/* ---- once script key ---- */
-function getScriptKey(src) {
-  const u = new URL(src);
+/* ---- onceスクリプトのキー（パス部分のみ） ---- */
+function getScriptKey(rawHref) {
+  const u = new URL(rawHref);
   return u.origin + u.pathname;
 }
 
-/* ---- load page scripts ---- */
-async function loadPageScripts(doc, base) {
-  const scripts = $$("page-script[src]", doc);
-
-  for (const s of scripts) {
-    const rawUrl = new URL(s.getAttribute("src"), base);
+/* ---- ページスクリプト読み込み ---- */
+async function loadPageScripts(scriptElements, base) {
+  for (const s of scriptElements) {
+    // 元のsrc属性をそのまま解決
+    const resolved = new URL(s.getAttribute("src"), base);
     const isOnce = s.hasAttribute("once");
-    const scriptKey = getScriptKey(rawUrl.href);
+    const scriptKey = getScriptKey(resolved.href);
 
     if (isOnce && executedOnceScripts.has(scriptKey)) continue;
 
+    // onceでないスクリプトだけキャッシュバスター付与（再実行のため）
     if (!isOnce) {
-      rawUrl.searchParams.set("t", performance.now());
+      resolved.searchParams.set("t", performance.now());
     }
 
     try {
-      const mod = await import(rawUrl.href);
+      const mod = await import(resolved.href);
       activeModules.push(mod);
       mod.init?.();
-
       if (isOnce) executedOnceScripts.add(scriptKey);
     } catch (err) {
-      console.error("Script load failed:", rawUrl.href, err.message);
+      console.error("Script load failed:", resolved.href, err);
     }
   }
 }
 
-/* ---- cleanup ---- */
+/* cleanup */
 function cleanup() {
   activeModules.forEach((m) => {
     try {
@@ -271,7 +285,7 @@ function cleanup() {
   activeStyles = [];
 }
 
-/* ---- meta sync ---- */
+/* meta同期 */
 function syncMeta(doc) {
   const selectors = [
     'meta[name="description"]',
@@ -287,14 +301,14 @@ function syncMeta(doc) {
     if (next && current) {
       current.setAttribute("content", next.getAttribute("content"));
     } else if (next && !current) {
-      document.head.appendChild(next.cloneNode(true));
+      document.head.appendChild(document.adoptNode(next));
     } else if (!next && current) {
       current.remove();
     }
   });
 }
 
-/* ---- error page ---- */
+/* error page */
 function showErrorPage() {
   const main = $("main");
   if (!main) return location.reload();
@@ -310,25 +324,12 @@ function showErrorPage() {
   document.body.classList.remove("load");
 }
 
-/* ---- popstate ---- */
+/* back/forward */
 window.addEventListener("popstate", () => {
   navigate(normalize(location.href), false);
 });
 
-/* ---- scroll記録 ---- */
-let scrollTimer;
-window.addEventListener(
-  "scroll",
-  () => {
-    clearTimeout(scrollTimer);
-    scrollTimer = setTimeout(() => {
-      scrollMap.set(normalize(location.href), scrollY);
-    }, 100);
-  },
-  { passive: true }
-);
-
-/* ---- prefetch ---- */
+/* prefetch on hover */
 document.addEventListener("mouseover", (e) => {
   const a = e.target.closest("a");
   if (!a || !a.href) return;
@@ -339,13 +340,12 @@ document.addEventListener("mouseover", (e) => {
   fetchPage(normalize(url.href)).catch(() => {});
 });
 
-/* ---- init ---- */
+/* init */
 window.addEventListener("DOMContentLoaded", () => {
   activeStyles = $$("link[data-page]");
-
   history.replaceState(null, "", normalize(location.href) + location.hash);
-
-  loadPageScripts(document, location.href);
+  loadPageScripts($$("page-script[src]"), location.href);
 });
 
+/* 外部公開 */
 window.spaRouter = { navigate, invalidateCache };
