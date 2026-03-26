@@ -1,3 +1,6 @@
+/* ---- BASE PATH ---- */
+const BASE = "/Sp3";
+
 /* shortcut utils */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -9,8 +12,16 @@ const event = (detail) =>
 const normalize = (url) => {
   const u = new URL(url, location.origin);
 
-  let path = u.pathname.replace(/\/+$/, "");
-  if (path === "") path = "/";
+  let path = u.pathname;
+
+  // BASE を強制付与
+  if (!path.startsWith(BASE)) {
+    path = BASE + path;
+  }
+
+  // 末尾スラッシュ除去
+  path = path.replace(/\/+$/, "");
+  if (path === BASE) path = BASE + "/";
 
   return path + u.search;
 };
@@ -25,7 +36,7 @@ const scrollMap = new Map();
 const executedOnceScripts = new Set();
 
 /* ---- BUG FIX #9: transition待機の改善 ---- */
-const TRANSITION_TIMEOUT = 600; // CSSのmax transitionに合わせて調整
+const TRANSITION_TIMEOUT = 600;
 
 const waitTransition = (el) =>
   new Promise((resolve) => {
@@ -46,7 +57,6 @@ const waitTransition = (el) =>
 async function fetchPage(pathWithQuery) {
   const key = normalize(pathWithQuery);
 
-  // キャッシュがあればそのまま返す（prefetchが活きる）
   if (pageCache.has(key)) {
     return pageCache.get(key);
   }
@@ -70,7 +80,7 @@ async function fetchPage(pathWithQuery) {
   return result;
 }
 
-/* ---- キャッシュを明示的に破棄するユーティリティ ---- */
+/* ---- キャッシュ破棄 ---- */
 function invalidateCache(pathWithQuery) {
   if (pathWithQuery) {
     pageCache.delete(normalize(pathWithQuery));
@@ -89,7 +99,7 @@ document.addEventListener("click", (e) => {
   if (
     url.origin !== location.origin ||
     a.target === "_blank" ||
-    a.hasAttribute("download") || // download属性も除外
+    a.hasAttribute("download") ||
     e.metaKey ||
     e.ctrlKey
   )
@@ -98,7 +108,6 @@ document.addEventListener("click", (e) => {
   const to = normalize(url.href);
   const from = normalize(location.href);
 
-  // same page, only hash changed → scroll only
   if (url.hash && to === from) {
     e.preventDefault();
     location.hash = url.hash;
@@ -108,23 +117,21 @@ document.addEventListener("click", (e) => {
   if (to === from) return;
 
   e.preventDefault();
-  // ---- BUG FIX #6: hashを保持して遷移 ----
   navigate(to, true, url.hash);
 });
 
-/* ---- BUG FIX #5: スクロール位置を離脱前に保存 ---- */
+/* ---- スクロール保存 ---- */
 function saveCurrentScroll() {
   scrollMap.set(normalize(location.href), scrollY);
 }
 
-/* ---- router core (BUG FIX #2, #5, #6 適用) ---- */
+/* ---- router core ---- */
 async function navigate(pathWithQuery, push = true, hash = "") {
   if (!pathWithQuery) return;
 
   const key = normalize(pathWithQuery);
   const id = ++navId;
 
-  // 離脱元のスクロール位置を、URLが変わる前に保存
   saveCurrentScroll();
 
   event({ type: "before" });
@@ -138,7 +145,7 @@ async function navigate(pathWithQuery, push = true, hash = "") {
   try {
     const [{ doc, baseUrl }] = await Promise.all([pFetch, pTransition]);
 
-    if (id !== navId) return; // 後続のnavigate()が走っていたら中断
+    if (id !== navId) return;
 
     const nextMain = $("main", doc);
     if (!main || !nextMain) {
@@ -146,20 +153,16 @@ async function navigate(pathWithQuery, push = true, hash = "") {
       return;
     }
 
-    // ---- BUG FIX #3 & #4: cleanup前に「現在の全page style」を把握 ----
     cleanup();
 
     main.replaceWith(nextMain);
     document.title = doc.title;
 
-    // metaタグ同期（OGP等）
     syncMeta(doc);
-
     loadStyles(doc, baseUrl);
 
     if (push) history.pushState(null, "", key + hash);
 
-    // ---- BUG FIX #6: hashがあればその要素へスクロール ----
     if (hash) {
       const target = document.getElementById(hash.slice(1));
       if (target) {
@@ -179,7 +182,6 @@ async function navigate(pathWithQuery, push = true, hash = "") {
 
     event({ type: "after" });
   } catch (err) {
-    // ---- BUG FIX #2: AbortErrorは正常キャンセルなので無視 ----
     if (err.name === "AbortError") return;
 
     console.error("Nav failed:", err);
@@ -187,18 +189,15 @@ async function navigate(pathWithQuery, push = true, hash = "") {
   }
 }
 
-/* ---- BUG FIX #3: スタイルの差分管理 ---- */
+/* ---- スタイル差分管理 ---- */
 function loadStyles(doc, base) {
   const nextLinks = $$("link[data-page]", doc);
   const nextHrefs = new Set();
 
-  // 次のページに必要なスタイルを収集
   nextLinks.forEach((l) => {
     const href = new URL(l.getAttribute("href"), base).href;
     nextHrefs.add(href);
   });
-
-  // 今あるpage styleのうち、次のページで不要なものを削除
 
   $$('link[data-page]').forEach((existing) => {
     if (!nextHrefs.has(existing.href)) {
@@ -206,7 +205,6 @@ function loadStyles(doc, base) {
     }
   });
 
-  // 次のページに必要で、まだDOMにないものを追加
   const newActiveStyles = [];
 
   nextHrefs.forEach((href) => {
@@ -226,14 +224,13 @@ function loadStyles(doc, base) {
   activeStyles = newActiveStyles;
 }
 
-/* ---- BUG FIX #10: onceスクリプトのキーをパス部分のみに正規化 ---- */
+/* ---- once script key ---- */
 function getScriptKey(src) {
   const u = new URL(src);
-  // クエリパラメータを除いたpathname部分だけをキーにする
   return u.origin + u.pathname;
 }
 
-/* load page scripts (with once support) */
+/* ---- load page scripts ---- */
 async function loadPageScripts(doc, base) {
   const scripts = $$("page-script[src]", doc);
 
@@ -260,7 +257,7 @@ async function loadPageScripts(doc, base) {
   }
 }
 
-/* cleanup */
+/* ---- cleanup ---- */
 function cleanup() {
   activeModules.forEach((m) => {
     try {
@@ -270,12 +267,11 @@ function cleanup() {
     }
   });
 
-  // スタイルの削除は loadStyles() の差分管理に任せる
   activeModules = [];
   activeStyles = [];
 }
 
-/* meta同期 */
+/* ---- meta sync ---- */
 function syncMeta(doc) {
   const selectors = [
     'meta[name="description"]',
@@ -298,7 +294,7 @@ function syncMeta(doc) {
   });
 }
 
-/* error page */
+/* ---- error page ---- */
 function showErrorPage() {
   const main = $("main");
   if (!main) return location.reload();
@@ -314,17 +310,12 @@ function showErrorPage() {
   document.body.classList.remove("load");
 }
 
-/* ---- BUG FIX #5: popstateでも離脱元スクロールを正しく保存 ---- */
+/* ---- popstate ---- */
 window.addEventListener("popstate", () => {
-  // popstate発火時、location.hrefは既に遷移先のURLになっている
-  // → saveCurrentScrollはnavigate()内で呼ばれるが、
-  //   popstate時はlocationが既に変わっているため、
-  //   ここではscrollMapへの保存をスキップし、navigate内でも保存しない
-  //   代わりに、beforeunload的にscrollを常時記録する方式に変更
   navigate(normalize(location.href), false);
 });
 
-// スクロール位置を定期的に記録（popstate対策）
+/* ---- scroll記録 ---- */
 let scrollTimer;
 window.addEventListener(
   "scroll",
@@ -337,7 +328,7 @@ window.addEventListener(
   { passive: true }
 );
 
-/* prefetch on hover (BUG FIX #7: キャッシュが効くので意味がある) */
+/* ---- prefetch ---- */
 document.addEventListener("mouseover", (e) => {
   const a = e.target.closest("a");
   if (!a || !a.href) return;
@@ -348,15 +339,13 @@ document.addEventListener("mouseover", (e) => {
   fetchPage(normalize(url.href)).catch(() => {});
 });
 
-/* init */
+/* ---- init ---- */
 window.addEventListener("DOMContentLoaded", () => {
   activeStyles = $$("link[data-page]");
 
-  // 初期URLをhistoryに置換（popstate対策）
   history.replaceState(null, "", normalize(location.href) + location.hash);
 
   loadPageScripts(document, location.href);
 });
 
-// 外部から使えるように公開
 window.spaRouter = { navigate, invalidateCache };
