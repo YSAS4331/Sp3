@@ -255,7 +255,7 @@ async function loadPageScripts(doc, base) {
 
       if (isOnce) executedOnceScripts.add(scriptKey);
     } catch (err) {
-      console.error("Script load failed:", rawUrl.href, err);
+      console.error("Script load failed:", rawUrl.href, err.message);
     }
   }
 }
