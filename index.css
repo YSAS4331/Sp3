@@ -4,6 +4,14 @@ main {
     --accent-strong: #9ff0b8;
     --border-color: #dcdcdc;
     --radius: 14px;
+
+    /* アクセント光 */
+    --accent-glow: 0 0 10px rgba(183, 245, 200, 0.45);
+    --accent-border: rgba(183, 245, 200, 0.65);
+
+    /* ガラス影 */
+    --glass-inner-shadow: inset 0 0 0.6px rgba(255, 255, 255, 0.6),
+                          inset 0 0 12px rgba(255, 255, 255, 0.25);
   }
 
   /* セクションタイトル */
@@ -15,6 +23,16 @@ main {
     font-weight: 700;
     margin: 28px 0 16px;
     color: #222;
+
+    /* タイトルの左にアクセントの光ライン */
+    &::before {
+      content: "";
+      width: 6px;
+      height: 20px;
+      border-radius: 4px;
+      background: var(--accent);
+      box-shadow: var(--accent-glow);
+    }
   }
 
   /* ナビリンク */
@@ -32,17 +50,23 @@ main {
 
     padding: 14px 16px;
     border-radius: var(--radius);
+
+    /* ガラス風カード */
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px) saturate(160%);
     border: 2px solid var(--border-color);
-    background: white;
+    box-shadow: var(--glass-inner-shadow);
 
     font-weight: 600;
     color: #1d9bf0;
     text-decoration: none;
 
-    transition: border-color 0.15s ease;
+    transition: 0.15s ease;
 
     &:hover {
-      border-color: var(--accent);
+      border-color: var(--accent-border);
+      background: rgba(255, 255, 255, 0.75);
+      box-shadow: var(--accent-glow);
       text-decoration: underline;
     }
   }
@@ -72,15 +96,18 @@ main {
     align-items: center;
     gap: 10px;
 
-    background: white;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px) saturate(160%);
     padding: 12px 14px;
     border-radius: var(--radius);
     border: 2px solid var(--border-color);
+    box-shadow: var(--glass-inner-shadow);
 
-    transition: border-color 0.15s ease;
+    transition: 0.15s ease;
 
     &:focus-within {
-      border-color: var(--accent);
+      border-color: var(--accent-border);
+      box-shadow: var(--accent-glow);
     }
 
     input[type="number"],
@@ -100,8 +127,15 @@ main {
     border: 2px solid var(--border-color);
     padding: 8px;
 
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px) saturate(160%);
+    box-shadow: var(--glass-inner-shadow);
+
+    transition: 0.15s ease;
+
     &:focus-within {
-      border-color: var(--accent);
+      border-color: var(--accent-border);
+      box-shadow: var(--accent-glow);
     }
   }
 
@@ -114,18 +148,22 @@ main {
 
     padding: 14px 16px;
     border-radius: var(--radius);
+
     border: 2px solid var(--accent);
-    background: white;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px) saturate(160%);
+    box-shadow: var(--glass-inner-shadow);
 
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     color: #1d9bf0;
 
-    transition: border-color 0.15s ease;
+    transition: 0.15s ease;
 
     &:hover {
       border-color: var(--accent-strong);
+      box-shadow: var(--accent-glow);
       text-decoration: underline;
     }
   }
