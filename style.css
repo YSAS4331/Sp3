@@ -21,7 +21,6 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
