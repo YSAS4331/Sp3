@@ -16,18 +16,11 @@ function normalize(input) {
   const u = new URL(input, location.href);
 
   u.hash = "";
-
-  if (u.pathname.endsWith("index.html")) {
-    u.pathname = u.pathname.replace(/index\.html$/, "");
-  }
-
   u.searchParams.sort();
 
-  if (!u.pathname.endsWith("/")) {
-    u.pathname += "/";
-  }
-
   return u.pathname + u.search;
+}
+ u.pathname + u.search;
 }
 
 /* state */
