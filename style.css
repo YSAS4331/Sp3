@@ -1,17 +1,20 @@
 /* -----------------------------------
-   Apple クリアガラス美学（main 以外）
+   Apple クリアガラス美学（強化版）
 ----------------------------------- */
 :root {
   --accent: #B7F5C8;
   --accent-strong: #9ff0b8;
 
-  /* 透明度高いガラスの境界線 */
-  --glass-border: rgba(255, 255, 255, 0.55);
+  /* ガラス境界線（Apple は白より “光の縁” が強い） */
+  --glass-border: rgba(255, 255, 255, 0.45);
   --glass-border-strong: rgba(255, 255, 255, 0.75);
+
+  /* 内側の淡い影（Apple のガラス感の秘密） */
+  --glass-inner-shadow: inset 0 0 0.6px rgba(255, 255, 255, 0.6),
+                        inset 0 0 12px rgba(255, 255, 255, 0.25);
 
   --radius: 14px;
 
-  /* Apple の背景階層 */
   --bg: #f5f5f7;
   --text-primary: #1c1c1e;
   --text-secondary: #3a3a3c;
@@ -28,14 +31,15 @@ html, body {
 }
 
 /* -----------------------------------
-   グローバルヘッダー（透明度高いガラス）
+   グローバルヘッダー（Apple の “薄膜ガラス”）
 ----------------------------------- */
 body > header {
   height: 60px;
 
-  background: rgba(255, 255, 255, 0.1); /* ← 透明度高い */
-  backdrop-filter: blur(28px);           /* ← 強めのぼかし */
-  border-bottom: 1px solid var(--accent);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(28px) saturate(180%);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--glass-inner-shadow);
 
   display: flex;
   align-items: center;
@@ -47,7 +51,6 @@ body > header {
   left: 0;
   right: 0;
   top: 0;
-
   z-index: 10;
 
   h1 {
@@ -65,7 +68,8 @@ body > header {
     border-radius: var(--radius);
 
     &:hover {
-      text-decoration: underline;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
     }
   }
 }
@@ -79,20 +83,20 @@ body > header {
 }
 
 /* -----------------------------------
-   サイドバー（macOS 風クリアガラス）
+   サイドバー（macOS Finder の質感）
 ----------------------------------- */
 aside#aside {
   width: 240px;
 
-  background: rgba(255, 255, 255, 0.18); /* ← header よりさらに透明 */
-  backdrop-filter: blur(30px);           /* ← macOS 風の強いぼかし */
-  border-right: 1px solid var(--accent);
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(32px) saturate(180%);
+  border-right: 1px solid var(--glass-border);
+  box-shadow: var(--glass-inner-shadow);
 
   padding: 20px;
   padding-top: 60px;
   box-sizing: border-box;
 
-  /* Finder のセクションタイトル */
   h2 {
     font-size: 13px;
     font-weight: 700;
@@ -103,20 +107,21 @@ aside#aside {
     letter-spacing: 0.5px;
   }
 
-  /* Apple のサイドバーリンク */
   a {
     display: block;
-    padding: 8px 4px;
+    padding: 8px 6px;
     margin-bottom: 4px;
 
-    border-radius: 6px; /* Finder は角丸小さめ */
-    color: #1d9bf0;
+    border-radius: 8px;
+    color: var(--text-primary);
     text-decoration: none;
     font-weight: 500;
 
-    /* hover は underline のみ */
+    transition: background 0.15s ease;
+
     &:hover {
-      text-decoration: underline;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
     }
   }
 }
