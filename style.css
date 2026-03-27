@@ -1,12 +1,14 @@
-/* ------------------------------
+/* -----------------------------------
    基本設定
------------------------------- */
+----------------------------------- */
 :root {
   --accent: #B7F5C8;
   --bg: #f0f0f0;
   --text: #333;
-  --header-height: 60px;
-  --aside-width: 240px;
+  --radius: 12px;
+  --shadow: 0 4px 12px rgba(0,0,0,0.08);
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.4);
 }
 
 html, body {
@@ -14,121 +16,195 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, sans-serif;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
   height: 100%;
 }
 
-/* ------------------------------
+/* -----------------------------------
    グローバルヘッダー
------------------------------- */
+----------------------------------- */
 body > header {
-  height: var(--header-height);
-  background: white;
-  border-bottom: 2px solid var(--accent);
+  height: 64px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--glass-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
+  padding: 0 24px;
   box-sizing: border-box;
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 20;
 }
 
 body > header h1 {
   margin: 0;
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
-/* ------------------------------
+/* -----------------------------------
    レイアウト
------------------------------- */
+----------------------------------- */
 #app {
   display: flex;
-  height: calc(100vh - var(--header-height));
+  height: calc(100vh - 64px);
 }
 
-/* ------------------------------
+/* -----------------------------------
    サイドバー
------------------------------- */
+----------------------------------- */
 aside#aside {
-  width: var(--aside-width);
-  background: white;
-  border-right: 2px solid var(--accent);
-  padding: 16px;
+  width: 240px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border-right: 1px solid var(--glass-border);
+  padding: 24px 20px;
   box-sizing: border-box;
   overflow-y: auto;
 }
 
 aside#aside a {
   display: block;
-  padding: 8px 0;
+  padding: 10px 0;
   color: var(--text);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
+  opacity: 0.8;
+  transition: 0.2s ease;
 }
 
 aside#aside a:hover {
-  color: black;
+  opacity: 1;
+  transform: translateX(4px);
 }
 
-/* ------------------------------
+/* -----------------------------------
    メインコンテンツ
------------------------------- */
+----------------------------------- */
 main {
   flex: 1;
-  padding: 24px;
+  padding: 32px;
   overflow-y: auto;
   box-sizing: border-box;
 }
 
-main header.page-header h1 {
-  margin: 0 0 16px;
-  font-size: 24px;
-  font-weight: 600;
-}
-
-/* ------------------------------
-   カード風コンテナ
------------------------------- */
+/* -----------------------------------
+   ガラスカード
+----------------------------------- */
 .card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  margin-bottom: 32px;
+}
+
+/* -----------------------------------
+   セクションタイトル
+----------------------------------- */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 24px 0 16px;
+}
+
+/* -----------------------------------
+   ナビリンク（トップページ）
+----------------------------------- */
+.nav-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   background: white;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  margin-bottom: 16px;
-}
-
-/* ------------------------------
-   アコーディオン（com-accordion 用）
------------------------------- */
-com-accordion {
-  display: block;
-  margin-bottom: 12px;
-}
-
-com-accordion > [slot="header"] {
-  cursor: pointer;
-  padding: 8px;
-  background: var(--accent);
-  border-radius: 6px;
-  font-weight: 600;
-}
-
-com-accordion > [slot="content"] {
-  margin: 8px 0 0;
-  padding-left: 12px;
-}
-
-/* ------------------------------
-   リンク
------------------------------- */
-a {
-  color: var(--accent);
+  padding: 14px 18px;
+  border-radius: var(--radius);
   text-decoration: none;
+  color: var(--text);
+  font-weight: 600;
+  border: 1px solid #e5e5e5;
+  box-shadow: var(--shadow);
+  transition: 0.2s ease;
 }
 
-a:hover {
-  text-decoration: underline;
+.nav-item:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+}
+
+/* -----------------------------------
+   フォーム
+----------------------------------- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid #ddd;
+  transition: 0.2s ease;
+}
+
+.input-wrap:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(183, 245, 200, 0.4);
+}
+
+input, select {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  background: transparent;
+}
+
+/* -----------------------------------
+   ボタン
+----------------------------------- */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 18px;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+  color: #333;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.08);
+  transform: translateY(-2px);
 }
