@@ -64,27 +64,31 @@ body > header {
 ----------------------------------- */
 aside#aside {
   width: 240px;
-  background: white;
+  background: var(--bg-white);
   border-right: 1px solid var(--border-color);
   padding: 20px;
   box-sizing: border-box;
 
   a {
     display: block;
-    padding: 10px 12px;
-    margin-bottom: 8px;
-    border-radius: var(--radius);
-    border: 2px solid transparent;
+    padding: 8px 4px;
+    margin-bottom: 4px;
+
+    /* Apple のサイドバーは角丸を使わない */
+    border-radius: 0;
+
+    /* Apple のリンク色 */
     color: #1d9bf0;
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 500;
 
+    /* hover は underline のみ */
     &:hover {
-      border-color: var(--accent);
       text-decoration: underline;
     }
   }
 }
+
 
 /* -----------------------------------
    main は index.css が担当
