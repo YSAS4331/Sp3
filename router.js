@@ -39,11 +39,24 @@ const waitTransition = (el) =>
     setTimeout(finish, TRANSITION_TIMEOUT);
   });
 
-/* ---- fetch html (キャッシュはテキスト段階で保存) ---- */
+/* ---- baseUrlを相対パス解決用に補正 ---- */
+function resolveBase(responseUrl) {
+  const u = new URL(responseUrl);
+
+  // パスが拡張子を持たない & 末尾が / でない → ディレクトリとみなして / を付与
+  // 例: /Sp3 → /Sp3/  (./script.js が /Sp3/script.js に解決される)
+  // 例: /Sp3/index.html → そのまま (./script.js が /Sp3/script.js に解決される)
+  if (!u.pathname.endsWith("/") && !u.pathname.split("/").pop().includes(".")) {
+    u.pathname += "/";
+  }
+
+  return u.href;
+}
+
+/* ---- fetch html ---- */
 async function fetchPage(pathWithQuery) {
   const key = normalize(pathWithQuery);
 
-  // キャッシュにHTMLテキストがあればパースして返す
   if (htmlCache.has(key)) {
     const cached = htmlCache.get(key);
     const doc = new DOMParser().parseFromString(cached.html, "text/html");
@@ -53,18 +66,18 @@ async function fetchPage(pathWithQuery) {
   controller?.abort();
   controller = new AbortController();
 
-  // 元のパスをそのままfetch（余計なパラメータを付けない）
   const res = await fetch(key, { signal: controller.signal });
   if (!res.ok) throw new Error(res.status);
 
   const html = await res.text();
+  const baseUrl = resolveBase(res.url);
 
-  // HTMLテキストとbaseUrlをキャッシュ
-  htmlCache.set(key, { html, baseUrl: res.url });
+  htmlCache.set(key, { html, baseUrl });
 
   const doc = new DOMParser().parseFromString(html, "text/html");
-  return { doc, baseUrl: res.url };
+  return { doc, baseUrl };
 }
+
 
 /* キャッシュ破棄ユーティリティ */
 function invalidateCache(pathWithQuery) {
