@@ -1,0 +1,101 @@
+/* -----------------------------------
+   共通カード（一覧・詳細）
+----------------------------------- */
+
+.common-card {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(18px) saturate(160%);
+  border-radius: 14px;
+
+  padding: 18px 20px;
+  margin-bottom: 16px;
+
+  border: 1px solid rgba(183, 245, 200, 0.45); /* アクセントの薄い光 */
+  box-shadow:
+    inset 0 0 0.6px rgba(255, 255, 255, 0.6),
+    inset 0 0 12px rgba(255, 255, 255, 0.25),
+    0 0 10px rgba(183, 245, 200, 0.25); /* 外側の淡い光 */
+  
+  transition: 0.15s ease;
+}
+
+/* hover 時は “光が当たる” */
+.common-card:hover {
+  border-color: rgba(183, 245, 200, 0.75);
+  box-shadow:
+    inset 0 0 0.6px rgba(255, 255, 255, 0.6),
+    inset 0 0 12px rgba(255, 255, 255, 0.25),
+    0 0 14px rgba(183, 245, 200, 0.45);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* -----------------------------------
+   カード内：タイトル行
+----------------------------------- */
+
+.common-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.common-name a {
+  color: #1d9bf0;
+  text-decoration: none;
+}
+
+.common-name a:hover {
+  text-decoration: underline;
+}
+
+/* -----------------------------------
+   カード内：ステータス行
+----------------------------------- */
+
+.common-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  font-size: 14px;
+  color: #333;
+}
+
+.common-stats div {
+  background: rgba(255, 255, 255, 0.45);
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(183, 245, 200, 0.35);
+  backdrop-filter: blur(8px) saturate(150%);
+}
+
+/* 編集リンク */
+.common-stats a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 10px;
+  border-radius: 8px;
+
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(183, 245, 200, 0.45);
+  backdrop-filter: blur(10px) saturate(160%);
+
+  color: #1d9bf0;
+  font-weight: 600;
+  text-decoration: none;
+
+  transition: 0.15s ease;
+}
+
+.common-stats a:hover {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(183, 245, 200, 0.75);
+  box-shadow: 0 0 10px rgba(183, 245, 200, 0.45);
+  text-decoration: underline;
+}
