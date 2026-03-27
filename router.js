@@ -66,8 +66,10 @@ function resolveBase(doc, responseUrl) {
 /* ---- fetch html ---- */
 async function fetchPage(pathWithQuery) {
   const key = normalize(pathWithQuery);
+  console.log("[fetchPage] key:", key);
 
   if (htmlCache.has(key)) {
+    console.log("[fetchPage] cache hit:", key);
     const cached = htmlCache.get(key);
     const doc = new DOMParser().parseFromString(cached.html, "text/html");
     return { doc, baseUrl: resolveBase(doc, cached.responseUrl), responseUrl: cached.responseUrl };
@@ -77,6 +79,8 @@ async function fetchPage(pathWithQuery) {
   controller = new AbortController();
 
   const res = await fetch(key, { signal: controller.signal });
+  console.log("[fetchPage] response:", res.url);
+
   if (!res.ok) throw new Error(res.status);
 
   const html = await res.text();
@@ -102,6 +106,10 @@ document.addEventListener("click", (e) => {
   if (!a || !a.href) return;
 
   const url = new URL(a.href);
+  const to = normalize(url.href);
+  const from = normalize(location.href);
+
+  console.log("[click]", "from:", from, "to:", to);
 
   if (
     url.origin !== location.origin ||
@@ -111,9 +119,6 @@ document.addEventListener("click", (e) => {
     e.ctrlKey
   )
     return;
-
-  const to = normalize(url.href);
-  const from = normalize(location.href);
 
   if (url.hash && to === from) {
     e.preventDefault();
@@ -145,6 +150,10 @@ async function navigate(pathWithQuery, push = true, hash = "") {
   if (!pathWithQuery) return;
 
   const key = normalize(pathWithQuery);
+  const from = normalize(location.href);
+
+  console.log("[navigate]", "from:", from, "to:", key);
+
   const id = ++navId;
 
   scrollMap.set(normalize(location.href), scrollY);
@@ -261,12 +270,12 @@ async function loadPageScripts(scriptElements, base, responseUrl) {
 
     let resolved;
     if (raw.startsWith("/")) {
-      // 絶対パス → ルート基準
       resolved = new URL(raw, location.origin);
     } else {
-      // 相対パス → 遷移先ページの URL 基準
       resolved = new URL(raw, responseUrl);
     }
+
+    console.log("[script]", raw, "→", resolved.href);
 
     const isOnce = s.hasAttribute("once");
     const scriptKey = getScriptKey(resolved.href);
@@ -341,7 +350,9 @@ function showErrorPage() {
 
 /* back/forward */
 window.addEventListener("popstate", () => {
-  navigate(normalize(location.href), false);
+  const to = normalize(location.href);
+  console.log("[popstate]", "to:", to);
+  navigate(to, false);
 });
 
 /* prefetch on hover */
@@ -350,9 +361,13 @@ document.addEventListener("mouseover", (e) => {
   if (!a || !a.href) return;
 
   const url = new URL(a.href);
+  const to = normalize(url.href);
+
+  console.log("[prefetch]", "to:", to);
+
   if (url.origin !== location.origin) return;
 
-  fetchPage(normalize(url.href)).catch(() => {});
+  fetchPage(to).catch(() => {});
 });
 
 /* ---- init ---- */
@@ -361,6 +376,8 @@ window.addEventListener("DOMContentLoaded", () => {
   history.replaceState(null, "", normalize(location.href) + location.hash);
 
   const initBase = resolveBase(document, location.href);
+  console.log("[init]", "base:", initBase);
+
   loadPageScripts($$("page-script[src]"), initBase, location.href);
 });
 
