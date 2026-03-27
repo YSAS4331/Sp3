@@ -4,38 +4,51 @@
 :root {
   --accent: #B7F5C8;
   --accent-strong: #9ff0b8;
-  --border-color: #dcdcdc;
-  --radius: 14px;
-  --bg: #f7f7f7;
-  --text: #1a1a1a;
+
+  --border-color: rgba(255, 255, 255, 0.35);
+  --border-strong: rgba(255, 255, 255, 0.55);
+
+  --radius: 12px;
+
+  --bg: #f5f5f7;
+  --text-primary: #1c1c1e;
+  --text-secondary: #3a3a3c;
+  --text-tertiary: #8e8e93;
 }
 
+/* -----------------------------------
+   ベース
+----------------------------------- */
 html, body {
   margin: 0;
   padding: 0;
   background: var(--bg);
-  color: var(--text);
+  color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
 /* -----------------------------------
-   グローバルヘッダー
+   グローバルヘッダー（ガラス）
 ----------------------------------- */
 body > header {
   height: 60px;
-  background: white;
+
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-color);
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: 0 24px;
   box-sizing: border-box;
 
   h1 {
     margin: 0;
     font-size: 20px;
     font-weight: 600;
+    color: var(--text-primary);
   }
 
   a {
@@ -60,35 +73,45 @@ body > header {
 }
 
 /* -----------------------------------
-   サイドバー（main 以外）
+   サイドバー（macOS Finder 風ガラス）
 ----------------------------------- */
 aside#aside {
   width: 240px;
-  background: var(--bg-white);
+
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(24px);
   border-right: 1px solid var(--border-color);
+
   padding: 20px;
   box-sizing: border-box;
+
+  h2 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    margin: 0 0 12px;
+    padding-left: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 
   a {
     display: block;
     padding: 8px 4px;
     margin-bottom: 4px;
 
-    /* Apple のサイドバーは角丸を使わない */
+    /* Apple のサイドバーは角丸なし */
     border-radius: 0;
 
-    /* Apple のリンク色 */
     color: #1d9bf0;
     text-decoration: none;
     font-weight: 500;
 
-    /* hover は underline のみ */
     &:hover {
       text-decoration: underline;
     }
   }
 }
-
 
 /* -----------------------------------
    main は index.css が担当
