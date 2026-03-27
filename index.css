@@ -1,170 +1,214 @@
+/* -----------------------------------
+   main 専用 Apple ガラス美学 × アクセント光
+----------------------------------- */
+
 main {
-  :root {
-    --accent: #B7F5C8;
-    --accent-strong: #9ff0b8;
-    --border-color: #dcdcdc;
-    --radius: 14px;
+  padding: 32px;
+  padding-top: 70px;
+  box-sizing: border-box;
+  flex: 1;
+  overflow-y: auto;
+}
 
-    /* アクセント光 */
-    --accent-glow: 0 0 10px rgba(183, 245, 200, 0.45);
-    --accent-border: rgba(183, 245, 200, 0.65);
+/* アクセント・ガラス共通変数 */
+main {
+  --accent: #B7F5C8;
+  --accent-strong: #9ff0b8;
+  --border-color: #dcdcdc;
+  --radius: 14px;
 
-    /* ガラス影 */
-    --glass-inner-shadow: inset 0 0 0.6px rgba(255, 255, 255, 0.6),
-                          inset 0 0 12px rgba(255, 255, 255, 0.25);
-  }
+  --accent-border: rgba(183, 245, 200, 0.65);
+  --accent-glow: 0 0 12px rgba(183, 245, 200, 0.45);
 
-  /* セクションタイトル */
-  .section-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 20px;
-    font-weight: 700;
-    margin: 28px 0 16px;
-    color: #222;
+  --glass-inner-shadow: inset 0 0 0.6px rgba(255, 255, 255, 0.6),
+                        inset 0 0 12px rgba(255, 255, 255, 0.25);
+}
 
-    /* タイトルの左にアクセントの光ライン */
-    &::before {
-      content: "";
-      width: 6px;
-      height: 20px;
-      border-radius: 4px;
-      background: var(--accent);
-      box-shadow: var(--accent-glow);
-    }
-  }
+/* -----------------------------------
+   ページタイトル（page-header）
+----------------------------------- */
+.page-header {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(18px) saturate(160%);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  border: 1px solid var(--accent-border);
+  box-shadow: var(--glass-inner-shadow), var(--accent-glow);
+}
 
-  /* ナビリンク */
-  .nav-links {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 16px;
-    margin-bottom: 32px;
-  }
+.page-header .header-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 700;
+}
 
-  .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+/* -----------------------------------
+   カード（card）
+----------------------------------- */
+.card {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px) saturate(160%);
+  border-radius: var(--radius);
+  padding: 28px;
+  border: 1px solid var(--accent-border);
+  box-shadow: var(--glass-inner-shadow), var(--accent-glow);
+}
 
-    padding: 14px 16px;
-    border-radius: var(--radius);
+/* -----------------------------------
+   セクションタイトル
+----------------------------------- */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 28px 0 16px;
+  color: #222;
+}
 
-    /* ガラス風カード */
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(12px) saturate(160%);
-    border: 2px solid var(--border-color);
-    box-shadow: var(--glass-inner-shadow);
+.section-title::before {
+  content: "";
+  width: 6px;
+  height: 20px;
+  border-radius: 4px;
+  background: var(--accent);
+  box-shadow: var(--accent-glow);
+}
 
-    font-weight: 600;
-    color: #1d9bf0;
-    text-decoration: none;
+/* -----------------------------------
+   ナビリンク
+----------------------------------- */
+.nav-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
 
-    transition: 0.15s ease;
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 
-    &:hover {
-      border-color: var(--accent-border);
-      background: rgba(255, 255, 255, 0.75);
-      box-shadow: var(--accent-glow);
-      text-decoration: underline;
-    }
-  }
+  padding: 14px 16px;
+  border-radius: var(--radius);
 
-  /* フォーム */
-  .form {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px) saturate(160%);
+  border: 2px solid var(--border-color);
+  box-shadow: var(--glass-inner-shadow);
 
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  font-weight: 600;
+  color: #1d9bf0;
+  text-decoration: none;
 
-    label {
-      font-size: 14px;
-      font-weight: 600;
-      color: #222;
-    }
-  }
+  transition: 0.15s ease;
+}
 
-  /* 入力欄 */
-  .input-wrap {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.nav-item:hover {
+  border-color: var(--accent-border);
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: var(--accent-glow);
+  text-decoration: underline;
+}
 
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(10px) saturate(160%);
-    padding: 12px 14px;
-    border-radius: var(--radius);
-    border: 2px solid var(--border-color);
-    box-shadow: var(--glass-inner-shadow);
+/* -----------------------------------
+   フォーム
+----------------------------------- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
 
-    transition: 0.15s ease;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 
-    &:focus-within {
-      border-color: var(--accent-border);
-      box-shadow: var(--accent-glow);
-    }
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+}
 
-    input[type="number"],
-    input[type="text"],
-    select {
-      flex: 1;
-      border: none;
-      outline: none;
-      font-size: 15px;
-      background: transparent;
-    }
-  }
+/* -----------------------------------
+   入力欄（input-wrap）
+----------------------------------- */
+.input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 
-  /* メモ欄 */
-  #memo-text {
-    border-radius: var(--radius);
-    border: 2px solid var(--border-color);
-    padding: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px) saturate(160%);
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 2px solid var(--border-color);
+  box-shadow: var(--glass-inner-shadow);
 
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(10px) saturate(160%);
-    box-shadow: var(--glass-inner-shadow);
+  transition: 0.15s ease;
+}
 
-    transition: 0.15s ease;
+.input-wrap:focus-within {
+  border-color: var(--accent-border);
+  box-shadow: var(--accent-glow);
+}
 
-    &:focus-within {
-      border-color: var(--accent-border);
-      box-shadow: var(--accent-glow);
-    }
-  }
+.input-wrap input[type="number"],
+.input-wrap input[type="text"],
+.input-wrap select {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  background: transparent;
+}
 
-  /* 保存ボタン（背景にアクセント使わない） */
-  .btn-primary {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+/* -----------------------------------
+   メモ欄（Editor padding なし）
+----------------------------------- */
+#memo-text {
+  width: 100%;
+  min-height: 150px;
+  padding: 0 !important;
+  margin: 0;
+  border: none;
+  background: transparent;
+}
 
-    padding: 14px 16px;
-    border-radius: var(--radius);
+/* -----------------------------------
+   保存ボタン
+----------------------------------- */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 
-    border: 2px solid var(--accent);
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px) saturate(160%);
-    box-shadow: var(--glass-inner-shadow);
+  padding: 14px 16px;
+  border-radius: var(--radius);
 
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    color: #1d9bf0;
+  border: 2px solid var(--accent);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px) saturate(160%);
+  box-shadow: var(--glass-inner-shadow);
 
-    transition: 0.15s ease;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  color: #1d9bf0;
 
-    &:hover {
-      border-color: var(--accent-strong);
-      box-shadow: var(--accent-glow);
-      text-decoration: underline;
-    }
-  }
+  transition: 0.15s ease;
+}
+
+.btn-primary:hover {
+  border-color: var(--accent-strong);
+  box-shadow: var(--accent-glow);
+  text-decoration: underline;
 }
