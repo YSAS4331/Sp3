@@ -5,13 +5,30 @@ const create = (e) => document.createElement(e);
 const event = (detail) =>
   window.dispatchEvent(new CustomEvent("spa:router", { detail }));
 
-/* normalize url (force remove trailing slash, strip hash) */
-const normalize = (url) => {
-  const u = new URL(url, location.origin);
-  let path = u.pathname.replace(/\/+$/, "");
-  if (path === "") path = "/";
-  return path + u.search;
-};
+/* ---- 完全版 normalize ---- */
+/* 
+  - ハッシュはルーティングキーに含めない
+  - index.html → ディレクトリ扱い
+  - クエリは保持
+  - 末尾スラッシュ統一
+*/
+function normalize(input) {
+  const u = new URL(input, location.href);
+
+  u.hash = "";
+
+  if (u.pathname.endsWith("index.html")) {
+    u.pathname = u.pathname.replace(/index\.html$/, "");
+  }
+
+  u.searchParams.sort();
+
+  if (!u.pathname.endsWith("/")) {
+    u.pathname += "/";
+  }
+
+  return u.pathname + u.search;
+}
 
 /* state */
 let activeStyles = [];
@@ -39,35 +56,26 @@ const waitTransition = (el) =>
   });
 
 /* ---- レスポンスURLからbaseUrlを決定 ---- */
-// 相対パス解決の基準となるディレクトリURLを返す
-// "/Sp3/index.html" → "/Sp3/"
-// "/Sp3/"           → "/Sp3/"
-// "/Sp3"            → "/Sp3/" (ファイルではなくディレクトリと推定)
 function deriveBaseUrl(responseUrl) {
   const u = new URL(responseUrl);
   const last = u.pathname.split("/").pop();
 
-  // 最後のセグメントに拡張子があればファイル → その親ディレクトリ
   if (last.includes(".")) {
     u.pathname = u.pathname.substring(0, u.pathname.lastIndexOf("/") + 1);
-  }
-  // 末尾が / でなければ / を付与
-  else if (!u.pathname.endsWith("/")) {
+  } else if (!u.pathname.endsWith("/")) {
     u.pathname += "/";
   }
 
-  // searchやhashは不要
   u.search = "";
   u.hash = "";
 
   return u.href;
 }
 
-/* ---- baseUrl決定: doc内の<base href>を優先、なければderiveBaseUrl ---- */
+/* ---- baseUrl決定 ---- */
 function resolveBase(doc, responseUrl) {
   const baseEl = $("base[href]", doc);
   if (baseEl) {
-    // <base href>はレスポンスURL基準で解決
     return new URL(baseEl.getAttribute("href"), responseUrl).href;
   }
   return deriveBaseUrl(responseUrl);
@@ -91,7 +99,6 @@ async function fetchPage(pathWithQuery) {
 
   const html = await res.text();
 
-  // キャッシュにはHTMLテキストとレスポンスURLのみ保存
   htmlCache.set(key, { html, responseUrl: res.url });
 
   const doc = new DOMParser().parseFromString(html, "text/html");
@@ -179,7 +186,6 @@ async function navigate(pathWithQuery, push = true, hash = "") {
       return;
     }
 
-    // mainをreplaceする前にscripts/stylesを取得
     const nextScripts = $$("page-script[src]", doc);
     const nextStyleLinks = $$("link[data-page]", doc);
 
@@ -228,7 +234,6 @@ function loadStyles(nextStyleLinks, base) {
     const href = new URL(l.getAttribute("href"), base).href;
     nextHrefs.add(href);
   });
-
 
   $$("link[data-page]").forEach((existing) => {
     if (!nextHrefs.has(existing.href)) {
@@ -363,8 +368,6 @@ window.addEventListener("DOMContentLoaded", () => {
   activeStyles = $$("link[data-page]");
   history.replaceState(null, "", normalize(location.href) + location.hash);
 
-  // 初回ロード: location.hrefをそのままbaseにするのではなく
-  // 同じロジックでbaseUrlを決定
   const initBase = resolveBase(document, location.href);
   loadPageScripts($$("page-script[src]"), initBase);
 });
