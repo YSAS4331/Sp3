@@ -4,148 +4,170 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Splatoon3 Battle Logger</title>
-  <link rel="stylesheet" href="style.css">
 
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" data-page>
-  
+
   <script src="./router.js" type="module"></script>
   <page-script src="/Editor/editor.js" once></page-script>
   <page-script src="db.js" once></page-script>
   <page-script src="script.js"></page-script>
 </head>
-<body><main>
 
-<header class="header glass">
-  <div class="header-inner">
-    <i data-lucide="clipboard-list"></i>
-    <span>Splatoon3 バトルログ</span>
+<body>
+  <!-- グローバルヘッダー -->
+  <header class="global-header">
+    <h1>Splatoon3 Battle Logger</h1>
+    <div style="display: flex; flex-direction: row-reverse">
+      <a href="/Sp3/">トップ</a>
+    </div>
+  </header>
+
+  <!-- アプリ本体 -->
+  <div id="app">
+
+    <!-- サイドバー -->
+    <aside id="aside">
+      <a href="/Sp3/">トップ</a>
+      <!-- 必要ならここにナビを追加 -->
+    </aside>
+
+    <!-- メインコンテンツ（SPA 置き換え対象） -->
+    <main>
+
+      <header class="header glass">
+        <div class="header-inner">
+          <i data-lucide="clipboard-list"></i>
+          <span>Splatoon3 バトルログ</span>
+        </div>
+      </header>
+
+      <div class="container card glass">
+
+        <h2 class="section-title">
+          <i data-lucide="bar-chart-3"></i>
+          サマリー画面へ
+        </h2>
+
+        <nav class="nav-links">
+          <a class="nav-item" href="weapons/">
+            <i data-lucide="sword"></i>
+            武器別
+          </a>
+
+          <a class="nav-item" href="stages/">
+            <i data-lucide="map"></i>
+            ステージ別
+          </a>
+
+          <a class="nav-item" href="rules/">
+            <i data-lucide="list"></i>
+            ルール別
+          </a>
+
+          <a class="nav-item" href="all/">
+            <i data-lucide="brick-wall"></i>
+            全データ
+          </a>
+        </nav>
+
+        <h2 class="section-title">
+          <i data-lucide="plus-circle"></i>
+          バトル記録を追加
+        </h2>
+
+        <form id="battleForm" class="form">
+
+          <div class="form-group">
+            <label for="kills">キル数</label>
+            <div class="input-wrap">
+              <i data-lucide="crosshair"></i>
+              <input type="number" id="kills" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="deaths">デス数</label>
+            <div class="input-wrap">
+              <i data-lucide="skull"></i>
+              <input type="number" id="deaths" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="special">スペシャル使用回数</label>
+            <div class="input-wrap">
+              <i data-lucide="zap"></i>
+              <input type="number" id="special" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="weapon">武器（自由入力）</label>
+            <div class="input-wrap">
+              <i data-lucide="sword"></i>
+              <input type="text" id="weapon" placeholder="例: スシコラ" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="stage">ステージ（自由入力）</label>
+            <div class="input-wrap">
+              <i data-lucide="map"></i>
+              <input type="text" id="stage" placeholder="例: ユノハナ大渓谷" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="rule">ルール</label>
+            <div class="input-wrap">
+              <i data-lucide="list"></i>
+              <select id="rule" required>
+                <option value="">選択してください</option>
+                <option>ナワバリ</option>
+                <option>ガチエリア</option>
+                <option>ガチヤグラ</option>
+                <option>ガチホコ</option>
+                <option>ガチアサリ</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="result">勝敗</label>
+            <div class="input-wrap">
+              <i data-lucide="check-circle"></i>
+              <select id="result" required>
+                <option value="">選択してください</option>
+                <option value="win">勝ち</option>
+                <option value="lose">負け</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="memo-text">メモ</label>
+            <div class="input-wrap" style="flex-direction:column;align-items:normal;">
+              <i data-lucide="notebook-text"></i>
+              <com-editor lang="Markdown" placeholder="メモを入力" id="memo-text" style="min-height: 150px; width: 90%;"></com-editor>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary">
+            <i data-lucide="save"></i>
+            記録を保存
+          </button>
+
+        </form>
+
+      </div>
+
+      <script type="module">
+        import { createIcons, icons } from "https://esm.sh/lucide";
+        createIcons({ icons });
+      </script>
+
+    </main>
   </div>
-</header>
-
-<div class="container card glass">
-
-  <h2 class="section-title">
-    <i data-lucide="bar-chart-3"></i>
-    サマリー画面へ
-  </h2>
-
-  <nav class="nav-links">
-    <a class="nav-item" href="weapons/">
-      <i data-lucide="sword"></i>
-      武器別
-    </a>
-
-    <a class="nav-item" href="stages/">
-      <i data-lucide="map"></i>
-      ステージ別
-    </a>
-
-    <a class="nav-item" href="rules/">
-      <i data-lucide="list"></i>
-      ルール別
-    </a>
-
-    <a class="nav-item" href="all/">
-      <i data-lucide="brick-wall"></i>
-      全データ
-    </a>
-  </nav>
-
-  <h2 class="section-title">
-    <i data-lucide="plus-circle"></i>
-    バトル記録を追加
-  </h2>
-
-  <form id="battleForm" class="form">
-
-    <div class="form-group">
-      <label for="kills">キル数</label>
-      <div class="input-wrap">
-        <i data-lucide="crosshair"></i>
-        <input type="number" id="kills" required>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="deaths">デス数</label>
-      <div class="input-wrap">
-        <i data-lucide="skull"></i>
-        <input type="number" id="deaths" required>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="special">スペシャル使用回数</label>
-      <div class="input-wrap">
-        <i data-lucide="zap"></i>
-        <input type="number" id="special" required>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="weapon">武器（自由入力）</label>
-      <div class="input-wrap">
-        <i data-lucide="sword"></i>
-        <input type="text" id="weapon" placeholder="例: スシコラ" required>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="stage">ステージ（自由入力）</label>
-      <div class="input-wrap">
-        <i data-lucide="map"></i>
-        <input type="text" id="stage" placeholder="例: ユノハナ大渓谷" required>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="rule">ルール</label>
-      <div class="input-wrap">
-        <i data-lucide="list"></i>
-        <select id="rule" required>
-          <option value="">選択してください</option>
-          <option>ナワバリ</option>
-          <option>ガチエリア</option>
-          <option>ガチヤグラ</option>
-          <option>ガチホコ</option>
-          <option>ガチアサリ</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="result">勝敗</label>
-      <div class="input-wrap">
-        <i data-lucide="check-circle"></i>
-        <select id="result" required>
-          <option value="">選択してください</option>
-          <option value="win">勝ち</option>
-          <option value="lose">負け</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="memo-text">メモ</label>
-      <div class="input-wrap" style="flex-direction:column;align-items:normal;">
-        
-        <i data-lucide="notebook-text"></i>
-        <com-editor lang="Markdown" placeholder="メモを入力" id="memo-text" style="min-height: 150px; width: 90%;"></com-editor>
-      </div>
-    </div>
-
-    <button type="submit" class="btn-primary">
-      <i data-lucide="save"></i>
-      記録を保存
-    </button>
-
-  </form>
-
-</div>
-
-<script type="module">
-  import { createIcons, icons } from "https://esm.sh/lucide";
-  createIcons({ icons });
-</script>
-</main>
 </body>
 </html>
