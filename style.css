@@ -1,15 +1,17 @@
 /* -----------------------------------
-   Apple クリアガラス美学（強化版）
+   アクセントカラー強化
 ----------------------------------- */
 :root {
   --accent: #B7F5C8;
   --accent-strong: #9ff0b8;
 
-  /* ガラス境界線（Apple は白より “光の縁” が強い） */
+  /* アクセントを光として扱う */
+  --accent-glow: 0 0 12px rgba(183, 245, 200, 0.55);
+  --accent-border: rgba(183, 245, 200, 0.65);
+
   --glass-border: rgba(255, 255, 255, 0.45);
   --glass-border-strong: rgba(255, 255, 255, 0.75);
 
-  /* 内側の淡い影（Apple のガラス感の秘密） */
   --glass-inner-shadow: inset 0 0 0.6px rgba(255, 255, 255, 0.6),
                         inset 0 0 12px rgba(255, 255, 255, 0.25);
 
@@ -21,25 +23,16 @@
   --text-tertiary: #8e8e93;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  color: var(--text-primary);
-  background: var(--bg);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-
 /* -----------------------------------
-   グローバルヘッダー（Apple の “薄膜ガラス”）
+   グローバルヘッダー
 ----------------------------------- */
 body > header {
   height: 60px;
 
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(28px) saturate(180%);
-  border-bottom: 1px solid var(--glass-border);
-  box-shadow: var(--glass-inner-shadow);
+  border-bottom: 1px solid var(--accent-border); /* ← アクセントの光 */
+  box-shadow: var(--glass-inner-shadow), var(--accent-glow);
 
   display: flex;
   align-items: center;
@@ -53,81 +46,61 @@ body > header {
   top: 0;
   z-index: 10;
 
-  h1 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
   a {
-    color: #1d9bf0;
-    text-decoration: none;
+    color: var(--accent-strong);
     font-weight: 600;
     padding: 6px 10px;
     border-radius: var(--radius);
+    transition: 0.15s ease;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.25);
+      background: rgba(183, 245, 200, 0.25); /* ← アクセントの薄膜 */
       backdrop-filter: blur(10px);
+      box-shadow: 0 0 8px rgba(183, 245, 200, 0.4);
     }
   }
 }
 
 /* -----------------------------------
-   レイアウト
------------------------------------ */
-#app {
-  display: flex;
-  height: calc(100vh - 60px);
-}
-
-/* -----------------------------------
-   サイドバー（macOS Finder の質感）
+   サイドバー
 ----------------------------------- */
 aside#aside {
   width: 240px;
 
   background: rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(32px) saturate(180%);
-  border-right: 1px solid var(--glass-border);
+  border-right: 1px solid var(--accent-border); /* ← アクセントの縁 */
   box-shadow: var(--glass-inner-shadow);
 
   padding: 20px;
   padding-top: 60px;
   box-sizing: border-box;
 
-  h2 {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text-tertiary);
-    margin: 0 0 12px;
-    padding-left: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
   a {
     display: block;
     padding: 8px 6px;
     margin-bottom: 4px;
-
     border-radius: 8px;
-    color: var(--text-primary);
-    text-decoration: none;
     font-weight: 500;
-
-    transition: background 0.15s ease;
+    color: var(--text-primary);
+    transition: 0.15s ease;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.25);
-      backdrop-filter: blur(10px);
+      background: rgba(183, 245, 200, 0.22); /* ← アクセントの薄膜 */
+      box-shadow: 0 0 10px rgba(183, 245, 200, 0.35);
+    }
+
+    &.active {
+      background: rgba(183, 245, 200, 0.32); /* ← 選択中は濃いめ */
+      box-shadow: 0 0 14px rgba(183, 245, 200, 0.45);
+      border-left: 3px solid var(--accent-strong);
+      padding-left: 10px;
     }
   }
 }
 
 /* -----------------------------------
-   main は index.css が担当
+   main
 ----------------------------------- */
 main {
   flex: 1;
