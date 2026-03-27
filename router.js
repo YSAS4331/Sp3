@@ -18,11 +18,10 @@ let activeStyles = [];
 let activeModules = [];
 let navId = 0;
 let controller;
-const htmlCache = new Map(); // HTMLテキストをキャッシュ
+const htmlCache = new Map();
 const scrollMap = new Map();
 const executedOnceScripts = new Set();
 
-/* transition timeout (CSSに合わせて調整) */
 const TRANSITION_TIMEOUT = 600;
 
 const waitTransition = (el) =>
@@ -39,18 +38,39 @@ const waitTransition = (el) =>
     setTimeout(finish, TRANSITION_TIMEOUT);
   });
 
-/* ---- baseUrlを相対パス解決用に補正 ---- */
-function resolveBase(responseUrl) {
+/* ---- レスポンスURLからbaseUrlを決定 ---- */
+// 相対パス解決の基準となるディレクトリURLを返す
+// "/Sp3/index.html" → "/Sp3/"
+// "/Sp3/"           → "/Sp3/"
+// "/Sp3"            → "/Sp3/" (ファイルではなくディレクトリと推定)
+function deriveBaseUrl(responseUrl) {
   const u = new URL(responseUrl);
+  const last = u.pathname.split("/").pop();
 
-  // パスが拡張子を持たない & 末尾が / でない → ディレクトリとみなして / を付与
-  // 例: /Sp3 → /Sp3/  (./script.js が /Sp3/script.js に解決される)
-  // 例: /Sp3/index.html → そのまま (./script.js が /Sp3/script.js に解決される)
-  if (!u.pathname.endsWith("/") && !u.pathname.split("/").pop().includes(".")) {
+  // 最後のセグメントに拡張子があればファイル → その親ディレクトリ
+  if (last.includes(".")) {
+    u.pathname = u.pathname.substring(0, u.pathname.lastIndexOf("/") + 1);
+  }
+  // 末尾が / でなければ / を付与
+  else if (!u.pathname.endsWith("/")) {
     u.pathname += "/";
   }
 
+  // searchやhashは不要
+  u.search = "";
+  u.hash = "";
+
   return u.href;
+}
+
+/* ---- baseUrl決定: doc内の<base href>を優先、なければderiveBaseUrl ---- */
+function resolveBase(doc, responseUrl) {
+  const baseEl = $("base[href]", doc);
+  if (baseEl) {
+    // <base href>はレスポンスURL基準で解決
+    return new URL(baseEl.getAttribute("href"), responseUrl).href;
+  }
+  return deriveBaseUrl(responseUrl);
 }
 
 /* ---- fetch html ---- */
@@ -60,7 +80,7 @@ async function fetchPage(pathWithQuery) {
   if (htmlCache.has(key)) {
     const cached = htmlCache.get(key);
     const doc = new DOMParser().parseFromString(cached.html, "text/html");
-    return { doc, baseUrl: cached.baseUrl };
+    return { doc, baseUrl: resolveBase(doc, cached.responseUrl) };
   }
 
   controller?.abort();
@@ -70,16 +90,15 @@ async function fetchPage(pathWithQuery) {
   if (!res.ok) throw new Error(res.status);
 
   const html = await res.text();
-  const baseUrl = resolveBase(res.url);
 
-  htmlCache.set(key, { html, baseUrl });
+  // キャッシュにはHTMLテキストとレスポンスURLのみ保存
+  htmlCache.set(key, { html, responseUrl: res.url });
 
   const doc = new DOMParser().parseFromString(html, "text/html");
-  return { doc, baseUrl };
+  return { doc, baseUrl: resolveBase(doc, res.url) };
 }
 
-
-/* キャッシュ破棄ユーティリティ */
+/* キャッシュ破棄 */
 function invalidateCache(pathWithQuery) {
   if (pathWithQuery) {
     htmlCache.delete(normalize(pathWithQuery));
@@ -119,7 +138,7 @@ document.addEventListener("click", (e) => {
   navigate(to, true, url.hash);
 });
 
-/* スクロール位置を保存 */
+/* スクロール位置を常時記録 */
 let scrollTimer;
 window.addEventListener(
   "scroll",
@@ -139,7 +158,6 @@ async function navigate(pathWithQuery, push = true, hash = "") {
   const key = normalize(pathWithQuery);
   const id = ++navId;
 
-  // 離脱元のスクロール位置を保存
   scrollMap.set(normalize(location.href), scrollY);
 
   event({ type: "before" });
@@ -161,26 +179,22 @@ async function navigate(pathWithQuery, push = true, hash = "") {
       return;
     }
 
-    // ---- mainをreplaceする前にscripts/stylesを取得 ----
+    // mainをreplaceする前にscripts/stylesを取得
     const nextScripts = $$("page-script[src]", doc);
     const nextStyleLinks = $$("link[data-page]", doc);
 
-    // cleanup (前ページのモジュールunmount + 不要スタイル削除)
     cleanup();
 
-    // ---- adoptNodeでDOMParserのノードを現在のdocumentに取り込む ----
     const adopted = document.adoptNode(nextMain);
     main.replaceWith(adopted);
 
     document.title = doc.title;
     syncMeta(doc);
 
-    // スタイル適用
     loadStyles(nextStyleLinks, baseUrl);
 
     if (push) history.pushState(null, "", key + hash);
 
-    // スクロール処理
     if (hash) {
       const target = document.getElementById(hash.slice(1));
       if (target) {
@@ -210,13 +224,11 @@ async function navigate(pathWithQuery, push = true, hash = "") {
 function loadStyles(nextStyleLinks, base) {
   const nextHrefs = new Set();
 
-  // 次のページに必要なhrefを収集（元のhrefをそのまま解決）
   nextStyleLinks.forEach((l) => {
     const href = new URL(l.getAttribute("href"), base).href;
     nextHrefs.add(href);
   });
 
-  // 現在のpage styleで不要なものを削除
 
   $$("link[data-page]").forEach((existing) => {
     if (!nextHrefs.has(existing.href)) {
@@ -224,13 +236,10 @@ function loadStyles(nextStyleLinks, base) {
     }
   });
 
-  // まだDOMにないものを追加
   const newActiveStyles = [];
 
   nextHrefs.forEach((href) => {
     let existing = null;
-
-    // 既存のlink[data-page]から一致するものを探す
     for (const el of $$("link[data-page]")) {
       if (el.href === href) {
         existing = el;
@@ -252,7 +261,7 @@ function loadStyles(nextStyleLinks, base) {
   activeStyles = newActiveStyles;
 }
 
-/* ---- onceスクリプトのキー（パス部分のみ） ---- */
+/* onceスクリプトのキー */
 function getScriptKey(rawHref) {
   const u = new URL(rawHref);
   return u.origin + u.pathname;
@@ -261,14 +270,12 @@ function getScriptKey(rawHref) {
 /* ---- ページスクリプト読み込み ---- */
 async function loadPageScripts(scriptElements, base) {
   for (const s of scriptElements) {
-    // 元のsrc属性をそのまま解決
     const resolved = new URL(s.getAttribute("src"), base);
     const isOnce = s.hasAttribute("once");
     const scriptKey = getScriptKey(resolved.href);
 
     if (isOnce && executedOnceScripts.has(scriptKey)) continue;
 
-    // onceでないスクリプトだけキャッシュバスター付与（再実行のため）
     if (!isOnce) {
       resolved.searchParams.set("t", performance.now());
     }
@@ -293,7 +300,6 @@ function cleanup() {
       console.error("Unmount failed:", err);
     }
   });
-
   activeModules = [];
   activeStyles = [];
 }
@@ -333,7 +339,6 @@ function showErrorPage() {
       <button onclick="location.reload()">Reload</button>
     </section>
   `;
-
   document.body.classList.remove("load");
 }
 
@@ -353,11 +358,15 @@ document.addEventListener("mouseover", (e) => {
   fetchPage(normalize(url.href)).catch(() => {});
 });
 
-/* init */
+/* ---- init ---- */
 window.addEventListener("DOMContentLoaded", () => {
   activeStyles = $$("link[data-page]");
   history.replaceState(null, "", normalize(location.href) + location.hash);
-  loadPageScripts($$("page-script[src]"), location.href);
+
+  // 初回ロード: location.hrefをそのままbaseにするのではなく
+  // 同じロジックでbaseUrlを決定
+  const initBase = resolveBase(document, location.href);
+  loadPageScripts($$("page-script[src]"), initBase);
 });
 
 /* 外部公開 */
