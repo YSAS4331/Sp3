@@ -1,24 +1,23 @@
 /* -----------------------------------
-   全体設定（Apple 的ミニマル）
+   Apple クリアガラス美学（main 以外）
 ----------------------------------- */
 :root {
   --accent: #B7F5C8;
   --accent-strong: #9ff0b8;
 
-  --border-color: rgba(255, 255, 255, 0.35);
-  --border-strong: rgba(255, 255, 255, 0.55);
+  /* 透明度高いガラスの境界線 */
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-border-strong: rgba(255, 255, 255, 0.75);
 
-  --radius: 12px;
+  --radius: 14px;
 
+  /* Apple の背景階層 */
   --bg: #f5f5f7;
   --text-primary: #1c1c1e;
   --text-secondary: #3a3a3c;
   --text-tertiary: #8e8e93;
 }
 
-/* -----------------------------------
-   ベース
------------------------------------ */
 html, body {
   margin: 0;
   padding: 0;
@@ -29,14 +28,14 @@ html, body {
 }
 
 /* -----------------------------------
-   グローバルヘッダー（ガラス）
+   グローバルヘッダー（透明度高いガラス）
 ----------------------------------- */
 body > header {
   height: 60px;
 
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.25); /* ← 透明度高い */
+  backdrop-filter: blur(28px);           /* ← 強めのぼかし */
+  border-bottom: 1px solid var(--glass-border);
 
   display: flex;
   align-items: center;
@@ -73,18 +72,19 @@ body > header {
 }
 
 /* -----------------------------------
-   サイドバー（macOS Finder 風ガラス）
+   サイドバー（macOS 風クリアガラス）
 ----------------------------------- */
 aside#aside {
   width: 240px;
 
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(24px);
-  border-right: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.18); /* ← header よりさらに透明 */
+  backdrop-filter: blur(30px);           /* ← macOS 風の強いぼかし */
+  border-right: 1px solid var(--glass-border);
 
   padding: 20px;
   box-sizing: border-box;
 
+  /* Finder のセクションタイトル */
   h2 {
     font-size: 13px;
     font-weight: 700;
@@ -95,18 +95,18 @@ aside#aside {
     letter-spacing: 0.5px;
   }
 
+  /* Apple のサイドバーリンク */
   a {
     display: block;
     padding: 8px 4px;
     margin-bottom: 4px;
 
-    /* Apple のサイドバーは角丸なし */
-    border-radius: 0;
-
+    border-radius: 6px; /* Finder は角丸小さめ */
     color: #1d9bf0;
     text-decoration: none;
     font-weight: 500;
 
+    /* hover は underline のみ */
     &:hover {
       text-decoration: underline;
     }
