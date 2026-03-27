@@ -5,12 +5,13 @@ const create = (e) => document.createElement(e);
 const event = (detail) =>
   window.dispatchEvent(new CustomEvent("spa:router", { detail }));
 
-/* ---- 完全版 normalize ---- */
-/* 
+/* ---- 完全安定版 normalize ---- */
+/*
   - ハッシュはルーティングキーに含めない
-  - index.html → ディレクトリ扱い
-  - クエリは保持
-  - 末尾スラッシュ統一
+  - クエリは保持（順序は正規化）
+  - 末尾スラッシュ強制しない
+  - index.html を削除しない
+  → サーバーの実ファイル構造とズレない
 */
 function normalize(input) {
   const u = new URL(input, location.href);
@@ -19,8 +20,6 @@ function normalize(input) {
   u.searchParams.sort();
 
   return u.pathname + u.search;
-}
- u.pathname + u.search;
 }
 
 /* state */
