@@ -5,20 +5,11 @@ const create = (e) => document.createElement(e);
 const event = (detail) =>
   window.dispatchEvent(new CustomEvent("spa:router", { detail }));
 
-/* ---- 完全安定版 normalize ---- */
-/*
-  - ハッシュはルーティングキーに含めない
-  - クエリは保持（順序は正規化）
-  - 末尾スラッシュ強制しない
-  - index.html を削除しない
-  → サーバーの実ファイル構造とズレない
-*/
+/* ---- normalize ---- */
 function normalize(input) {
   const u = new URL(input, location.href);
-
   u.hash = "";
   u.searchParams.sort();
-
   return u.pathname + u.search;
 }
 
@@ -47,7 +38,7 @@ const waitTransition = (el) =>
     setTimeout(finish, TRANSITION_TIMEOUT);
   });
 
-/* ---- レスポンスURLからbaseUrlを決定 ---- */
+/* ---- baseUrl ---- */
 function deriveBaseUrl(responseUrl) {
   const u = new URL(responseUrl);
   const last = u.pathname.split("/").pop();
@@ -64,7 +55,6 @@ function deriveBaseUrl(responseUrl) {
   return u.href;
 }
 
-/* ---- baseUrl決定 ---- */
 function resolveBase(doc, responseUrl) {
   const baseEl = $("base[href]", doc);
   if (baseEl) {
@@ -80,7 +70,7 @@ async function fetchPage(pathWithQuery) {
   if (htmlCache.has(key)) {
     const cached = htmlCache.get(key);
     const doc = new DOMParser().parseFromString(cached.html, "text/html");
-    return { doc, baseUrl: resolveBase(doc, cached.responseUrl) };
+    return { doc, baseUrl: resolveBase(doc, cached.responseUrl), responseUrl: cached.responseUrl };
   }
 
   controller?.abort();
@@ -94,7 +84,7 @@ async function fetchPage(pathWithQuery) {
   htmlCache.set(key, { html, responseUrl: res.url });
 
   const doc = new DOMParser().parseFromString(html, "text/html");
-  return { doc, baseUrl: resolveBase(doc, res.url) };
+  return { doc, baseUrl: resolveBase(doc, res.url), responseUrl: res.url };
 }
 
 /* キャッシュ破棄 */
@@ -168,7 +158,7 @@ async function navigate(pathWithQuery, push = true, hash = "") {
   const pFetch = fetchPage(key);
 
   try {
-    const [{ doc, baseUrl }] = await Promise.all([pFetch, pTransition]);
+    const [{ doc, baseUrl, responseUrl }] = await Promise.all([pFetch, pTransition]);
 
     if (id !== navId) return;
 
@@ -207,7 +197,7 @@ async function navigate(pathWithQuery, push = true, hash = "") {
 
     requestAnimationFrame(async () => {
       document.body.classList.remove("load");
-      await loadPageScripts(nextScripts, baseUrl);
+      await loadPageScripts(nextScripts, baseUrl, responseUrl);
     });
 
     event({ type: "after" });
@@ -264,10 +254,20 @@ function getScriptKey(rawHref) {
   return u.origin + u.pathname;
 }
 
-/* ---- ページスクリプト読み込み ---- */
-async function loadPageScripts(scriptElements, base) {
+/* ---- ページスクリプト読み込み（script と同じ挙動） ---- */
+async function loadPageScripts(scriptElements, base, responseUrl) {
   for (const s of scriptElements) {
-    const resolved = new URL(s.getAttribute("src"), base);
+    const raw = s.getAttribute("src");
+
+    let resolved;
+    if (raw.startsWith("/")) {
+      // 絶対パス → ルート基準
+      resolved = new URL(raw, location.origin);
+    } else {
+      // 相対パス → 遷移先ページの URL 基準
+      resolved = new URL(raw, responseUrl);
+    }
+
     const isOnce = s.hasAttribute("once");
     const scriptKey = getScriptKey(resolved.href);
 
@@ -361,7 +361,7 @@ window.addEventListener("DOMContentLoaded", () => {
   history.replaceState(null, "", normalize(location.href) + location.hash);
 
   const initBase = resolveBase(document, location.href);
-  loadPageScripts($$("page-script[src]"), initBase);
+  loadPageScripts($$("page-script[src]"), initBase, location.href);
 });
 
 /* 外部公開 */
