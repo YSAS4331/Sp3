@@ -1,13 +1,13 @@
 /* -----------------------------------
-   基本設定（Apple 的ミニマル）
+   全体設定（Apple 的ミニマル）
 ----------------------------------- */
 :root {
   --accent: #B7F5C8;
   --accent-strong: #9ff0b8;
+  --border-color: #dcdcdc;
+  --radius: 14px;
   --bg: #f7f7f7;
   --text: #1a1a1a;
-  --radius: 14px;
-  --border-color: #dcdcdc;
 }
 
 html, body {
@@ -31,25 +31,24 @@ body > header {
   justify-content: space-between;
   padding: 0 20px;
   box-sizing: border-box;
-}
 
-body > header h1 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-}
+  h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
 
-/* Apple 風リンク */
-body > header a {
-  color: #1d9bf0;
-  text-decoration: none;
-  font-weight: 600;
-  padding: 6px 10px;
-  border-radius: var(--radius);
-}
+  a {
+    color: #1d9bf0;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: var(--radius);
 
-body > header a:hover {
-  text-decoration: underline;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 /* -----------------------------------
@@ -61,7 +60,7 @@ body > header a:hover {
 }
 
 /* -----------------------------------
-   サイドバー（影なし・border で区切る）
+   サイドバー（main 以外）
 ----------------------------------- */
 aside#aside {
   width: 240px;
@@ -69,143 +68,30 @@ aside#aside {
   border-right: 1px solid var(--border-color);
   padding: 20px;
   box-sizing: border-box;
-}
 
-/* Apple 風サイドバーリンク */
-aside#aside a {
-  display: block;
-  padding: 10px 12px;
-  margin-bottom: 8px;
-  border-radius: var(--radius);
-  color: #1d9bf0;
-  text-decoration: none;
-  font-weight: 600;
-  border: 1px solid transparent;
-}
+  a {
+    display: block;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border-radius: var(--radius);
+    border: 2px solid transparent;
+    color: #1d9bf0;
+    text-decoration: none;
+    font-weight: 600;
 
-aside#aside a:hover {
-  background: var(--accent);
-  border-color: var(--accent-strong);
-  text-decoration: underline;
+    &:hover {
+      border-color: var(--accent);
+      text-decoration: underline;
+    }
+  }
 }
 
 /* -----------------------------------
-   メインコンテンツ
+   main は index.css が担当
 ----------------------------------- */
 main {
   flex: 1;
   padding: 32px;
   overflow-y: auto;
   box-sizing: border-box;
-}
-
-/* -----------------------------------
-   カード（影なし・border で立体感）
------------------------------------ */
-.card {
-  background: white;
-  border-radius: var(--radius);
-  border: 1px solid var(--border-color);
-  padding: 24px;
-  margin-bottom: 32px;
-}
-
-/* -----------------------------------
-   セクションタイトル
------------------------------------ */
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 20px;
-  font-weight: 700;
-  margin: 24px 0 12px;
-}
-
-/* -----------------------------------
-   ナビリンク（トップページ）
------------------------------------ */
-.nav-links {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 16px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border-color);
-  background: white;
-  color: #1d9bf0;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.nav-item:hover {
-  background: var(--accent);
-  border-color: var(--accent-strong);
-  text-decoration: underline;
-}
-
-/* -----------------------------------
-   フォーム
------------------------------------ */
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-group label {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.input-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: white;
-  padding: 12px 14px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border-color);
-}
-
-.input-wrap:focus-within {
-  border-color: var(--accent-strong);
-}
-
-input, select {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-size: 15px;
-  background: transparent;
-}
-
-/* -----------------------------------
-   ボタン（影なし・アクセント強め）
------------------------------------ */
-.btn-primary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-
-  padding: 14px 16px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border-color);
-  background: var(--accent);
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  color: #222;
-}
-
-.btn-primary:hover {
-  background: var(--accent-strong);
 }
