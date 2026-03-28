@@ -1,12 +1,9 @@
 /* -----------------------------------
-   Apple クリアガラス美学（グローバル）
+   Apple ガラス美学（グローバル）
 ----------------------------------- */
 :root {
   --accent: #B7F5C8;
   --accent-strong: #9ff0b8;
-
-  --glass-border: rgba(255, 255, 255, 0.45);
-  --glass-border-strong: rgba(255, 255, 255, 0.75);
 
   --accent-border: rgba(183, 245, 200, 0.65);
   --accent-glow: 0 0 12px rgba(183, 245, 200, 0.45);
@@ -29,12 +26,13 @@ html, body {
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  height: 100%;
 }
 
 /* -----------------------------------
-   グローバルヘッダー
+   グローバルヘッダー（#global-header）
 ----------------------------------- */
-.global-header {
+#global-header {
   height: 60px;
 
   background: rgba(255, 255, 255, 0.12);
@@ -54,16 +52,16 @@ html, body {
   left: 0;
   right: 0;
 
-  z-index: 10;
+  z-index: 20;
 }
 
-.global-header h1 {
+#global-header h1 {
   margin: 0;
   font-size: 20px;
   font-weight: 700;
 }
 
-.global-header a {
+#global-header a {
   color: var(--accent-strong);
   text-decoration: none;
   font-weight: 600;
@@ -72,23 +70,24 @@ html, body {
   transition: 0.15s ease;
 }
 
-.global-header a:hover {
+#global-header a:hover {
   background: rgba(183, 245, 200, 0.25);
   backdrop-filter: blur(10px);
   box-shadow: 0 0 8px rgba(183, 245, 200, 0.4);
 }
 
 /* -----------------------------------
-   レイアウト
+   レイアウト（#app）
 ----------------------------------- */
 #app {
   display: flex;
   height: calc(100vh - 60px);
   margin-top: 60px;
+  overflow: hidden;
 }
 
 /* -----------------------------------
-   サイドバー
+   サイドバー（#aside）
 ----------------------------------- */
 #aside {
   width: 240px;
@@ -99,17 +98,15 @@ html, body {
   box-shadow: var(--glass-inner-shadow);
 
   padding: 20px;
-  padding-top: 40px;
+  padding-top: 30px;
   box-sizing: border-box;
-}
 
-.sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
-.sidebar-item {
+#aside a {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -124,7 +121,7 @@ html, body {
   transition: 0.15s ease;
 }
 
-.sidebar-item:hover {
+#aside a:hover {
   background: rgba(183, 245, 200, 0.22);
   box-shadow: 0 0 10px rgba(183, 245, 200, 0.35);
 }
@@ -145,7 +142,7 @@ html, body {
   border-radius: 12px;
 
   padding: 8px 10px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 
   border: 1px solid var(--accent-border);
   box-shadow:
@@ -198,4 +195,15 @@ html, body {
     0 0 5px rgba(183, 245, 200, 0.25);
 
   user-select: none;
+}
+
+/* -----------------------------------
+   main（index.css が担当）
+----------------------------------- */
+main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+  padding-top: 40px;
+  box-sizing: border-box;
 }
