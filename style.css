@@ -130,65 +130,72 @@ html, body {
 }
 
 /* -----------------------------------
-   Spotlight 風 searchBar
+   Sidebar 内検索バー（Spotlight 風）
 ----------------------------------- */
-.searchBar {
+#aside .searchBar {
+  width: 100%;
+  box-sizing: border-box;
+
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.45);
   backdrop-filter: blur(14px) saturate(160%);
-  border-radius: 14px;
+  border-radius: 12px;
 
-  padding: 10px 14px;
+  padding: 8px 10px;
+  margin-bottom: 16px;
+
   border: 1px solid var(--accent-border);
   box-shadow:
     inset 0 0 0.6px rgba(255, 255, 255, 0.6),
-    inset 0 0 12px rgba(255, 255, 255, 0.25),
-    0 0 10px rgba(183, 245, 200, 0.25);
+    inset 0 0 10px rgba(255, 255, 255, 0.25),
+    0 0 8px rgba(183, 245, 200, 0.25);
 
   transition: 0.15s ease;
 }
 
-.searchBar:focus-within {
+#aside .searchBar:focus-within {
   border-color: rgba(183, 245, 200, 0.75);
+  background: rgba(255, 255, 255, 0.65);
   box-shadow:
     inset 0 0 0.6px rgba(255, 255, 255, 0.6),
     inset 0 0 12px rgba(255, 255, 255, 0.25),
-    0 0 14px rgba(183, 245, 200, 0.45);
-  background: rgba(255, 255, 255, 0.7);
+    0 0 12px rgba(183, 245, 200, 0.45);
 }
 
-.searchBar i {
-  opacity: 0.8;
+#aside .searchBar i {
+  width: 18px;
+  height: 18px;
   color: #1d9bf0;
+  opacity: 0.85;
 }
 
-.searchInput {
+#aside .searchInput {
   flex: 1;
   border: none;
   outline: none;
-  font-size: 15px;
+  font-size: 14px;
   background: transparent;
   color: #222;
 }
 
-.searchBar kbd {
-  background: rgba(255, 255, 255, 0.6);
-  padding: 4px 6px;
+#aside .searchBar kbd {
+  background: rgba(255, 255, 255, 0.55);
+  padding: 3px 6px;
   border-radius: 6px;
 
   border: 1px solid var(--accent-border);
   backdrop-filter: blur(10px) saturate(160%);
 
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: #333;
 
   box-shadow:
     inset 0 0 0.6px rgba(255, 255, 255, 0.6),
-    0 0 6px rgba(183, 245, 200, 0.25);
+    0 0 5px rgba(183, 245, 200, 0.25);
 
   user-select: none;
 }
