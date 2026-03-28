@@ -1,180 +1,209 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Splatoon3 Battle Logger</title>
+/* -----------------------------------
+   Apple ガラス美学（グローバル）
+----------------------------------- */
+:root {
+  --accent: #B7F5C8;
+  --accent-strong: #9ff0b8;
 
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="index.css" data-page>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" data-page>
+  --accent-border: rgba(183, 245, 200, 0.65);
+  --accent-glow: 0 0 12px rgba(183, 245, 200, 0.45);
 
-  <script src="./router.js" type="module"></script>
-  <page-script src="/Editor/editor.js" once></page-script>
-  <page-script src="db.js" once></page-script>
-  <page-script src="script.js"></page-script>
-</head>
+  --glass-inner-shadow: inset 0 0 0.6px rgba(255, 255, 255, 0.6),
+                        inset 0 0 12px rgba(255, 255, 255, 0.25);
 
-<body>
-  <!-- グローバルヘッダー -->
-  <header id="global-header">
-    <h1>Splatoon3 Battle Logger</h1>
-    <div style="display: flex; flex-direction: row-reverse">
-      <a href="/Sp3/">トップ</a>
-    </div>
-  </header>
+  --radius: 14px;
 
-  <!-- アプリ本体 -->
-  <div id="app">
+  --bg: #f5f5f7;
+  --text-primary: #1c1c1e;
+  --text-secondary: #3a3a3c;
+  --text-tertiary: #8e8e93;
+}
 
-    <!-- サイドバー -->
-    <aside id="aside">
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  height: 100%;
+}
 
-      <div class="searchBar">
-        <i data-lucide="search"></i>
-        <input class="searchInput">
-        <kbd>Ctrl</kbd><kbd>K</kbd>
-      </div>
-      <a href="/Sp3/">トップ</a>
-      <!-- 必要ならここにナビを追加 -->
-    </aside>
+/* -----------------------------------
+   グローバルヘッダー（#global-header）
+----------------------------------- */
+#global-header {
+  height: 60px;
 
-    <!-- メインコンテンツ（SPA 置き換え対象） -->
-    <main>
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(28px) saturate(180%);
+  border-bottom: 1px solid var(--accent-border);
+  box-shadow: var(--glass-inner-shadow), var(--accent-glow);
 
-      <header class="header glass">
-        <div class="header-inner">
-          <i data-lucide="clipboard-list"></i>
-          <span>Splatoon3 バトルログ</span>
-        </div>
-      </header>
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-      <div class="container card glass">
+  padding: 0 24px;
+  box-sizing: border-box;
 
-        <h2 class="section-title">
-          <i data-lucide="bar-chart-3"></i>
-          サマリー画面へ
-        </h2>
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
 
-        <nav class="nav-links">
-          <a class="nav-item" href="weapons/">
-            <i data-lucide="sword"></i>
-            武器別
-          </a>
+  z-index: 20;
+}
 
-          <a class="nav-item" href="stages/">
-            <i data-lucide="map"></i>
-            ステージ別
-          </a>
+#global-header h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
 
-          <a class="nav-item" href="rules/">
-            <i data-lucide="list"></i>
-            ルール別
-          </a>
+#global-header a {
+  color: var(--accent-strong);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  transition: 0.15s ease;
+}
 
-          <a class="nav-item" href="all/">
-            <i data-lucide="brick-wall"></i>
-            全データ
-          </a>
-        </nav>
+#global-header a:hover {
+  background: rgba(183, 245, 200, 0.25);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 8px rgba(183, 245, 200, 0.4);
+}
 
-        <h2 class="section-title">
-          <i data-lucide="plus-circle"></i>
-          バトル記録を追加
-        </h2>
+/* -----------------------------------
+   レイアウト（#app）
+----------------------------------- */
+#app {
+  display: flex;
+  height: calc(100vh - 60px);
+  margin-top: 60px;
+  overflow: hidden;
+}
 
-        <form id="battleForm" class="form">
+/* -----------------------------------
+   サイドバー（#aside）
+----------------------------------- */
+#aside {
+  width: 240px;
 
-          <div class="form-group">
-            <label for="kills">キル数</label>
-            <div class="input-wrap">
-              <i data-lucide="crosshair"></i>
-              <input type="number" id="kills" required>
-            </div>
-          </div>
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(32px) saturate(180%);
+  border-right: 1px solid var(--accent-border);
+  box-shadow: var(--glass-inner-shadow);
 
-          <div class="form-group">
-            <label for="deaths">デス数</label>
-            <div class="input-wrap">
-              <i data-lucide="skull"></i>
-              <input type="number" id="deaths" required>
-            </div>
-          </div>
+  padding: 20px;
+  padding-top: 30px;
+  box-sizing: border-box;
 
-          <div class="form-group">
-            <label for="special">スペシャル使用回数</label>
-            <div class="input-wrap">
-              <i data-lucide="zap"></i>
-              <input type="number" id="special" required>
-            </div>
-          </div>
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
-          <div class="form-group">
-            <label for="weapon">武器（自由入力）</label>
-            <div class="input-wrap">
-              <i data-lucide="sword"></i>
-              <input type="text" id="weapon" placeholder="例: スシコラ" required>
-            </div>
-          </div>
+#aside a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 
-          <div class="form-group">
-            <label for="stage">ステージ（自由入力）</label>
-            <div class="input-wrap">
-              <i data-lucide="map"></i>
-              <input type="text" id="stage" placeholder="例: ユノハナ大渓谷" required>
-            </div>
-          </div>
+  padding: 10px 12px;
+  border-radius: 10px;
 
-          <div class="form-group">
-            <label for="rule">ルール</label>
-            <div class="input-wrap">
-              <i data-lucide="list"></i>
-              <select id="rule" required>
-                <option value="">選択してください</option>
-                <option>ナワバリ</option>
-                <option>ガチエリア</option>
-                <option>ガチヤグラ</option>
-                <option>ガチホコ</option>
-                <option>ガチアサリ</option>
-              </select>
-            </div>
-          </div>
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 600;
 
-          <div class="form-group">
-            <label for="result">勝敗</label>
-            <div class="input-wrap">
-              <i data-lucide="check-circle"></i>
-              <select id="result" required>
-                <option value="">選択してください</option>
-                <option value="win">勝ち</option>
-                <option value="lose">負け</option>
-              </select>
-            </div>
-          </div>
+  transition: 0.15s ease;
+}
 
-          <div class="form-group">
-            <label for="memo-text">メモ</label>
-            <div class="input-wrap" style="flex-direction:column;align-items:normal;">
-              <i data-lucide="notebook-text"></i>
-              <com-editor lang="Markdown" placeholder="メモを入力" id="memo-text" style="min-height: 150px; width: 90%;"></com-editor>
-            </div>
-          </div>
+#aside a:hover {
+  background: rgba(183, 245, 200, 0.22);
+  box-shadow: 0 0 10px rgba(183, 245, 200, 0.35);
+}
 
-          <button type="submit" class="btn-primary">
-            <i data-lucide="save"></i>
-            記録を保存
-          </button>
+/* -----------------------------------
+   Sidebar 内検索バー（Spotlight 風）
+----------------------------------- */
+#aside .searchBar {
+  width: 100%;
+  box-sizing: border-box;
 
-        </form>
+  display: flex;
+  align-items: center;
+  gap: 8px;
 
-      </div>
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(14px) saturate(160%);
+  border-radius: 12px;
 
-      <script type="module">
-        import { createIcons, icons } from "https://esm.sh/lucide";
-        createIcons({ icons });
-      </script>
+  padding: 8px 10px;
+  margin-bottom: 8px;
 
-    </main>
-  </div>
-</body>
-</html>
+  border: 1px solid var(--accent-border);
+  box-shadow:
+    inset 0 0 0.6px rgba(255, 255, 255, 0.6),
+    inset 0 0 10px rgba(255, 255, 255, 0.25),
+    0 0 8px rgba(183, 245, 200, 0.25);
+
+  transition: 0.15s ease;
+}
+
+#aside .searchBar:focus-within {
+  border-color: rgba(183, 245, 200, 0.75);
+  background: rgba(255, 255, 255, 0.65);
+  box-shadow:
+    inset 0 0 0.6px rgba(255, 255, 255, 0.6),
+    inset 0 0 12px rgba(255, 255, 255, 0.25),
+    0 0 12px rgba(183, 245, 200, 0.45);
+}
+
+#aside .searchBar i {
+  width: 18px;
+  height: 18px;
+  color: #1d9bf0;
+  opacity: 0.85;
+}
+
+#aside .searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: transparent;
+  color: #222;
+}
+
+#aside .searchBar kbd {
+  background: rgba(255, 255, 255, 0.55);
+  padding: 3px 6px;
+  border-radius: 6px;
+
+  border: 1px solid var(--accent-border);
+  backdrop-filter: blur(10px) saturate(160%);
+
+  font-size: 11px;
+  font-weight: 600;
+  color: #333;
+
+  box-shadow:
+    inset 0 0 0.6px rgba(255, 255, 255, 0.6),
+    0 0 5px rgba(183, 245, 200, 0.25);
+
+  user-select: none;
+}
+
+/* -----------------------------------
+   main（index.css が担当）
+----------------------------------- */
+main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+  padding-top: 40px;
+  box-sizing: border-box;
+}
