@@ -191,6 +191,8 @@ body.load main::before {
   /* サイドバーをスライドインに変更 */
   #aside {
     position: fixed;
+    top: 0;
+     
     left: 0;
     height: 100vh;
     width: 240px;
