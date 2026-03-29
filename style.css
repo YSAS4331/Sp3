@@ -193,7 +193,7 @@ body.load main::before {
     position: fixed;
     top: 60px;
     left: 0;
-    height: calc(100vh - 60px);
+    height: 100vh;
     width: 240px;
 
     transform: translateX(-100%);
