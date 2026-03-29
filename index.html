@@ -16,9 +16,20 @@
 </head>
 
 <body>
+
+  <!-- 黒幕（モバイル時の aside 用） -->
+  <div id="aside-backdrop"></div>
+
   <!-- グローバルヘッダー -->
   <header id="global-header">
+
+    <!-- モバイル用ハンバーガー -->
+    <button id="aside-toggle" aria-label="Toggle Sidebar">
+      <i data-lucide="menu"></i>
+    </button>
+
     <h1>Splatoon3 Battle Logger</h1>
+
     <div style="display: flex; flex-direction: row-reverse">
       <a href="/Sp3/">トップ</a>
     </div>
@@ -35,7 +46,12 @@
         <input class="searchInput">
         <kbd>Ctrl</kbd><kbd>K</kbd>
       </div>
-      <a href="/Sp3/">トップ</a>
+
+      <a href="/Sp3/">
+        <i data-lucide="home"></i>
+        トップ
+      </a>
+
       <!-- 必要ならここにナビを追加 -->
     </aside>
 
@@ -169,9 +185,30 @@
 
       </div>
 
+      <!-- Lucide アイコン生成 -->
       <script type="module">
         import { createIcons, icons } from "https://esm.sh/lucide";
         createIcons({ icons });
+      </script>
+
+      <!-- aside 開閉 JS -->
+      <script>
+        const toggle = document.getElementById('aside-toggle');
+        const backdrop = document.getElementById('aside-backdrop');
+
+        toggle.addEventListener('click', () => {
+          document.body.classList.toggle('aside-open');
+        });
+
+        backdrop.addEventListener('click', () => {
+          document.body.classList.remove('aside-open');
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            document.body.classList.remove('aside-open');
+          }
+        });
       </script>
 
     </main>
