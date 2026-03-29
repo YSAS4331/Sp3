@@ -201,6 +201,8 @@ body.load main::before {
 
     transition: transform 0.35s ease, opacity 0.35s ease;
     z-index: 30;
+
+    background: white;
   }
 
   body.aside-open #aside {
