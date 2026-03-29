@@ -202,7 +202,7 @@ body.load main::before {
     transition: transform 0.35s ease, opacity 0.35s ease;
     z-index: 30;
 
-    background: white;
+    background: #f0f0f0;
   }
 
   body.aside-open #aside {
