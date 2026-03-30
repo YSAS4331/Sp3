@@ -253,3 +253,10 @@ body.load main::before {
     margin-top: 60px;
   }
 }
+/* 600px 以下ではタイトル文字を消す（アイコンのみ） */
+@media (max-width: 600px) {
+  #header-title h1 {
+    display: none;
+  }
+}
+
