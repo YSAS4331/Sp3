@@ -153,7 +153,7 @@ export function init() {
       await Sp3DB.updateRecord(id, updated);
 
       alert("保存しました！");
-      location.href = `../all/?id=${encodeURIComponent(id)}`;
+      window.spaRouter.navigate(`/Sp3/all/?id=${encodeURIComponent(id)}`);
     });
   }
 
