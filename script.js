@@ -22,9 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const aside = document.getElementById('aside');
-  const list = aside.querySelector('ul');
-  list.innerHTML = '';
-
+  const list = document.createElement('ul');
   const datas = window.Sp3DB.getAllRecords();
 
   // ============================
@@ -82,4 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
     acc.appendChild(box);
     list.appendChild(acc);
   });
+
+  aside.appendChild(list)
 });
