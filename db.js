@@ -53,10 +53,15 @@ export async function init() {
   }
 
   function getAllRecords() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_NAME, "readonly");
-      tx.objectStore(STORE_NAME).getAll().onsuccess =
-        (e) => resolve(e.target.result);
+      const store = tx.objectStore(STORE_NAME);
+  
+      const req = store.getAll();
+      req.onerror = () => reject(req.error);
+  
+      tx.oncomplete = () => resolve(req.result);
+      tx.onerror = () => reject(tx.error);
     });
   }
 
