@@ -196,27 +196,6 @@
         import { createIcons, icons } from "https://esm.sh/lucide";
         createIcons({ icons });
       </script>
-
-      <!-- aside 開閉 JS -->
-      <script>
-        const toggle = document.getElementById('aside-toggle');
-        const backdrop = document.getElementById('aside-backdrop');
-
-        toggle.addEventListener('click', () => {
-          document.body.classList.toggle('aside-open');
-        });
-
-        backdrop.addEventListener('click', () => {
-          document.body.classList.remove('aside-open');
-        });
-
-        document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') {
-            document.body.classList.remove('aside-open');
-          }
-        });
-      </script>
-
     </main>
   </div>
 </body>
