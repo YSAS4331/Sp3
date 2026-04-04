@@ -1,7 +1,95 @@
 class Sp3Header extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
-<header>
+<style>
+/* ====== ヘッダー専用 CSS ====== */
+#global-header {
+  height: 60px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(28px) saturate(180%);
+  border-bottom: 1px solid var(--accent-border);
+  box-shadow: var(--glass-inner-shadow), var(--accent-glow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 20;
+}
+
+#header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--glass-inner-shadow);
+}
+
+#header-title h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+#header-title img {
+  height: 32px;
+  width: 32px;
+  border-radius: 8px;
+}
+
+#global-header a {
+  color: var(--accent-strong);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  transition: 0.15s ease;
+}
+
+#global-header a:hover {
+  background: rgba(183, 245, 200, 0.25);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 8px rgba(183, 245, 200, 0.4);
+}
+
+#aside-toggle {
+  display: none;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--accent-border);
+  box-shadow: var(--glass-inner-shadow);
+  border-radius: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  color: var(--text-primary);
+}
+
+#aside-toggle:hover {
+  background: rgba(183, 245, 200, 0.25);
+  box-shadow: 0 0 10px rgba(183, 245, 200, 0.35);
+}
+
+@media (max-width: 900px) {
+  #aside-toggle {
+    display: block;
+    margin-right: 12px;
+  }
+}
+
+@media (max-width: 500px) {
+  #header-title h1 {
+    display: none;
+  }
+}
+</style>
+
+<header id="global-header">
   <button id="aside-toggle" aria-label="Toggle Sidebar">
     <i data-lucide="menu"></i>
   </button>
@@ -16,92 +104,6 @@ class Sp3Header extends HTMLElement {
   </div>
 </header>
     `;
-
-    // ============================
-    //  ヘッダーが挿入された瞬間に実行
-    // ============================
-    this.setupAsideToggle();
-    this.setupAsideMenu();
-  }
-
-  setupAsideToggle() {
-    const toggle = this.querySelector('#aside-toggle');
-    const backdrop = document.getElementById('aside-backdrop');
-
-    toggle?.addEventListener('click', () => {
-      document.body.classList.toggle('aside-open');
-    });
-
-    backdrop?.addEventListener('click', () => {
-      document.body.classList.remove('aside-open');
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        document.body.classList.remove('aside-open');
-      }
-    });
-  }
-
-  setupAsideMenu() {
-    if (!window.Sp3DB) {
-      console.warn('Sp3DBが読み込まれていません');
-      return;
-    }
-
-    const aside = document.getElementById('aside');
-    const list = document.createElement('ul');
-    const datas = window.Sp3DB.getAllRecords();
-
-    const categories = {
-      '武器別': [...new Set(datas.map(d => d.weaponName))],
-      'ステージ別': [...new Set(datas.map(d => d.stage))],
-      'ルール別': [...new Set(datas.map(d => d.rule))],
-      '全データ': datas.map(d => d.id)
-    };
-
-    Object.entries(categories).forEach(([label, items]) => {
-      const acc = document.createElement('com-accordion');
-
-      const header = document.createElement('p');
-      header.slot = 'header';
-      header.textContent = label;
-      acc.appendChild(header);
-
-      const box = document.createElement('div');
-      box.slot = 'item';
-
-      items.forEach(item => {
-        const a = document.createElement('a');
-
-        if (label === '武器別') {
-          a.href = `/Sp3/weapons/?weapon=${encodeURIComponent(item)}`;
-          a.textContent = item;
-        }
-
-        if (label === 'ステージ別') {
-          a.href = `/Sp3/stages/?stage=${encodeURIComponent(item)}`;
-          a.textContent = item;
-        }
-
-        if (label === 'ルール別') {
-          a.href = `/Sp3/rules/?rule=${encodeURIComponent(item)}`;
-          a.textContent = item;
-        }
-
-        if (label === '全データ') {
-          a.href = `/Sp3/battle/?id=${item}`;
-          a.textContent = `#${item}`;
-        }
-
-        box.appendChild(a);
-      });
-
-      acc.appendChild(box);
-      list.appendChild(acc);
-    });
-
-    aside.appendChild(list);
   }
 }
 
