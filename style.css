@@ -31,96 +31,6 @@ html, body {
 }
 
 /* -----------------------------------
-   グローバルヘッダー（#global-header）
------------------------------------ */
-#global-header {
-  height: 60px;
-
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(28px) saturate(180%);
-  border-bottom: 1px solid var(--accent-border);
-  box-shadow: var(--glass-inner-shadow), var(--accent-glow);
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 0 24px;
-  box-sizing: border-box;
-
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-
-  z-index: 20;
-}
-
-/* タイトルブロック（img + h1） */
-#header-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  padding: 6px 10px;
-  border-radius: var(--radius);
-
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  box-shadow: var(--glass-inner-shadow);
-}
-
-#header-title h1 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-#header-title img {
-  height: 32px;
-  width: 32px;
-  border-radius: 8px;
-}
-
-/* ヘッダー右側リンク */
-#global-header a {
-  color: var(--accent-strong);
-  text-decoration: none;
-  font-weight: 600;
-  padding: 6px 10px;
-  border-radius: var(--radius);
-  transition: 0.15s ease;
-}
-
-#global-header a:hover {
-  background: rgba(183, 245, 200, 0.25);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 8px rgba(183, 245, 200, 0.4);
-}
-
-/* -----------------------------------
-   ハンバーガー（モバイル用）
------------------------------------ */
-#aside-toggle {
-  display: none;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--accent-border);
-  box-shadow: var(--glass-inner-shadow);
-  border-radius: 10px;
-
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: 0.2s ease;
-  color: var(--text-primary);
-}
-
-#aside-toggle:hover {
-  background: rgba(183, 245, 200, 0.25);
-  box-shadow: 0 0 10px rgba(183, 245, 200, 0.35);
-}
-
-/* -----------------------------------
    レイアウト（#app）
 ----------------------------------- */
 #app {
@@ -204,12 +114,6 @@ body.load main::before {
 ----------------------------------- */
 @media (max-width: 900px) {
 
-  /* ハンバーガー表示 */
-  #aside-toggle {
-    display: block;
-    margin-right: 12px;
-  }
-
   /* サイドバーをスライドインに変更 */
   #aside {
     position: fixed;
@@ -254,11 +158,3 @@ body.load main::before {
     margin-top: 60px;
   }
 }
-/* 600px 以下ではタイトル文字を消す（アイコンのみ） */
-@media (max-width: 500px) {
-   
-  #header-title h1 {
-    display: none;
-  }
-}
-
