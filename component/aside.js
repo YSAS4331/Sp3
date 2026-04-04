@@ -143,7 +143,7 @@ class aside extends HTMLElement {
       const list = document.createElement('ul');
 
       const categories = {
-        '武器別': [...new Set(datas.map(d => d.weaponName))],
+        '武器別': [...new Set(datas.map(d => d.weapon))],
         'ステージ別': [...new Set(datas.map(d => d.stage))],
         'ルール別': [...new Set(datas.map(d => d.rule))],
         '全データ': datas.map(d => d.id)
