@@ -1,6 +1,7 @@
 class aside extends HTMLElement {
   connectedCallback() {
     console.log('[sp3-aside] connected');
+
     this.innerHTML = `
 <style>
   /* -----------------------------------
@@ -121,20 +122,25 @@ class aside extends HTMLElement {
     });
 
     /* -----------------------------------
-       run() をアロー関数にして this を保持
+       run() — DB 読み込み後に実行
     ----------------------------------- */
-    const run = () => {
+    const run = async () => {
       console.log('[sp3-aside] run start');
-      console.log("this is:", this);
-      console.log("aside is:", this.querySelector('#aside'));
-      const aside = this.querySelector('#aside');
-      if (!aside) return;
 
-      // 既存のリストがあれば削除（重複防止）
+      const aside = this.querySelector('#aside');
+      if (!aside) {
+        console.warn('[sp3-aside] aside not found');
+        return;
+      }
+
+      // 既存のリストを削除
       aside.querySelector('ul')?.remove();
 
+      // ★ Promise を await する（超重要）
+      const datas = await window.Sp3DB.getAllRecords();
+      console.log('[sp3-aside] datas length:', datas.length);
+
       const list = document.createElement('ul');
-      const datas = window.Sp3DB.getAllRecords();
 
       const categories = {
         '武器別': [...new Set(datas.map(d => d.weaponName))],
@@ -181,6 +187,7 @@ class aside extends HTMLElement {
       });
 
       aside.appendChild(list);
+      console.log('[sp3-aside] list appended');
     };
 
     /* -----------------------------------
@@ -197,4 +204,3 @@ class aside extends HTMLElement {
 }
 
 customElements.define('sp3-aside', aside);
-
