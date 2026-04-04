@@ -184,7 +184,7 @@ class aside extends HTMLElement {
     ----------------------------------- */
     if (!window.Sp3DB) {
       console.warn('Sp3DBが読み込まれていません');
-      window.addEventListener('sp3db-ready', run);
+      window.addEventListener('sp3db-ready', run, { once: true });
       return;
     }
 
