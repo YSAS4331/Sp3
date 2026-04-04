@@ -125,6 +125,7 @@ class aside extends HTMLElement {
 
     if (!window.Sp3DB) {
       console.warn('Sp3DBが読み込まれていません');
+      alert();
       return;
     }
 
