@@ -136,6 +136,8 @@ export async function init() {
   // DB 初期化
   await openDB();
 
+  window.Sp3DBReady = true;
+
   // API を公開
   window.Sp3DB = {
     addRecord,
