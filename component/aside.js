@@ -91,7 +91,7 @@ class aside extends HTMLElement {
 <aside id="aside">
   <div class="searchBar">
     <i data-lucide="search"></i>
-    <input class="searchInput">
+    <input class="searchInput" type="text">
     <kbd>Ctrl</kbd><kbd>K</kbd>
   </div>
 
@@ -105,17 +105,13 @@ class aside extends HTMLElement {
     const toggle = document.getElementById('aside-toggle');
     const backdrop = document.getElementById('aside-backdrop');
 
-    if (toggle) {
-      toggle.addEventListener('click', () => {
-        document.body.classList.toggle('aside-open');
-      });
-    }
+    toggle?.addEventListener('click', () => {
+      document.body.classList.toggle('aside-open');
+    });
 
-    if (backdrop) {
-      backdrop.addEventListener('click', () => {
-        document.body.classList.remove('aside-open');
-      });
-    }
+    backdrop?.addEventListener('click', () => {
+      document.body.classList.remove('aside-open');
+    });
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
@@ -123,66 +119,78 @@ class aside extends HTMLElement {
       }
     });
 
+    /* -----------------------------------
+       run() をアロー関数にして this を保持
+    ----------------------------------- */
+    const run = () => {
+      const aside = this.querySelector('#aside');
+      if (!aside) return;
+
+      // 既存のリストがあれば削除（重複防止）
+      aside.querySelector('ul')?.remove();
+
+      const list = document.createElement('ul');
+      const datas = window.Sp3DB.getAllRecords();
+
+      const categories = {
+        '武器別': [...new Set(datas.map(d => d.weaponName))],
+        'ステージ別': [...new Set(datas.map(d => d.stage))],
+        'ルール別': [...new Set(datas.map(d => d.rule))],
+        '全データ': datas.map(d => d.id)
+      };
+
+      Object.entries(categories).forEach(([label, items]) => {
+        const li = document.createElement('li');
+        const acc = document.createElement('com-accordion');
+
+        const header = document.createElement('p');
+        header.slot = 'header';
+        header.textContent = label;
+        acc.appendChild(header);
+
+        const box = document.createElement('div');
+        box.slot = 'item';
+
+        items.forEach(item => {
+          const a = document.createElement('a');
+
+          if (label === '武器別') {
+            a.href = `/Sp3/weapons/?weapon=${encodeURIComponent(item)}`;
+            a.textContent = item;
+          } else if (label === 'ステージ別') {
+            a.href = `/Sp3/stages/?stage=${encodeURIComponent(item)}`;
+            a.textContent = item;
+          } else if (label === 'ルール別') {
+            a.href = `/Sp3/rules/?rule=${encodeURIComponent(item)}`;
+            a.textContent = item;
+          } else {
+            a.href = `/Sp3/battle/?id=${item}`;
+            a.textContent = `#${item}`;
+          }
+
+          box.appendChild(a);
+        });
+
+        acc.appendChild(box);
+        li.appendChild(acc);
+        list.appendChild(li);
+      });
+
+      aside.appendChild(list);
+    };
+
+    /* -----------------------------------
+       Sp3DB のロード待ち
+    ----------------------------------- */
     if (!window.Sp3DB) {
       console.warn('Sp3DBが読み込まれていません');
-      alert();
+      window.addEventListener('sp3db-ready', run);
       return;
     }
 
-    const aside = this.querySelector('#aside');
-    const list = document.createElement('ul');
-    const datas = window.Sp3DB.getAllRecords();
-
-    const categories = {
-      '武器別': [...new Set(datas.map(d => d.weaponName))],
-      'ステージ別': [...new Set(datas.map(d => d.stage))],
-      'ルール別': [...new Set(datas.map(d => d.rule))],
-      '全データ': datas.map(d => d.id)
-    };
-
-    Object.entries(categories).forEach(([label, items]) => {
-      const acc = document.createElement('com-accordion');
-
-      const header = document.createElement('p');
-      header.slot = 'header';
-      header.textContent = label;
-      acc.appendChild(header);
-
-      const box = document.createElement('div');
-      box.slot = 'item';
-
-      items.forEach(item => {
-        const a = document.createElement('a');
-
-        if (label === '武器別') {
-          a.href = `/Sp3/weapons/?weapon=${encodeURIComponent(item)}`;
-          a.textContent = item;
-        }
-
-        if (label === 'ステージ別') {
-          a.href = `/Sp3/stages/?stage=${encodeURIComponent(item)}`;
-          a.textContent = item;
-        }
-
-        if (label === 'ルール別') {
-          a.href = `/Sp3/rules/?rule=${encodeURIComponent(item)}`;
-          a.textContent = item;
-        }
-
-        if (label === '全データ') {
-          a.href = `/Sp3/battle/?id=${item}`;
-          a.textContent = `#${item}`;
-        }
-
-        box.appendChild(a);
-      });
-
-      acc.appendChild(box);
-      list.appendChild(acc);
-    });
-
-    aside.appendChild(list);
+    run();
   }
 }
 
 customElements.define('sp3-aside', aside);
+
