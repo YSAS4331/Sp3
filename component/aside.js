@@ -174,7 +174,7 @@ class aside extends HTMLElement {
             a.href = `/Sp3/rules/?rule=${encodeURIComponent(item)}`;
             a.textContent = item;
           } else {
-            a.href = `/Sp3/battle/?id=${item}`;
+            a.href = `/Sp3/all/?id=${item}`;
             a.textContent = `#${item}`;
           }
 
