@@ -1,4 +1,4 @@
-class Aside extends HTMLElement {
+class aside extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
 <style>
@@ -100,8 +100,6 @@ class Aside extends HTMLElement {
 </aside>
     `;
 
-    // ===== 以下は前回の JS をそのまま =====
-
     const toggle = document.getElementById('aside-toggle');
     const backdrop = document.getElementById('aside-backdrop');
 
@@ -170,7 +168,7 @@ class Aside extends HTMLElement {
 
         if (label === '全データ') {
           a.href = `/Sp3/battle/?id=${item}`;
-          a.textContent = \`#\${item}\`;
+          a.textContent = `#${item}`;
         }
 
         box.appendChild(a);
@@ -184,4 +182,4 @@ class Aside extends HTMLElement {
   }
 }
 
-customElements.define('com-aside', Aside);
+customElements.define('sp3-aside', aside);
