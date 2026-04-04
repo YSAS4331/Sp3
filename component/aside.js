@@ -1,5 +1,6 @@
 class aside extends HTMLElement {
   connectedCallback() {
+    console.log('[sp3-aside] connected');
     this.innerHTML = `
 <style>
   /* -----------------------------------
@@ -123,6 +124,7 @@ class aside extends HTMLElement {
        run() をアロー関数にして this を保持
     ----------------------------------- */
     const run = () => {
+      console.log('[sp3-aside] run start');
       const aside = this.querySelector('#aside');
       if (!aside) return;
 
