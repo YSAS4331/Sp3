@@ -134,7 +134,8 @@ html, body {
    サイドバー（#aside）
 ----------------------------------- */
 #aside {
-  width: 240px;
+  min-width: 240px;
+  max-width: 75vh;
 
   background: rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(32px) saturate(180%);
