@@ -9,6 +9,8 @@ class aside extends HTMLElement {
     min-width: 240px;
     max-width: 75vh;
 
+    height: 100%;
+
     background: rgba(255, 255, 255, 0.16);
     backdrop-filter: blur(32px) saturate(180%);
     border-right: 1px solid var(--accent-border);
