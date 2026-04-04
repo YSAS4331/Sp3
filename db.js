@@ -147,5 +147,5 @@ export async function init() {
   };
 
   // ★★★ DB 初期化完了イベント ★★★
-  window.dispatchEvent(new Event("sp3db-ready"));
+  window.dispatchEvent(new CustomEvent("sp3db-ready"));
 }
