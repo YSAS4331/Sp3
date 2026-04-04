@@ -125,6 +125,8 @@ class aside extends HTMLElement {
     ----------------------------------- */
     const run = () => {
       console.log('[sp3-aside] run start');
+      console.log("this is:", this);
+      console.log("aside is:", this.querySelector('#aside'));
       const aside = this.querySelector('#aside');
       if (!aside) return;
 
