@@ -1,7 +1,7 @@
 class accor extends HTMLElement {
   static event = new EventTarget();
-  static dispatch = (type, detail = {}) => {
-    accor.event.dispatchEvent(new CustomEvent(type, { detail }));
+  dispatch = (type, data = {}) => {
+    accor.event.dispatchEvent(new CustomEvent(type, { detail: { source: this, ...data } }));
   }
   #group;
 
@@ -101,7 +101,7 @@ class accor extends HTMLElement {
     this.#group = this.getAttribute('group') ?? null;
 
     accor.event.addEventListener('open', e => {
-      if (e.target === this) return;
+      if (e.detail.source === this) return;
       
       if (this.#group !== null && this.#group === e.detail.group) {
         this.closeContent();
@@ -113,10 +113,10 @@ class accor extends HTMLElement {
   toggle() {
     if (this.hasAttribute('open')) {
       this.closeContent();
-      accor.dispatch('close');
+      this.dispatch('close');
     } else {
       this.openContent();
-      accor.dispatch('open', { group: this.#group });
+      this.dispatch('open', { group: this.#group });
     }
   }
 
