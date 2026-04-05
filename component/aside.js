@@ -228,6 +228,8 @@ class aside extends HTMLElement {
         const li = document.createElement('li');
         const acc = document.createElement('com-accordion');
 
+        acc.setAttribute('group', 'aside');
+
         const header = document.createElement('p');
         header.slot = 'header';
         header.textContent = label;
