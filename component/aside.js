@@ -21,6 +21,8 @@ class aside extends HTMLElement {
     display: flex;
     flex-direction: column;
     gap: 12px;
+
+    overflow-y: auto;
   }
 
   #aside a {
