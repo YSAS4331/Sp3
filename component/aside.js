@@ -11,10 +11,19 @@ class aside extends HTMLElement {
     min-width: 240px;
     max-width: 75vh;
     height: 100%;
-    background: rgba(255, 255, 255, 0.16);
-    backdrop-filter: blur(32px) saturate(180%);
-    border-right: 1px solid var(--accent-border);
-    box-shadow: var(--glass-inner-shadow);
+
+    /* ★ ガラスを濃くして視認性UP */
+    background: rgba(255, 255, 255, 0.32);
+    backdrop-filter: blur(28px) saturate(180%);
+
+    /* ★ 境界線を強める */
+    border-right: 1px solid rgba(255, 255, 255, 0.45);
+
+    /* ★ 内側の白シャドウを少し強める */
+    box-shadow:
+      inset 0 0 1px rgba(255, 255, 255, 0.9),
+      inset 0 0 14px rgba(255, 255, 255, 0.35);
+
     padding: 20px;
     padding-top: 30px;
     box-sizing: border-box;
@@ -25,6 +34,9 @@ class aside extends HTMLElement {
     overflow-y: auto;
   }
 
+  /* -----------------------------------
+     リンク
+  ----------------------------------- */
   #aside a {
     display: flex;
     align-items: center;
@@ -37,52 +49,14 @@ class aside extends HTMLElement {
     transition: 0.15s ease;
   }
 
+  /* ★ hover をもっと見やすく */
   #aside a:hover {
-    background: rgba(183, 245, 200, 0.22);
-    box-shadow: 0 0 10px rgba(183, 245, 200, 0.35);
+    background: rgba(183, 245, 200, 0.32);
+    box-shadow: 0 0 10px rgba(183, 245, 200, 0.45);
   }
 
   /* -----------------------------------
-     モバイルレイアウト（レスポンシブ）
-  ----------------------------------- */
-  @media (max-width: 900px) {
-    #aside {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      width: 240px;
-      transform: translateX(-100%);
-      opacity: 0;
-      transition: transform 0.35s ease, opacity 0.35s ease;
-      z-index: 30;
-      background: #fafafa;
-    }
-
-    body.aside-open #aside {
-      transform: translateX(0);
-      opacity: 1;
-    }
-
-    #aside-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.25);
-      backdrop-filter: blur(4px);
-      opacity: 0;
-      pointer-events: none;
-      transition: 0.35s ease;
-      z-index: 25;
-    }
-
-    body.aside-open #aside-backdrop {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  }
-
-  /* -----------------------------------
-     カテゴリリスト（生成される ul / li）
+     カテゴリリスト
   ----------------------------------- */
   #aside ul {
     list-style: none;
@@ -105,9 +79,13 @@ class aside extends HTMLElement {
     display: block;
     border-radius: 10px;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    /* ★ 背景を濃くしてカード感UP */
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(16px);
+
+    /* ★ 境界線を強める */
+    border: 1px solid rgba(255, 255, 255, 0.35);
   }
 
   /* -----------------------------------
@@ -120,6 +98,9 @@ class aside extends HTMLElement {
     font-size: 14px;
     color: var(--text-primary);
     cursor: pointer;
+
+    /* ★ 背景を少し付けて見やすく */
+    background: rgba(255, 255, 255, 0.18);
   }
 
   /* -----------------------------------
@@ -135,9 +116,52 @@ class aside extends HTMLElement {
     transition: 0.15s ease;
   }
 
+  /* ★ hover を強める */
   #aside com-accordion div[slot="item"] a:hover {
-    background: rgba(183, 245, 200, 0.22);
-    box-shadow: 0 0 6px rgba(183, 245, 200, 0.35);
+    background: rgba(183, 245, 200, 0.32);
+    box-shadow: 0 0 6px rgba(183, 245, 200, 0.45);
+  }
+
+  /* -----------------------------------
+     モバイルレイアウト
+  ----------------------------------- */
+  @media (max-width: 900px) {
+    #aside {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 240px;
+      transform: translateX(-100%);
+      opacity: 0;
+      transition: transform 0.35s ease, opacity 0.35s ease;
+      z-index: 30;
+
+      /* モバイルはガラスより白背景の方が見やすい */
+      background: #fafafa;
+      backdrop-filter: none;
+    }
+
+    body.aside-open #aside {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    #aside-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.25);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.35s ease;
+      z-index: 25;
+    }
+
+    body.aside-open #aside-backdrop {
+      opacity: 1;
+      pointer-events: auto;
+    }
   }
 </style>
 
