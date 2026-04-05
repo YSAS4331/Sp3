@@ -1,7 +1,7 @@
 class aside extends HTMLElement {
   connectedCallback() {
     console.log('[sp3-aside] connected');
-
+    
     this.innerHTML = `
 <style>
   /* -----------------------------------
@@ -10,18 +10,14 @@ class aside extends HTMLElement {
   #aside {
     min-width: 240px;
     max-width: 75vh;
-
     height: 100%;
-
     background: rgba(255, 255, 255, 0.16);
     backdrop-filter: blur(32px) saturate(180%);
     border-right: 1px solid var(--accent-border);
     box-shadow: var(--glass-inner-shadow);
-
     padding: 20px;
     padding-top: 30px;
     box-sizing: border-box;
-
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -31,14 +27,11 @@ class aside extends HTMLElement {
     display: flex;
     align-items: center;
     gap: 10px;
-
     padding: 10px 12px;
     border-radius: 10px;
-
     color: var(--text-primary);
     text-decoration: none;
     font-weight: 600;
-
     transition: 0.15s ease;
   }
 
@@ -57,13 +50,10 @@ class aside extends HTMLElement {
       left: 0;
       height: 100vh;
       width: 240px;
-
       transform: translateX(-100%);
       opacity: 0;
-
       transition: transform 0.35s ease, opacity 0.35s ease;
       z-index: 30;
-
       background: #fafafa;
     }
 
@@ -88,6 +78,65 @@ class aside extends HTMLElement {
       pointer-events: auto;
     }
   }
+
+  /* -----------------------------------
+     カテゴリリスト（生成される ul / li）
+  ----------------------------------- */
+  #aside ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  #aside li {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* -----------------------------------
+     アコーディオン全体
+  ----------------------------------- */
+  #aside com-accordion {
+    display: block;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  /* -----------------------------------
+     アコーディオンのヘッダー
+  ----------------------------------- */
+  #aside com-accordion p[slot="header"] {
+    margin: 0;
+    padding: 10px 12px;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+
+  /* -----------------------------------
+     アコーディオン内のリンク
+  ----------------------------------- */
+  #aside com-accordion div[slot="item"] a {
+    display: block;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: 0.15s ease;
+  }
+
+  #aside com-accordion div[slot="item"] a:hover {
+    background: rgba(183, 245, 200, 0.22);
+    box-shadow: 0 0 6px rgba(183, 245, 200, 0.35);
+  }
 </style>
 
 <aside id="aside">
@@ -103,7 +152,7 @@ class aside extends HTMLElement {
   </a>
 </aside>
     `;
-
+    
     const toggle = document.getElementById('aside-toggle');
     const backdrop = document.getElementById('aside-backdrop');
 
