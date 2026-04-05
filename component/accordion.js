@@ -1,4 +1,6 @@
 class accor extends HTMLElement {
+  static event = new EventTarget();
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
