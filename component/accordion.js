@@ -12,17 +12,11 @@ class accor extends HTMLElement {
           overflow: hidden;
           --duration: 0.25s;
 
-          /* ★ aside と統一したガラス背景 */
           background: rgba(255, 255, 255, 0.22);
           backdrop-filter: blur(16px);
-
-          /* ★ 境界線を強めて視認性UP */
           border: 1px solid rgba(255, 255, 255, 0.35);
         }
 
-        /* -----------------------------------
-           ヘッダー
-        ----------------------------------- */
         .header {
           display: flex;
           align-items: center;
@@ -32,8 +26,6 @@ class accor extends HTMLElement {
           font-weight: 700;
           font-size: 14px;
           user-select: none;
-
-          /* ★ 背景を少し濃くして見やすく */
           background: rgba(255, 255, 255, 0.18);
           color: var(--text-primary);
         }
@@ -42,9 +34,6 @@ class accor extends HTMLElement {
           background: rgba(255, 255, 255, 0.28);
         }
 
-        /* -----------------------------------
-           アイコン
-        ----------------------------------- */
         .icon {
           transition: transform var(--duration) ease;
           opacity: 0.7;
@@ -55,22 +44,12 @@ class accor extends HTMLElement {
           opacity: 1;
         }
 
-        /* -----------------------------------
-           コンテンツ
-        ----------------------------------- */
         .content {
           overflow: hidden;
           max-height: 0;
           transition: max-height var(--duration) ease;
         }
 
-        :host([open]) .content {
-          max-height: 500px;
-        }
-
-        /* -----------------------------------
-           スロット内の item
-        ----------------------------------- */
         ::slotted([slot="item"]) {
           display: block;
           padding: 8px 12px;
@@ -85,7 +64,6 @@ class accor extends HTMLElement {
           transition: 0.15s ease;
         }
 
-        /* ★ hover を aside と統一 */
         ::slotted([slot="item"]) a:hover {
           background: rgba(183, 245, 200, 0.32);
           box-shadow: 0 0 6px rgba(183, 245, 200, 0.45);
@@ -104,16 +82,34 @@ class accor extends HTMLElement {
   }
 
   connectedCallback() {
-    const header = this.shadowRoot.querySelector('.header');
-    header.addEventListener('click', () => this.toggle());
+    this.header = this.shadowRoot.querySelector('.header');
+    this.content = this.shadowRoot.querySelector('.content');
+
+    this.header.addEventListener('click', () => this.toggle());
+
+    // 初期状態 open の場合は高さをセット
+    if (this.hasAttribute('open')) {
+      this.openContent();
+    }
   }
 
   toggle() {
     if (this.hasAttribute('open')) {
-      this.removeAttribute('open');
+      this.closeContent();
     } else {
-      this.setAttribute('open', '');
+      this.openContent();
     }
+  }
+
+  openContent() {
+    this.setAttribute('open', '');
+    const height = this.content.scrollHeight;
+    this.content.style.maxHeight = height + 'px';
+  }
+
+  closeContent() {
+    this.removeAttribute('open');
+    this.content.style.maxHeight = '0px';
   }
 }
 
