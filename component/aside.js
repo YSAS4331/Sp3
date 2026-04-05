@@ -138,7 +138,7 @@ class aside extends HTMLElement {
       z-index: 30;
 
       /* モバイルはガラスより白背景の方が見やすい */
-      background: #fafafa;
+      background: #f0f0f0;
       backdrop-filter: none;
     }
 
