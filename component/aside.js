@@ -128,17 +128,22 @@ class aside extends HTMLElement {
     box-shadow: 0 0 6px rgba(183, 245, 200, 0.45);
   }
   #aside .user-setting {
-    height: 60px;
-    width: 100%;
+    height: 55px;
+    width: 95%;
 
     display: flex;
     overflow: hidden;
+
+    margin: 2.5px;
 
     align-items: center;
     justify-content: center;
 
     background: transparent;
     transition: background .5s ease;
+
+    border-radius: 12px;
+    cursor: pointer;
 
     &:hover {
       background: #f0f0f0;
