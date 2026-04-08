@@ -128,7 +128,7 @@ class aside extends HTMLElement {
     box-shadow: 0 0 6px rgba(183, 245, 200, 0.45);
   }
   #aside .user-setting {
-    height: 2rem;
+    height: 60px;
     width: 100%;
 
     display: flex;
