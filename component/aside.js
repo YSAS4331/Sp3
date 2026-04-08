@@ -132,7 +132,7 @@ class aside extends HTMLElement {
     width: 100%;
 
     display: flex;
-    overflow: hidden
+    overflow: hidden;
   }
 
   /* -----------------------------------
@@ -222,7 +222,7 @@ class aside extends HTMLElement {
     const run = async () => {
       console.log('[sp3-aside] run start');
 
-      const aside = this.querySelector('#aside');
+      const aside = this.querySelector('#aside > .aside-content');
       if (!aside) {
         console.warn('[sp3-aside] aside not found');
         return;
