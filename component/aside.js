@@ -136,6 +136,13 @@ class aside extends HTMLElement {
 
     align-items: center;
     justify-content: center;
+
+    background: transparent;
+    transition: background .5s ease;
+
+    &:hover {
+      background: #f0f0f0;
+    }
   }
 
   /* -----------------------------------
