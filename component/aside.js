@@ -133,6 +133,9 @@ class aside extends HTMLElement {
 
     display: flex;
     overflow: hidden;
+
+    align-items: center;
+    justify-content: center;
   }
 
   /* -----------------------------------
