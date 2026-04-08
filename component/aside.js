@@ -23,15 +23,21 @@ class aside extends HTMLElement {
     box-shadow:
       inset 0 0 1px rgba(255, 255, 255, 0.9),
       inset 0 0 14px rgba(255, 255, 255, 0.35);
-
-    padding: 20px;
-    padding-top: 30px;
+    
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+  }
+
+  .aside-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
     gap: 12px;
 
-    overflow-y: auto;
+    padding: 20px;
+    padding-top: 30px;
   }
 
   /* -----------------------------------
@@ -121,6 +127,13 @@ class aside extends HTMLElement {
     background: rgba(183, 245, 200, 0.32);
     box-shadow: 0 0 6px rgba(183, 245, 200, 0.45);
   }
+  #aside .user-setting {
+    height: 2rem;
+    width: 100%;
+
+    display: flex;
+    overflow: hidden
+  }
 
   /* -----------------------------------
      モバイルレイアウト
@@ -166,16 +179,23 @@ class aside extends HTMLElement {
 </style>
 
 <aside id="aside">
-  <div class="searchBar">
-    <i data-lucide="search"></i>
-    <input class="searchInput" type="text">
-    <kbd>Ctrl</kbd><kbd>K</kbd>
+  <div class="aside-content">
+    <div class="searchBar">
+      <i data-lucide="search"></i>
+      <input class="searchInput" type="text">
+      <kbd>Ctrl</kbd><kbd>K</kbd>
+    </div>
+  
+    <a href="/Sp3/">
+      <i data-lucide="home"></i>
+      トップ
+    </a>
   </div>
 
-  <a href="/Sp3/">
-    <i data-lucide="home"></i>
-    トップ
-  </a>
+  <div class="user-setting">
+    <i data-lucide="circle-user"></i>
+    ユーザー
+  </div>
 </aside>
     `;
     
