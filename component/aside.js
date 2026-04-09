@@ -129,7 +129,7 @@ class aside extends HTMLElement {
     background: rgba(183, 245, 200, 0.32);
     box-shadow: 0 0 6px rgba(183, 245, 200, 0.45);
   }
-  #aside .user-setting {
+  #aside .setting {
     height: 50px;
     width: 90%;
 
@@ -209,9 +209,9 @@ class aside extends HTMLElement {
     </a>
   </div>
 
-  <div class="user-setting">
-    <i data-lucide="circle-user"></i>
-    ユーザー
+  <div class="setting">
+    <i data-lucide="setting"></i>
+    設定
   </div>
 </aside>
     `;
