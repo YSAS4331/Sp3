@@ -210,7 +210,7 @@ class aside extends HTMLElement {
   </div>
 
   <div class="setting">
-    <i data-lucide="setting"></i>
+    <i data-lucide="settings"></i>
     設定
   </div>
 </aside>
