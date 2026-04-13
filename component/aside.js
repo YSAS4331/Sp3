@@ -129,28 +129,6 @@ class aside extends HTMLElement {
     background: rgba(183, 245, 200, 0.32);
     box-shadow: 0 0 6px rgba(183, 245, 200, 0.45);
   }
-  #aside .setting {
-    height: 50px;
-    width: 90%;
-
-    display: flex;
-    overflow: hidden;
-
-    margin: 5px;
-
-    align-items: center;
-    justify-content: center;
-
-    background: transparent;
-    transition: background .5s ease;
-
-    border-radius: 12px;
-    cursor: pointer;
-
-    &:hover {
-      background: #f0f0f0;
-    }
-  }
 
   /* -----------------------------------
      モバイルレイアウト
@@ -207,11 +185,10 @@ class aside extends HTMLElement {
       <i data-lucide="home"></i>
       トップ
     </a>
-  </div>
-
-  <div class="setting">
-    <i data-lucide="settings"></i>
-    設定
+    <a href="/Sp3/setting/">
+      <i data-lucide="settings"></i>
+      設定
+    </a>
   </div>
 </aside>
     `;
