@@ -41,7 +41,7 @@ async function setupForm() {
       return;
     }
 
-    const { setting: default } = db.get();
+    const { default: setting } = db.get();
     if (!setting) return;
 
     if (setting.weapon) {
