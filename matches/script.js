@@ -18,7 +18,10 @@ export function init() {
      一覧モード（マッチ一覧）
   ============================================================ */
   async function renderMatchList() {
-    const records = await Sp3DB.getAllRecords();
+    // ★ match が無い古いデータは除外
+    const records = (await Sp3DB.getAllRecords())
+      .filter(r => r && typeof r === "object" && r.match);
+
     const list = document.getElementById("matchList");
 
     if (!records.length) {
@@ -33,7 +36,7 @@ export function init() {
       groups[r.match].push(r);
     }
 
-    Object.keys(groups).forEach((matchKey) => {
+    Object.keys(groups).forEach(matchKey => {
       const summary = Sp3DB.summarize(groups[matchKey]);
       const matchLabel = MATCH_LABELS[matchKey];
 
@@ -75,8 +78,8 @@ export function init() {
     const container = document.querySelector(".container");
     container.innerHTML = "";
 
-    // 表示対象外なら即終了
-    if (!MATCH_LABELS[matchKey]) {
+    // ★ matchKey が無い（古いデータ or URL直打ち）
+    if (!matchKey || !MATCH_LABELS[matchKey]) {
       container.innerHTML = `
         <h2 class="section-title">
           <i data-lucide="swords"></i>
@@ -92,7 +95,10 @@ export function init() {
     }
 
     const matchLabel = MATCH_LABELS[matchKey];
-    const records = await Sp3DB.getByIndex("match", matchKey);
+
+    // ★ match が無い古いデータは除外
+    const records = (await Sp3DB.getByIndex("match", matchKey))
+      .filter(r => r && typeof r === "object");
 
     if (!records.length) {
       container.innerHTML = `
@@ -111,35 +117,26 @@ export function init() {
 
     const summary = Sp3DB.summarize(records);
 
-    const stageGroups = {};
-    for (const r of records) {
-      if (!stageGroups[r.stage]) stageGroups[r.stage] = [];
-      stageGroups[r.stage].push(r);
-    }
-
-    const weaponGroups = {};
-    for (const r of records) {
-      if (!weaponGroups[r.weapon]) weaponGroups[r.weapon] = [];
-      weaponGroups[r.weapon].push(r);
-    }
-
     const html = [];
 
+    /* -----------------------------
+       全体サマリー（必ず表示）
+    ----------------------------- */
     html.push(`
       <h2 class="section-title">
         <i data-lucide="swords"></i>
-        ${matchLabel} の詳細
+        ${matchLabel} のサマリー
       </h2>
 
       <a class="btn-primary" href="./">
         <i data-lucide="arrow-left"></i>
-        一覧に戻る
+        マッチ一覧に戻る
       </a>
 
       <div class="common-card" style="margin-top:20px;">
         <div class="common-name">
           <i data-lucide="bar-chart-3"></i>
-          全体サマリー
+          ${matchLabel} 全体
         </div>
 
         <div class="common-stats">
@@ -158,8 +155,14 @@ export function init() {
     `);
 
     /* -----------------------------
-       ステージ別
+       ステージ別（stage は必ずある）
     ----------------------------- */
+    const stageGroups = {};
+    for (const r of records) {
+      if (!stageGroups[r.stage]) stageGroups[r.stage] = [];
+      stageGroups[r.stage].push(r);
+    }
+
     html.push(`
       <h3 class="section-title" style="margin-top:30px;">
         <i data-lucide="map"></i>
@@ -194,8 +197,14 @@ export function init() {
     });
 
     /* -----------------------------
-       武器別
+       武器別（weapon も必ずある）
     ----------------------------- */
+    const weaponGroups = {};
+    for (const r of records) {
+      if (!weaponGroups[r.weapon]) weaponGroups[r.weapon] = [];
+      weaponGroups[r.weapon].push(r);
+    }
+
     html.push(`
       <h3 class="section-title" style="margin-top:30px;">
         <i data-lucide="sword"></i>
