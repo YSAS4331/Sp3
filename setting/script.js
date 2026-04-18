@@ -24,12 +24,12 @@ export function init() {
     if (!saved) return;
 
     // weapon → placeholder
-    if (saved.weapon) {
+    if (saved.default.weapon) {
       UIs.weapon.placeholder = `現在: ${saved.weapon}`;
     }
 
     // match → select の最初の option を書き換え
-    if (saved.match) {
+    if (saved.default.match) {
       const firstOption = UIs.match.querySelector("option[value='']");
       if (firstOption) {
         firstOption.textContent = `現在: ${saved.match}`;
@@ -63,9 +63,11 @@ export function init() {
     }
 
     const record = {
-      weapon: UIs.weapon.value || null,
-      match: UIs.match.value || null,
-      timestamp: Date.now()
+      default: {
+        weapon: UIs.weapon.value || null,
+        match: UIs.match.value || null,
+        timestamp: Date.now()
+      }
     };
 
     try {
