@@ -241,7 +241,7 @@ export function init() {
     const ruleGroups = {};
     for (const r of records) {
       if (!ruleGroups[r.rule]) ruleGroups[r.rule] = [];
-      weaponGroups[r.rule].push(r);
+      ruleGroups[r.rule].push(r);
     }
     
     html.push(`
@@ -257,7 +257,7 @@ export function init() {
       html.push(`
         <div class="common-card">
           <div class="common-name">
-            <i data-lucide="sword"></i>
+            <i data-lucide="list"></i>
             ${rule}
           </div>
 
@@ -275,7 +275,6 @@ export function init() {
           </div>
         </div>
       `);
-
     });
 
     container.innerHTML = html.join("");
