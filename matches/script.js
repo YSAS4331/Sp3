@@ -237,6 +237,46 @@ export function init() {
         </div>
       `);
     });
+    
+    const ruleGroups = {};
+    for (const r of records) {
+      if (!ruleGroups[r.rule]) ruleGroups[r.rule] = [];
+      weaponGroups[r.rule].push(r);
+    }
+    
+    html.push(`
+      <h3 class="section-title" style="margin-top: 30px">
+        <i data-lucide="list"></i>
+        ルール別サマリー
+      </h3>
+    `);
+    
+    Object.keys(ruleGroups).forEach(rule => {
+      const s = Sp3DB.summarize(ruleGroups[rule]);
+
+      html.push(`
+        <div class="common-card">
+          <div class="common-name">
+            <i data-lucide="sword"></i>
+            ${rule}
+          </div>
+
+          <div class="common-stats">
+            <div>試合数: ${s.count}</div>
+            <div>勝ち: ${s.win} / 負け: ${s.lose}</div>
+            <div>勝率: ${(s.winRate * 100).toFixed(1)}%</div>
+            <div>平均キル: ${s.avgKills.toFixed(2)}</div>
+            <div>平均デス: ${s.avgDeaths.toFixed(2)}</div>
+            <div>平均スペ: ${s.avgSpecial.toFixed(2)}</div>
+          </div>
+
+          <div class="winrate-bar">
+            <div class="winrate-fill" style="width: ${(s.winRate * 100)}%"></div>
+          </div>
+        </div>
+      `);
+
+    });
 
     container.innerHTML = html.join("");
 
