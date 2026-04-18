@@ -16,30 +16,88 @@ export function init() {
   });
 }
 
-  async function setupForm() {
-    if (formInitialized) return;
-    formInitialized = true;
-  
-    const form = $('battleForm');
-    if (!form) return;
-  
-    async function formReset() {
+// ===============================
+// スケジュール取得（キャッシュ付き）
+// ===============================
+async function getStagesData() {
+  const db = window.SetDB;
+  const cache = await db.getItem("cache_stages");
+
+  if (cache && Date.now() < cache.cache_end) {
+    return cache.content;
+  }
+
+  const res = await fetch("https://spla3.yuu26.com/api/schedule");
+  const content = await res.json();
+
+  const cache_end = new Date(content.regular.end_time).getTime();
+
+  await db.setItem("cache_stages", {
+    content,
+    cache_end
+  });
+
+  return content;
+}
+
+// ===============================
+// ルール更新（match変更時）
+// ===============================
+async function updateRuleUI() {
+  const content = await getStagesData();
+  const match = UIs.match.value;
+
+  const data = content[match];
+  if (!data) return;
+
+  if (data.rule) {
+    UIs.rule.value = data.rule.name || data.rule;
+  }
+
+  // ============================================
+  // 🟡 ステージ更新部分（ここに後で書く）
+  // ============================================
+  /*
+  UIs.stage.innerHTML = "";
+
+  data.stages.forEach(stage => {
+    const opt = document.createElement("option");
+    opt.value = stage.name;
+    opt.textContent = stage.name;
+    UIs.stage.appendChild(opt);
+  });
+  */
+}
+
+// ===============================
+// フォーム初期化
+// ===============================
+async function setupForm() {
+  if (formInitialized) return;
+  formInitialized = true;
+
+  const form = $('battleForm');
+  if (!form) return;
+
+  async function formReset() {
     form.reset();
-    
+
     const data = window.SetDB;
-    if (!data) {
-      return;
-    }
-  
-    const { default: setting } = await data.get();
+    if (!data) return;
+
+    const setting = await data.get();
     if (!setting) return;
-  
+
     if (setting.weapon) {
       UIs.weapon.value = setting.weapon;
     }
+
     if (setting.match) {
-      UIs.match.value = setting.match
+      UIs.match.value = setting.match;
     }
+
+    // 初期ルール反映
+    await updateRuleUI();
   }
 
   if (Object.keys(UIs).length === 0) {
@@ -57,6 +115,11 @@ export function init() {
 
     await formReset();
   }
+
+  // 🎯 match変更時にルール更新
+  UIs.match.addEventListener("change", async () => {
+    await updateRuleUI();
+  });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
