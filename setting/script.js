@@ -20,16 +20,16 @@ export function init() {
     const db = window.SetDB;
     if (!db) return;
 
-    const saved = await db.get();
+    const {saved:default} = await db.get();
     if (!saved) return;
 
     // weapon → placeholder
-    if (saved.default.weapon) {
+    if (saved.weapon) {
       UIs.weapon.placeholder = `現在: ${saved.weapon}`;
     }
 
     // match → select の最初の option を書き換え
-    if (saved.default.match) {
+    if (saved.match) {
       const firstOption = UIs.match.querySelector("option[value='']");
       if (firstOption) {
         firstOption.textContent = `現在: ${saved.match}`;
