@@ -15,7 +15,7 @@ export function init() {
   if (!form) return;
 
   // ============================
-  // 保存済み設定をロードして反映
+  // 保存済み設定を placeholder に反映
   // ============================
   window.addEventListener("sp3settings-ready", async () => {
     const db = window.SetDB;
@@ -24,8 +24,18 @@ export function init() {
     const saved = await db.get();
     if (!saved) return;
 
-    UIs.weapon.value = saved.weapon ?? "";
-    UIs.match.value = saved.match ?? "";
+    // ★ placeholder に反映
+    if (saved.weapon) {
+      UIs.weapon.placeholder = `現在: ${saved.weapon}`;
+    }
+
+    if (saved.match) {
+      // セレクトは placeholder が無いので、最初の option を書き換える
+      const firstOption = UIs.match.querySelector("option[value='']");
+      if (firstOption) {
+        firstOption.textContent = `現在: ${saved.match}`;
+      }
+    }
   });
 
   // ============================
@@ -41,8 +51,8 @@ export function init() {
     }
 
     const record = {
-      weapon: UIs.weapon.value,
-      match: UIs.match.value,
+      weapon: UIs.weapon.value || null,
+      match: UIs.match.value || null,
       timestamp: Date.now()
     };
 
