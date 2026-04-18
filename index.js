@@ -16,7 +16,7 @@ export function init() {
   });
 }
 
-function setupForm() {
+async function setupForm() {
   if (formInitialized) return;
   formInitialized = true;
 
@@ -35,6 +35,21 @@ function setupForm() {
       result: $('result'),
       note: $('memo-text')
     };
+
+    const db = window.setDB;
+    if (!db) {
+      return;
+    }
+
+    const { setting: default } = db.get();
+    if (!setting) return;
+
+    if (setting.weapon) {
+      UIs.weapon.value = setting.weapon;
+    }
+    if (setting.match) {
+      UIs.match.value = setting.match
+    }
   }
 
   form.addEventListener("submit", async (e) => {
