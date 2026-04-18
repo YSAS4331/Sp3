@@ -254,7 +254,7 @@ class aside extends HTMLElement {
         box.slot = 'item';
 
         items.forEach(item => {
-          if (!item) continue;
+          if (!item) return;
           const a = document.createElement('a');
           if (label === '武器別') {
             a.href = `/Sp3/weapons/?weapon=${encodeURIComponent(item)}`;
