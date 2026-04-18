@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>マッチ別サマリー - Splatoon3 Battle Logger</title>
-  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="/Sp3/style.css">
   <link rel="stylesheet" href="/Sp3/card.css" data-page>
 
   <link rel="icon" href="/imgs/favicon.png">
@@ -18,29 +18,31 @@
 <body>
   <sp3-header></sp3-header>
 
-  <main>
+  <div id="app">
     <sp3-aside></sp3-aside>
     
-    <header class="header glass">
-      <div class="header-inner">
-        <i data-lucide="list"></i>
-        <span>マッチ別サマリー</span>
+    <main>
+      <header class="header glass">
+        <div class="header-inner">
+          <i data-lucide="list"></i>
+          <span>マッチ別サマリー</span>
+        </div>
+      </header>
+      
+      <div class="container card glass">
+      
+        <h2 class="section-title">
+          <i data-lucide="list"></i>
+          マッチ一覧
+        </h2>
+      
+        <div id="matchList" class="common-list">
+          <!-- JS でルール一覧を生成 -->
+        </div>
+      
       </div>
-    </header>
-    
-    <div class="container card glass">
-    
-      <h2 class="section-title">
-        <i data-lucide="list"></i>
-        マッチ一覧
-      </h2>
-    
-      <div id="matchList" class="common-list">
-        <!-- JS でルール一覧を生成 -->
-      </div>
-    
-    </div>
-  </main>
+    </main>
+  </div>
   
   <script type="module" src="/Sp3/load.js"></script>
 </body>
