@@ -30,6 +30,7 @@ function setupForm() {
       special: $('special'),
       weapon: $('weapon'),
       stage: $('stage'),
+      match: $('match'),
       rule: $('rule'),
       result: $('result'),
       note: $('memo-text')
@@ -51,6 +52,7 @@ function setupForm() {
       special: Number(UIs.special.value),
       weapon: UIs.weapon.value,
       stage: UIs.stage.value,
+      match: UIs.match.value,
       rule: UIs.rule.value,
       result: UIs.result.value,
       note: UIs.note.value,
