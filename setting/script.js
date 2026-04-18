@@ -4,4 +4,9 @@ export function init() {
   });
 
   const $ = id => document.getElementById(id);
+
+  let UIs = {
+    weapon: $('weapon'),
+    match: $('match')
+  };
 }
