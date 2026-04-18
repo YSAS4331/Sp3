@@ -4,6 +4,16 @@ export function init() {
     return;
   }
 
+  // 内部値 → 表示名
+  const MATCH_LABELS = {
+    x: "Xマッチ",
+    regular: "レギュラーマッチ",
+    "anarchy-c": "バンカラマッチ（チャレンジ）",
+    "anarchy-o": "バンカラマッチ（オープン）",
+    event: "イベントマッチ",
+    private: "プライベートマッチ",
+  };
+
   /* ============================================================
      一覧モード（マッチ一覧）
   ============================================================ */
@@ -18,12 +28,14 @@ export function init() {
 
     const groups = {};
     for (const r of records) {
+      if (!MATCH_LABELS[r.match]) continue; // 表示対象外は無視
       if (!groups[r.match]) groups[r.match] = [];
       groups[r.match].push(r);
     }
 
-    Object.keys(groups).forEach((match) => {
-      const summary = Sp3DB.summarize(groups[match]);
+    Object.keys(groups).forEach((matchKey) => {
+      const summary = Sp3DB.summarize(groups[matchKey]);
+      const matchLabel = MATCH_LABELS[matchKey];
 
       const card = document.createElement("div");
       card.className = "common-card";
@@ -31,7 +43,7 @@ export function init() {
       card.innerHTML = `
         <div class="common-name">
           <i data-lucide="swords"></i>
-          <a href="./?match=${encodeURIComponent(match)}">${match}</a>
+          <a href="./?match=${encodeURIComponent(matchKey)}">${matchLabel}</a>
         </div>
 
         <div class="common-stats">
@@ -59,17 +71,34 @@ export function init() {
   /* ============================================================
      詳細モード（マッチ詳細）
   ============================================================ */
-  async function renderMatchDetail(match) {
+  async function renderMatchDetail(matchKey) {
     const container = document.querySelector(".container");
     container.innerHTML = "";
 
-    const records = await Sp3DB.getByIndex("match", match);
+    // 表示対象外なら即終了
+    if (!MATCH_LABELS[matchKey]) {
+      container.innerHTML = `
+        <h2 class="section-title">
+          <i data-lucide="swords"></i>
+          不明なマッチ
+        </h2>
+        <p>このマッチは表示対象外です。</p>
+        <a class="btn-primary" href="./">
+          <i data-lucide="arrow-left"></i>
+          戻る
+        </a>
+      `;
+      return;
+    }
+
+    const matchLabel = MATCH_LABELS[matchKey];
+    const records = await Sp3DB.getByIndex("match", matchKey);
 
     if (!records.length) {
       container.innerHTML = `
         <h2 class="section-title">
           <i data-lucide="swords"></i>
-          ${match}
+          ${matchLabel}
         </h2>
         <p>このマッチの記録はありません。</p>
         <a class="btn-primary" href="./">
@@ -99,7 +128,7 @@ export function init() {
     html.push(`
       <h2 class="section-title">
         <i data-lucide="swords"></i>
-        ${match} の詳細
+        ${matchLabel} の詳細
       </h2>
 
       <a class="btn-primary" href="./">
