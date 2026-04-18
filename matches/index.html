@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>マッチ別サマリー - Splatoon3 Battle Logger</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="/Sp3/card.css" data-page>
+
+  <link rel="icon" href="/imgs/favicon.png">
+
+  <script src="/Sp3/router.js" type="module"></script>
+
+  <page-script src="/Sp3/db.js" once></page-script>
+  
+  <page-script src="/Sp3/matches/script.js"></page-script>
+</head>
+<body>
+  <sp3-header></sp3-header>
+
+  <main>
+    <sp3-aside></sp3-aside>
+    
+    <header class="header glass">
+      <div class="header-inner">
+        <i data-lucide="list"></i>
+        <span>マッチ別サマリー</span>
+      </div>
+    </header>
+    
+    <div class="container card glass">
+    
+      <h2 class="section-title">
+        <i data-lucide="list"></i>
+        マッチ一覧
+      </h2>
+    
+      <div id="matchList" class="common-list">
+        <!-- JS でルール一覧を生成 -->
+      </div>
+    
+    </div>
+  </main>
+  
+  <script type="module" src="/Sp3/load.js"></script>
+</body>
+</html>
