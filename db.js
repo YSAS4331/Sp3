@@ -227,7 +227,11 @@ async function initSettingsDB() {
   window.SetDB = {
     get: getSettings,
     set: setSettings,
-    clear: clearSettings
+    clear: clearSettings,
+
+    setItem,
+    getItem,
+    deleteItem
   };
 }
 
@@ -262,5 +266,34 @@ function clearSettings() {
     const tx = settingsDB.transaction(SET_STORE_NAME, "readwrite");
     tx.objectStore(SET_STORE_NAME).delete("settings").onsuccess =
       () => resolve(true);
+  });
+}
+
+function setItem(key, value) {
+  return new Promise((resolve) => {
+    const tx = settingsDB.transaction(SET_STORE_NAME, "readwrite");
+    const store = tx.objectStore(SET_STORE_NAME);
+
+    store.put({ key, value }).onsuccess = () => resolve(true);
+  });
+}
+
+function getItem(key) {
+  return new Promise((resolve) => {
+    const tx = settingsDB.transaction(SET_STORE_NAME, "readonly");
+    const store = tx.objectStore(SET_STORE_NAME);
+
+    store.get(key).onsuccess = (e) => {
+      resolve(e.target.result?.value ?? null);
+    };
+  });
+}
+
+function deleteItem(key) {
+  return new Promise((resolve) => {
+    const tx = settingsDB.transaction(SET_STORE_NAME, "readwrite");
+    const store = tx.objectStore(SET_STORE_NAME);
+
+    store.delete(key).onsuccess = () => resolve(true);
   });
 }
