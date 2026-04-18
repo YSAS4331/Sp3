@@ -267,6 +267,7 @@ class aside extends HTMLElement {
             a.textContent = item;
           } else if (label === 'マッチ別') {
             a.href = `/Sp3/matches/?match=${encodeURIComponent(item)}`;
+            a.textContent = item;
           } else {
             a.href = `/Sp3/all/?id=${item}`;
             a.textContent = `#${item}`;
