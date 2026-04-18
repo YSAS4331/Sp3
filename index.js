@@ -16,6 +16,25 @@ export function init() {
   });
 }
 
+async function formReset() {
+  form.reset();
+  
+  const data = window.SetDB;
+  if (!data) {
+    return;
+  }
+
+  const { default: setting } = await data.get();
+  if (!setting) return;
+
+  if (setting.weapon) {
+    UIs.weapon.value = setting.weapon;
+  }
+  if (setting.match) {
+    UIs.match.value = setting.match
+  }
+}
+
 async function setupForm() {
   if (formInitialized) return;
   formInitialized = true;
@@ -36,20 +55,7 @@ async function setupForm() {
       note: $('memo-text')
     };
 
-    const data = window.SetDB;
-    if (!data) {
-      return;
-    }
-
-    const { default: setting } = await data.get();
-    if (!setting) return;
-
-    if (setting.weapon) {
-      UIs.weapon.value = setting.weapon;
-    }
-    if (setting.match) {
-      UIs.match.value = setting.match
-    }
+    await formReset();
   }
 
   form.addEventListener("submit", async (e) => {
@@ -77,7 +83,7 @@ async function setupForm() {
     try {
       await db.addRecord(record);
       alert("保存しました！");
-      form.reset();
+      await formReset();
     } catch (err) {
       console.error(err);
       alert("保存に失敗しました");
