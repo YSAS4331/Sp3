@@ -1,5 +1,4 @@
 export function init() {
-  // lucide アイコン読み込み
   import("https://esm.sh/lucide").then(({ createIcons, icons }) => {
     createIcons({ icons });
   });
@@ -15,31 +14,42 @@ export function init() {
   if (!form) return;
 
   // ============================
-  // 保存済み設定を placeholder に反映
+  // 設定ロード関数（イベントでも即実行でもOK）
   // ============================
-  window.addEventListener("sp3settings-ready", async () => {
+  async function loadSettings() {
     const db = window.SetDB;
     if (!db) return;
 
     const saved = await db.get();
     if (!saved) return;
 
-    // ★ placeholder に反映
+    // weapon → placeholder
     if (saved.weapon) {
       UIs.weapon.placeholder = `現在: ${saved.weapon}`;
     }
 
+    // match → select の最初の option を書き換え
     if (saved.match) {
-      // セレクトは placeholder が無いので、最初の option を書き換える
       const firstOption = UIs.match.querySelector("option[value='']");
       if (firstOption) {
         firstOption.textContent = `現在: ${saved.match}`;
       }
     }
-  });
+  }
 
   // ============================
-  // フォーム送信（保存）
+  // DB ready を待つ
+  // ============================
+  if (window.SetDB) {
+    // すでに初期化済みなら即ロード
+    loadSettings();
+  } else {
+    // まだならイベントを待つ
+    window.addEventListener("sp3settings-ready", loadSettings);
+  }
+
+  // ============================
+  // 保存処理
   // ============================
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -59,6 +69,9 @@ export function init() {
     try {
       await db.set(record);
       alert("設定を保存しました！");
+
+      // 保存後に placeholder を更新
+      loadSettings();
     } catch (err) {
       console.error(err);
       alert("保存に失敗しました");
