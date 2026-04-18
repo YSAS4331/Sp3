@@ -20,7 +20,7 @@ export function init() {
     const db = window.SetDB;
     if (!db) return;
 
-    const {saved:default} = await db.get();
+    const { default: saved} = await db.get();
     if (!saved) return;
 
     // weapon → placeholder
