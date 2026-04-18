@@ -1,36 +1,58 @@
 // ===============================
-// グローバル変数（最低限）
+// 戦績DB（sp3_battle_log）
 // ===============================
-let db = null;
+let battleDB = null;
 
-const DB_NAME = "sp3_battle_log";
-const STORE_NAME = "battle_records";
-const DB_VERSION = 2; // ★ match インデックス追加のため v2
+const BATTLE_DB_NAME = "sp3_battle_log";
+const BATTLE_STORE_NAME = "battle_records";
+const BATTLE_DB_VERSION = 2; // match インデックス追加
 
 // ===============================
-// init() — DB 初期化
+// 設定DB（sp3_settings）
+// ===============================
+let settingsDB = null;
+
+const SET_DB_NAME = "sp3_settings";
+const SET_STORE_NAME = "settings";
+const SET_DB_VERSION = 1;
+
+// ===============================
+// 初期化（両方）
 // ===============================
 export async function init() {
+  await Promise.all([
+    initBattleDB(),
+    initSettingsDB()
+  ]);
 
-  async function openDB() {
+  // 初期化完了イベント
+  window.dispatchEvent(new CustomEvent("sp3db-ready"));
+  window.dispatchEvent(new CustomEvent("sp3settings-ready"));
+}
+
+/* ============================================================
+   戦績DB 初期化
+============================================================ */
+async function initBattleDB() {
+  function openDB() {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      const request = indexedDB.open(BATTLE_DB_NAME, BATTLE_DB_VERSION);
 
       request.onupgradeneeded = (event) => {
         const db = event.target.result;
         let store;
 
-        // ★ 既存ストアがあるかどうか
-        if (db.objectStoreNames.contains(STORE_NAME)) {
-          store = event.target.transaction.objectStore(STORE_NAME);
+        // 既存ストアがあるか？
+        if (db.objectStoreNames.contains(BATTLE_STORE_NAME)) {
+          store = event.target.transaction.objectStore(BATTLE_STORE_NAME);
         } else {
-          store = db.createObjectStore(STORE_NAME, {
+          store = db.createObjectStore(BATTLE_STORE_NAME, {
             keyPath: "id",
             autoIncrement: true
           });
         }
 
-        // ★ 既存インデックスが無ければ作成（互換性維持）
+        // 既存インデックスが無ければ作成
         if (!store.indexNames.contains("weapon"))
           store.createIndex("weapon", "weapon");
 
@@ -43,7 +65,7 @@ export async function init() {
         if (!store.indexNames.contains("result"))
           store.createIndex("result", "result");
 
-        // ★ v2 追加：match インデックス
+        // ★ v2 追加：match
         if (!store.indexNames.contains("match"))
           store.createIndex("match", "match");
 
@@ -61,115 +83,17 @@ export async function init() {
       };
 
       request.onsuccess = (event) => {
-        db = event.target.result;
-        resolve(db);
+        battleDB = event.target.result;
+        resolve(battleDB);
       };
 
       request.onerror = (event) => reject(event.target.error);
     });
   }
 
-  // ===============================
-  // DB 操作 API
-  // ===============================
-
-  function addRecord(record) {
-    return new Promise((resolve) => {
-      const tx = db.transaction(STORE_NAME, "readwrite");
-      tx.objectStore(STORE_NAME).add(record).onsuccess = () => resolve(true);
-    });
-  }
-
-  function getAllRecords() {
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE_NAME, "readonly");
-      const store = tx.objectStore(STORE_NAME);
-
-      const req = store.getAll();
-      req.onerror = () => reject(req.error);
-
-      tx.oncomplete = () => resolve(req.result);
-      tx.onerror = () => reject(tx.error);
-    });
-  }
-
-  function getByIndex(indexName, key) {
-    return new Promise((resolve) => {
-      const tx = db.transaction(STORE_NAME, "readonly");
-      tx.objectStore(STORE_NAME).index(indexName).getAll(key).onsuccess =
-        (e) => resolve(e.target.result);
-    });
-  }
-
-  function getByMultiIndex(indexName, keys) {
-    return new Promise((resolve) => {
-      const tx = db.transaction(STORE_NAME, "readonly");
-      tx.objectStore(STORE_NAME).index(indexName).getAll(keys).onsuccess =
-        (e) => resolve(e.target.result);
-    });
-  }
-
-  function summarize(records) {
-    if (!records.length) {
-      return {
-        count: 0,
-        win: 0,
-        lose: 0,
-        winRate: 0,
-        avgKills: 0,
-        avgDeaths: 0,
-        avgSpecial: 0
-      };
-    }
-
-    const win = records.filter(r => r.result === "win").length;
-    const lose = records.length - win;
-
-    const avg = (sum) => sum / records.length;
-
-    return {
-      count: records.length,
-      win,
-      lose,
-      winRate: win / records.length,
-      avgKills: avg(records.reduce((a, b) => a + b.kills, 0)),
-      avgDeaths: avg(records.reduce((a, b) => a + b.deaths, 0)),
-      avgSpecial: avg(records.reduce((a, b) => a + b.special, 0))
-    };
-  }
-
-  function updateRecord(id, newData) {
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE_NAME, "readwrite");
-      const store = tx.objectStore(STORE_NAME);
-
-      const getReq = store.get(id);
-
-      getReq.onsuccess = () => {
-        const record = getReq.result;
-
-        if (!record) {
-          resolve(false);
-          return;
-        }
-
-        const updated = { ...record, ...newData };
-
-        store.put(updated).onsuccess = () => resolve(true);
-      };
-
-      getReq.onerror = (e) => reject(e.target.error);
-    });
-  }
-
-  // ===============================
-  // DB 初期化
-  // ===============================
   await openDB();
 
-  window.Sp3DBReady = true;
-
-  // API を公開
+  // API 公開
   window.Sp3DB = {
     addRecord,
     getAllRecords,
@@ -178,7 +102,165 @@ export async function init() {
     summarize,
     updateRecord
   };
+}
 
-  // ★★★ DB 初期化完了イベント ★★★
-  window.dispatchEvent(new CustomEvent("sp3db-ready"));
+/* ============================================================
+   戦績DB API
+============================================================ */
+function addRecord(record) {
+  return new Promise((resolve) => {
+    const tx = battleDB.transaction(BATTLE_STORE_NAME, "readwrite");
+    tx.objectStore(BATTLE_STORE_NAME).add(record).onsuccess = () => resolve(true);
+  });
+}
+
+function getAllRecords() {
+  return new Promise((resolve, reject) => {
+    const tx = battleDB.transaction(BATTLE_STORE_NAME, "readonly");
+    const store = tx.objectStore(BATTLE_STORE_NAME);
+
+    const req = store.getAll();
+    req.onerror = () => reject(req.error);
+
+    tx.oncomplete = () => resolve(req.result);
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+function getByIndex(indexName, key) {
+  return new Promise((resolve) => {
+    const tx = battleDB.transaction(BATTLE_STORE_NAME, "readonly");
+    tx.objectStore(BATTLE_STORE_NAME).index(indexName).getAll(key).onsuccess =
+      (e) => resolve(e.target.result);
+  });
+}
+
+function getByMultiIndex(indexName, keys) {
+  return new Promise((resolve) => {
+    const tx = battleDB.transaction(BATTLE_STORE_NAME, "readonly");
+    tx.objectStore(BATTLE_STORE_NAME).index(indexName).getAll(keys).onsuccess =
+      (e) => resolve(e.target.result);
+  });
+}
+
+function summarize(records) {
+  if (!records.length) {
+    return {
+      count: 0,
+      win: 0,
+      lose: 0,
+      winRate: 0,
+      avgKills: 0,
+      avgDeaths: 0,
+      avgSpecial: 0
+    };
+  }
+
+  const win = records.filter(r => r.result === "win").length;
+  const lose = records.length - win;
+
+  const avg = (sum) => sum / records.length;
+
+  return {
+    count: records.length,
+    win,
+    lose,
+    winRate: win / records.length,
+    avgKills: avg(records.reduce((a, b) => a + b.kills, 0)),
+    avgDeaths: avg(records.reduce((a, b) => a + b.deaths, 0)),
+    avgSpecial: avg(records.reduce((a, b) => a + b.special, 0))
+  };
+}
+
+function updateRecord(id, newData) {
+  return new Promise((resolve, reject) => {
+    const tx = battleDB.transaction(BATTLE_STORE_NAME, "readwrite");
+    const store = tx.objectStore(BATTLE_STORE_NAME);
+
+    const getReq = store.get(id);
+
+    getReq.onsuccess = () => {
+      const record = getReq.result;
+
+      if (!record) {
+        resolve(false);
+        return;
+      }
+
+      const updated = { ...record, ...newData };
+
+      store.put(updated).onsuccess = () => resolve(true);
+    };
+
+    getReq.onerror = (e) => reject(e.target.error);
+  });
+}
+
+/* ============================================================
+   設定DB 初期化
+============================================================ */
+async function initSettingsDB() {
+  function openSettingsDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(SET_DB_NAME, SET_DB_VERSION);
+
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+
+        if (!db.objectStoreNames.contains(SET_STORE_NAME)) {
+          db.createObjectStore(SET_STORE_NAME, { keyPath: "key" });
+        }
+      };
+
+      request.onsuccess = (event) => {
+        settingsDB = event.target.result;
+        resolve(settingsDB);
+      };
+
+      request.onerror = (event) => reject(event.target.error);
+    });
+  }
+
+  await openSettingsDB();
+
+  // API 公開
+  window.SetDB = {
+    get: getSettings,
+    set: setSettings,
+    clear: clearSettings
+  };
+}
+
+/* ============================================================
+   設定DB API
+============================================================ */
+function setSettings(json) {
+  return new Promise((resolve) => {
+    const tx = settingsDB.transaction(SET_STORE_NAME, "readwrite");
+    const store = tx.objectStore(SET_STORE_NAME);
+
+    store.put({
+      key: "settings",
+      value: json
+    }).onsuccess = () => resolve(true);
+  });
+}
+
+function getSettings() {
+  return new Promise((resolve) => {
+    const tx = settingsDB.transaction(SET_STORE_NAME, "readonly");
+    const store = tx.objectStore(SET_STORE_NAME);
+
+    store.get("settings").onsuccess = (e) => {
+      resolve(e.target.result?.value ?? null);
+    };
+  });
+}
+
+function clearSettings() {
+  return new Promise((resolve) => {
+    const tx = settingsDB.transaction(SET_STORE_NAME, "readwrite");
+    tx.objectStore(SET_STORE_NAME).delete("settings").onsuccess =
+      () => resolve(true);
+  });
 }
