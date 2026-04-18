@@ -36,7 +36,7 @@ async function setupForm() {
       note: $('memo-text')
     };
 
-    const data = window.setDB;
+    const data = window.SetDB;
     if (!data) {
       return;
     }
