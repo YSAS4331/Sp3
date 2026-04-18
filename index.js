@@ -16,7 +16,7 @@ export function init() {
   });
 }
 
-async function formReset() {
+async function formReset(from) {
   form.reset();
   
   const data = window.SetDB;
@@ -55,7 +55,7 @@ async function setupForm() {
       note: $('memo-text')
     };
 
-    await formReset();
+    await formReset(from);
   }
 
   form.addEventListener("submit", async (e) => {
@@ -83,7 +83,7 @@ async function setupForm() {
     try {
       await db.addRecord(record);
       alert("保存しました！");
-      await formReset();
+      await formReset(from);
     } catch (err) {
       console.error(err);
       alert("保存に失敗しました");
