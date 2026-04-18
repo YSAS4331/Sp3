@@ -36,12 +36,12 @@ async function setupForm() {
       note: $('memo-text')
     };
 
-    const db = window.setDB;
-    if (!db) {
+    const set = window.setDB;
+    if (!set) {
       return;
     }
 
-    const { default: setting } = db.get();
+    const { default: setting } = await set.get();
     if (!setting) return;
 
     if (setting.weapon) {
