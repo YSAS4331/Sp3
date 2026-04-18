@@ -5,7 +5,7 @@ let db = null;
 
 const DB_NAME = "sp3_battle_log";
 const STORE_NAME = "battle_records";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 // ===============================
 // init() — DB 初期化
@@ -26,6 +26,7 @@ export async function init() {
 
         store.createIndex("weapon", "weapon");
         store.createIndex("stage", "stage");
+        store.createIndex("match", "match");
         store.createIndex("rule", "rule");
         store.createIndex("result", "result");
 
