@@ -16,31 +16,31 @@ export function init() {
   });
 }
 
-async function formReset(from) {
-  form.reset();
+  async function setupForm() {
+    if (formInitialized) return;
+    formInitialized = true;
   
-  const data = window.SetDB;
-  if (!data) {
-    return;
+    const form = $('battleForm');
+    if (!form) return;
+  
+    async function formReset() {
+    form.reset();
+    
+    const data = window.SetDB;
+    if (!data) {
+      return;
+    }
+  
+    const { default: setting } = await data.get();
+    if (!setting) return;
+  
+    if (setting.weapon) {
+      UIs.weapon.value = setting.weapon;
+    }
+    if (setting.match) {
+      UIs.match.value = setting.match
+    }
   }
-
-  const { default: setting } = await data.get();
-  if (!setting) return;
-
-  if (setting.weapon) {
-    UIs.weapon.value = setting.weapon;
-  }
-  if (setting.match) {
-    UIs.match.value = setting.match
-  }
-}
-
-async function setupForm() {
-  if (formInitialized) return;
-  formInitialized = true;
-
-  const form = $('battleForm');
-  if (!form) return;
 
   if (Object.keys(UIs).length === 0) {
     UIs = {
@@ -55,7 +55,7 @@ async function setupForm() {
       note: $('memo-text')
     };
 
-    await formReset(from);
+    await formReset();
   }
 
   form.addEventListener("submit", async (e) => {
@@ -83,7 +83,7 @@ async function setupForm() {
     try {
       await db.addRecord(record);
       alert("保存しました！");
-      await formReset(from);
+      await formReset();
     } catch (err) {
       console.error(err);
       alert("保存に失敗しました");
