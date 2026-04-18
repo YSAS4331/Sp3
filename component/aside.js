@@ -235,6 +235,7 @@ class aside extends HTMLElement {
         '武器別': [...new Set(datas.map(d => d.weapon))],
         'ステージ別': [...new Set(datas.map(d => d.stage))],
         'ルール別': [...new Set(datas.map(d => d.rule))],
+        'マッチ別': [...new Set(datas.map(d => d.match))],
         '全データ': datas.map(d => d.id)
       };
 
@@ -264,6 +265,8 @@ class aside extends HTMLElement {
           } else if (label === 'ルール別') {
             a.href = `/Sp3/rules/?rule=${encodeURIComponent(item)}`;
             a.textContent = item;
+          } else if (label === 'マッチ別') {
+            a.href = `/Sp3/matches/?match=${encodeURIComponent(item)}`;
           } else {
             a.href = `/Sp3/all/?id=${item}`;
             a.textContent = `#${item}`;
