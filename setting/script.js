@@ -35,6 +35,8 @@ export function init() {
         firstOption.textContent = `現在: ${saved.match}`;
       }
     }
+
+    form.reset();
   }
 
   // ============================
