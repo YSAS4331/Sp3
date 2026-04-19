@@ -28,8 +28,11 @@ async function getStagesData() {
     return cache.content;
   }
 
+  console.log('[Index.js] fetch');
   const res = await fetch("https://spla3.yuu26.com/api/schedule");
   const content = await res.json();
+  console.log('[Index.js] fetch end')
+  console.log(content);
 
   const cache_end = new Date(content.regular.end_time).getTime();
 
