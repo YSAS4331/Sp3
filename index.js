@@ -157,4 +157,6 @@ async function setupForm() {
       alert("保存に失敗しました");
     }
   });
+
+    console.log('event')
 }
