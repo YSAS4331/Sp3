@@ -126,6 +126,7 @@ async function setupForm() {
   });
 
   form.addEventListener("submit", async (e) => {
+    console.log('submit')
     e.preventDefault();
 
     const db = window.Sp3DB;
