@@ -25,8 +25,8 @@ async function getStagesData() {
 
   console.log('[Index.js] ', cache);
   if (cache && Date.now() < cache.cache_end) {
-    return cache.content;
     console.log('cache has');
+    return cache.content;
   }
 
   console.log('[Index.js] fetch');
