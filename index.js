@@ -89,7 +89,7 @@ async function setupForm() {
     const data = window.SetDB;
     if (!data) return;
 
-    const setting = await data.get();
+    const { default: setting } = await data.get();
     if (!setting) return;
 
     if (setting.weapon) {
