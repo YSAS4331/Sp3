@@ -1,10 +1,11 @@
 const $ = s => document.getElementById(s);
 let UIs = {};
 let formInitialized = false;
+
 const map = {
   "regular": "regular",
-  "anarchy-o": "bankara-open",
-  "anarchy-c": "bankara-challenge",
+  "anarchy-o": "bankara_open",
+  "anarchy-c": "bankara_challenge",
   "x": "x",
   "event": "event"
 };
@@ -30,29 +31,25 @@ async function getStagesData() {
   const db = window.SetDB;
   const cache = await db.getItem("cache_stages");
 
-  console.log('[Index.js] ', cache);
   if (cache && Date.now() < cache.cache_end) {
-    console.log('cache has');
-    console.log(cache.cache_end);
-    console.log(cache);
     return cache.content;
   }
 
-  console.log('[Index.js] fetch');
   const res = await fetch("https://spla3.yuu26.com/api/schedule");
-  const { content } = await res.json();
-  console.log('[Index.js] fetch end')
-  console.log(content);
+  const json = await res.json();
 
-  const cache_end = new Date(content.result.regular[0]["end_time"]).getTime();
-  console.log(cache_end)
+  // 新 API は json.result が本体
+  const result = json.result;
+
+  // regular の最初の end_time をキャッシュ期限に使う
+  const cache_end = new Date(result.regular[0].end_time).getTime();
 
   await db.setItem("cache_stages", {
-    content,
+    content: result,
     cache_end
   });
 
-  return content.content;
+  return result;
 }
 
 // ===============================
@@ -62,28 +59,30 @@ async function updateRuleUI() {
   const content = await getStagesData();
   const match = UIs.match.value;
 
-  const data = content.result[map[match] ?? match];
-  console.log('Index.js')
-  console.log(data);
+  // API のキーに変換
+  const key = map[match] ?? match;
+
+  // 新 API は配列なので 0 番目を使う
+  const data = content[key]?.[0];
   if (!data) return;
 
+  // ルール
   if (data.rule) {
     UIs.rule.value = data.rule.name || data.rule;
+  } else {
+    UIs.rule.value = "";
   }
 
-  // ============================================
-  // 🟡 ステージ更新部分（ここに後で書く）
-  // ============================================
-  /*
+  // ステージ
   UIs.stage.innerHTML = "";
-
-  data.stages.forEach(stage => {
-    const opt = document.createElement("option");
-    opt.value = stage.name;
-    opt.textContent = stage.name;
-    UIs.stage.appendChild(opt);
-  });
-  */
+  if (data.stages) {
+    data.stages.forEach(stage => {
+      const opt = document.createElement("option");
+      opt.value = stage.name;
+      opt.textContent = stage.name;
+      UIs.stage.appendChild(opt);
+    });
+  }
 }
 
 // ===============================
@@ -114,9 +113,11 @@ async function setupForm() {
     }
 
     // 初期ルール反映
-    try{
-    await updateRuleUI();
-    }catch(e){console.error(e.message)}
+    try {
+      await updateRuleUI();
+    } catch (e) {
+      console.error(e.message);
+    }
   }
 
   if (Object.keys(UIs).length === 0) {
@@ -132,16 +133,15 @@ async function setupForm() {
       note: $('memo-text')
     };
   }
-  
+
   await formReset();
 
-  // 🎯 match変更時にルール更新
+  // match変更時にルール更新
   UIs.match.addEventListener("change", async () => {
     await updateRuleUI();
   });
 
   form.addEventListener("submit", async (e) => {
-    console.log('submit')
     e.preventDefault();
 
     const db = window.Sp3DB;
@@ -172,6 +172,4 @@ async function setupForm() {
       alert("保存に失敗しました");
     }
   });
-
-    console.log('event')
 }
