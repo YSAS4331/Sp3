@@ -1,6 +1,13 @@
 const $ = s => document.getElementById(s);
 let UIs = {};
 let formInitialized = false;
+const map = {
+  "regular": "regular",
+  "anarchy-o": "bankara-open",
+  "anarchy-c": "bankara-challenge",
+  "x": "x",
+  "event": "event"
+};
 
 export function init() {
   const db = window.Sp3DB;
@@ -36,6 +43,7 @@ async function getStagesData() {
   console.log(content);
 
   const cache_end = new Date(content.result.regular[0]["end_time"]).getTime();
+  console.log(cache_end)
 
   await db.setItem("cache_stages", {
     content,
