@@ -34,7 +34,7 @@ async function getStagesData() {
   console.log('[Index.js] fetch end')
   console.log(content);
 
-  const cache_end = new Date(content.regular[0]["end_time"]).getTime();
+  const cache_end = new Date(content.result.regular[0]["end_time"]).getTime();
 
   await db.setItem("cache_stages", {
     content,
@@ -51,7 +51,7 @@ async function updateRuleUI() {
   const content = await getStagesData();
   const match = UIs.match.value;
 
-  const data = content[match];
+  const data = content.result[match];
   if (!data) return;
 
   if (data.rule) {
