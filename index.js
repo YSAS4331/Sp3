@@ -52,7 +52,7 @@ async function getStagesData() {
     cache_end
   });
 
-  return content;
+  return content.content;
 }
 
 // ===============================
@@ -62,7 +62,7 @@ async function updateRuleUI() {
   const content = await getStagesData();
   const match = UIs.match.value;
 
-  const data = content.result[match];
+  const data = content.result[map[match] ?? match];
   console.log('Index.js')
   console.log(data);
   if (!data) return;
