@@ -34,7 +34,7 @@ async function getStagesData() {
   console.log('[Index.js] fetch end')
   console.log(content);
 
-  const cache_end = new Date(content.regular.end_time).getTime();
+  const cache_end = new Date(content.regular["end_time"]).getTime();
 
   await db.setItem("cache_stages", {
     content,
