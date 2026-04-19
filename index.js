@@ -101,7 +101,9 @@ async function setupForm() {
     }
 
     // 初期ルール反映
+    try{
     await updateRuleUI();
+    }catch(e){console.error(e.message)}
   }
 
   if (Object.keys(UIs).length === 0) {
