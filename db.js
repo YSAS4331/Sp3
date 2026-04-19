@@ -297,3 +297,26 @@ function deleteItem(key) {
     store.delete(key).onsuccess = () => resolve(true);
   });
 }
+
+async function convertRulesToEnglish() {
+  const map = {
+    "ナワバリ": "TurfWar",
+    "ガチエリア": "SplatZones",
+    "ガチヤグラ": "TowerControl",
+    "ガチホコ": "Rainmaker",
+    "ガチアサリ": "ClamBlitz"
+  };
+
+  const records = await getAllRecords();
+
+  for (const rec of records) {
+    const jp = rec.rule;
+    if (map[jp]) {
+      await updateRecord(rec.id, { rule: map[jp] });
+    }
+  }
+}
+
+(async () => {
+  await convertRulesToEnglish();
+})();
