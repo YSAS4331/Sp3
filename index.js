@@ -59,21 +59,21 @@ async function updateRuleUI() {
   const content = await getStagesData();
   const match = UIs.match.value;
 
-  // API のキーに変換
+  // 俺 → API のマッピング
   const key = map[match] ?? match;
 
-  // 新 API は配列なので 0 番目を使う
+  // API は配列なので 0 番目を使う
   const data = content[key]?.[0];
   if (!data) return;
 
-  // ルール
+  // ルール更新
   if (data.rule) {
-    UIs.rule.value = data.rule.name || data.rule;
+    UIs.rule.value = data.rule.name;
   } else {
     UIs.rule.value = "";
   }
 
-  // ステージ
+  /* ステージ更新
   UIs.stage.innerHTML = "";
   if (data.stages) {
     data.stages.forEach(stage => {
@@ -82,8 +82,9 @@ async function updateRuleUI() {
       opt.textContent = stage.name;
       UIs.stage.appendChild(opt);
     });
-  }
+  }*/
 }
+
 
 // ===============================
 // フォーム初期化
