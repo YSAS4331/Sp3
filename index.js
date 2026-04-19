@@ -5,7 +5,7 @@ let formInitialized = false;
 export function init() {
   const db = window.Sp3DB;
   if (!db) {
-    console.warn("Sp3DB がまだ初期化されていません");
+    console.warn("[Index.js] Sp3DB がまだ初期化されていません");
     return;
   }
 
@@ -23,6 +23,7 @@ async function getStagesData() {
   const db = window.SetDB;
   const cache = await db.getItem("cache_stages");
 
+  console.log('[Index.js] ', cache);
   if (cache && Date.now() < cache.cache_end) {
     return cache.content;
   }
