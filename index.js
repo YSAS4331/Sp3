@@ -116,9 +116,9 @@ async function setupForm() {
       result: $('result'),
       note: $('memo-text')
     };
-
-    await formReset();
   }
+  
+  await formReset();
 
   // 🎯 match変更時にルール更新
   UIs.match.addEventListener("change", async () => {
