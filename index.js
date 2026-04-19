@@ -53,7 +53,8 @@ async function updateRuleUI() {
   const match = UIs.match.value;
 
   const data = content.result[match];
-  console.log('Index.js', data)
+  console.log('Index.js')
+  console.log(data);
   if (!data) return;
 
   if (data.rule) {
