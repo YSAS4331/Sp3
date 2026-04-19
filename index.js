@@ -4,8 +4,8 @@ let formInitialized = false;
 
 const map = {
   "regular": "regular",
-  "anarchy-o": "bankara_open",
-  "anarchy-c": "bankara_challenge",
+  "anarchy-o": "bankara-open",
+  "anarchy-c": "bankara-challenge",
   "x": "x",
   "event": "event"
 };
