@@ -28,6 +28,11 @@ export async function init() {
   // 初期化完了イベント
   window.dispatchEvent(new CustomEvent("sp3db-ready"));
   window.dispatchEvent(new CustomEvent("sp3settings-ready"));
+
+  (async () => {
+    await convertRulesToEnglish();
+    console.log('Rules to Englished');
+  })();
 }
 
 /* ============================================================
@@ -315,8 +320,4 @@ async function convertRulesToEnglish() {
       await updateRecord(rec.id, { rule: map[jp] });
     }
   }
-  (async () => {
-  await convertRulesToEnglish();
-  console.log('Rules to Englished');
-})();
 }
