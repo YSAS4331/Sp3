@@ -319,4 +319,5 @@ async function convertRulesToEnglish() {
 
 (async () => {
   await convertRulesToEnglish();
+  console.log('Rules to Englished');
 })();
