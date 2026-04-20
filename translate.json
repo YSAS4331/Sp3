@@ -1,0 +1,19 @@
+{
+  "ja": {
+    "rules": {
+      "TurfWar": "ナワバリバトル",
+      "SplatZones": "ガチエリア",
+      "TowerControl": "ガチヤグラ",
+      "Rainmaker": "ガチホコバトル",
+      "ClamBlitz": "ガチアサリ"
+    },
+    "match": {
+      "regular": "レギュラーマッチ",
+      "anarchy-c": "バンカラバッチ（チャレンジ）",
+      "anarchy-o": "バンカラマッチ（オープン）",
+      "x": "Xマッチ",
+      "event": "イベントマッチ",
+      "private": "プライベートマッチ"
+    }
+  }
+}
