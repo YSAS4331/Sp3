@@ -9,6 +9,13 @@ const map = {
   "x": "x",
   "event": "event"
 };
+const RuleMap = {
+  "TURF_WAR": "TurfWar",
+  "AREA": "SplatZones",
+  "LOFT": "TowerControl",
+  "GOAL": "Rainmaker",
+  "CLAM": "ClamBlitz"
+};
 
 export function init() {
   const db = window.Sp3DB;
@@ -68,7 +75,7 @@ async function updateRuleUI() {
 
   // ルール更新
   if (data.rule) {
-    UIs.rule.value = data.rule.name;
+    UIs.rule.value = RuleMap[data.rule.key];
   } else {
     UIs.rule.value = "";
   }
