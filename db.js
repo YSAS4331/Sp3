@@ -315,9 +315,8 @@ async function convertRulesToEnglish() {
       await updateRecord(rec.id, { rule: map[jp] });
     }
   }
-}
-
-(async () => {
+  (async () => {
   await convertRulesToEnglish();
   console.log('Rules to Englished');
 })();
+}
