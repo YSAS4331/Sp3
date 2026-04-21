@@ -232,11 +232,11 @@ class aside extends HTMLElement {
       const list = document.createElement('ul');
 
       const categories = {
-        '武器別': [...new Set(datas.map(d => d.weapon))],
-        'ステージ別': [...new Set(datas.map(d => d.stage))],
-        'ルール別': [...new Set(datas.map(d => d.rule))],
-        'マッチ別': [...new Set(datas.map(d => d.match))],
-        '全データ': datas.map(d => d.id)
+        'weapon': [...new Set(datas.map(d => d.weapon))],
+        'stage': [...new Set(datas.map(d => d.stage))],
+        'rule': [...new Set(datas.map(d => d.rule))],
+        'match': [...new Set(datas.map(d => d.match))],
+        'all': datas.map(d => d.id)
       };
 
       Object.entries(categories).forEach(([label, items]) => {
@@ -256,16 +256,16 @@ class aside extends HTMLElement {
         items.forEach(item => {
           if (!item) return;
           const a = document.createElement('a');
-          if (label === '武器別') {
+          if (label === 'weapon') {
             a.href = `/Sp3/weapons/?weapon=${encodeURIComponent(item)}`;
             a.textContent = item;
-          } else if (label === 'ステージ別') {
+          } else if (label === 'stage') {
             a.href = `/Sp3/stages/?stage=${encodeURIComponent(item)}`;
             a.textContent = item;
-          } else if (label === 'ルール別') {
+          } else if (label === 'rule') {
             a.href = `/Sp3/rules/?rule=${encodeURIComponent(item)}`;
             a.textContent = item;
-          } else if (label === 'マッチ別') {
+          } else if (label === 'match') {
             a.href = `/Sp3/matches/?match=${encodeURIComponent(item)}`;
             a.textContent = item;
           } else {
