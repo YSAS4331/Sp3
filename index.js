@@ -58,9 +58,9 @@ async function loadTranslations() {
 function populateSelect(element, items) {
   if (!element || !items) return;
   const fragment = document.createDocumentFragment();
-  items.forEach(item => {
+  items.forEach((item, index) => {
     const opt = document.createElement("option");
-    opt.value = item;
+    opt.value = index;
     opt.textContent = item;
     fragment.appendChild(opt);
   });
