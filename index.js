@@ -93,10 +93,7 @@ async function getStagesData() {
   return result;
 }
 
-// ===============================
-// ルール更新（match変更時）
-// ===============================
-async function updateRuleUI() {
+async function updateUI() {
   const content = await getStagesData();
   const match = UIs.match.value;
 
@@ -104,12 +101,20 @@ async function updateRuleUI() {
   const data = content[key]?.[0];
   if (!data) return;
 
+  // ルール更新
   if (data.rule) {
     UIs.rule.value = RuleMap[data.rule.key];
   } else {
     UIs.rule.value = "";
   }
+
+  // ★ ここからステージ 2 択更新 ★
+  if (data.stages && Array.isArray(data.stages)) {
+    const stageNames = data.stages.map(s => s.name);
+    populateSelect(UIs.stage, stageNames);
+  }
 }
+
 
 // ===============================
 // フォーム初期化
@@ -160,7 +165,7 @@ async function setupForm() {
     }
 
     try {
-      await updateRuleUI();
+      await updateUI();
     } catch (e) {
       console.error(e.message);
     }
@@ -169,7 +174,7 @@ async function setupForm() {
   await formReset();
 
   UIs.match.addEventListener("change", async () => {
-    await updateRuleUI();
+    await updateUI();
   });
 
   form.addEventListener("submit", async (e) => {
