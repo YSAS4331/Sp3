@@ -32,6 +32,43 @@ export function init() {
 }
 
 // ===============================
+// 翻訳データの取得（sessionStorageキャッシュ付き）
+// ===============================
+async function loadTranslations() {
+  const cacheKey = "sp3_translations";
+  const cachedData = sessionStorage.getItem(cacheKey);
+
+  if (cachedData) {
+    return JSON.parse(cachedData);
+  }
+
+  try {
+    const res = await fetch("/Sp3/datas/translate.json");
+    if (!res.ok) throw new Error("翻訳ファイルの取得に失敗");
+    const data = await res.json();
+    sessionStorage.setItem(cacheKey, JSON.stringify(data));
+    return data;
+  } catch (e) {
+    console.error("[Index.js]", e.message);
+    return null;
+  }
+}
+
+// セレクトボックスへの反映
+function populateSelect(element, items) {
+  if (!element || !items) return;
+  const fragment = document.createDocumentFragment();
+  items.forEach(item => {
+    const opt = document.createElement("option");
+    opt.value = item;
+    opt.textContent = item;
+    fragment.appendChild(opt);
+  });
+  element.innerHTML = "";
+  element.appendChild(fragment);
+}
+
+// ===============================
 // スケジュール取得（キャッシュ付き）
 // ===============================
 async function getStagesData() {
@@ -45,10 +82,7 @@ async function getStagesData() {
   const res = await fetch("https://spla3.yuu26.com/api/schedule");
   const json = await res.json();
 
-  // 新 API は json.result が本体
   const result = json.result;
-
-  // regular の最初の end_time をキャッシュ期限に使う
   const cache_end = new Date(result.regular[0].end_time).getTime();
 
   await db.setItem("cache_stages", {
@@ -66,32 +100,16 @@ async function updateRuleUI() {
   const content = await getStagesData();
   const match = UIs.match.value;
 
-  // 俺 → API のマッピング
   const key = map[match] ?? match;
-
-  // API は配列なので 0 番目を使う
   const data = content[key]?.[0];
   if (!data) return;
 
-  // ルール更新
   if (data.rule) {
     UIs.rule.value = RuleMap[data.rule.key];
   } else {
     UIs.rule.value = "";
   }
-
-  /* ステージ更新
-  UIs.stage.innerHTML = "";
-  if (data.stages) {
-    data.stages.forEach(stage => {
-      const opt = document.createElement("option");
-      opt.value = stage.name;
-      opt.textContent = stage.name;
-      UIs.stage.appendChild(opt);
-    });
-  }*/
 }
-
 
 // ===============================
 // フォーム初期化
@@ -102,6 +120,27 @@ async function setupForm() {
 
   const form = $('battleForm');
   if (!form) return;
+
+  if (Object.keys(UIs).length === 0) {
+    UIs = {
+      kills: $('kills'),
+      deaths: $('deaths'),
+      special: $('special'),
+      weapon: $('weapon'),
+      stage: $('stage'),
+      match: $('match'),
+      rule: $('rule'),
+      result: $('result'),
+      note: $('memo-text')
+    };
+  }
+
+  // 翻訳データのロードと反映
+  const trans = await loadTranslations();
+  if (trans && trans.ja) {
+    populateSelect(UIs.weapon, trans.ja.weapons);
+    populateSelect(UIs.stage, trans.ja.stages);
+  }
 
   async function formReset() {
     form.reset();
@@ -120,7 +159,6 @@ async function setupForm() {
       UIs.match.value = setting.match;
     }
 
-    // 初期ルール反映
     try {
       await updateRuleUI();
     } catch (e) {
@@ -128,23 +166,8 @@ async function setupForm() {
     }
   }
 
-  if (Object.keys(UIs).length === 0) {
-    UIs = {
-      kills: $('kills'),
-      deaths: $('deaths'),
-      special: $('special'),
-      weapon: $('weapon'),
-      stage: $('stage'),
-      match: $('match'),
-      rule: $('rule'),
-      result: $('result'),
-      note: $('memo-text')
-    };
-  }
-
   await formReset();
 
-  // match変更時にルール更新
   UIs.match.addEventListener("change", async () => {
     await updateRuleUI();
   });
