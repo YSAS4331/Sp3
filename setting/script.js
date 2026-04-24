@@ -72,10 +72,7 @@ export function init() {
 
     // match → select の最初の option を書き換え
     if (saved.match) {
-      const firstOption = UIs.match.querySelector("option[value='']");
-      if (firstOption) {
-        UIs.match.value = saved.match
-      }
+      UIs.match.value = saved.match
     }
 
     form.reset();
