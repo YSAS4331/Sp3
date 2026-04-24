@@ -74,7 +74,7 @@ export function init() {
     if (saved.match) {
       const firstOption = UIs.match.querySelector("option[value='']");
       if (firstOption) {
-        firstOption.textContent = `現在: ${saved.match}`;
+        firstOption.value = saved.match
       }
     }
 
