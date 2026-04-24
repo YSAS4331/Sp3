@@ -14,18 +14,60 @@ export function init() {
   if (!form) return;
 
   // ============================
-  // 設定ロード関数（イベントでも即実行でもOK）
+  // 翻訳データのロードとセレクトボックス反映
+  // ============================
+  async function setupWeaponList() {
+    const cacheKey = "sp3_translations";
+    let trans = sessionStorage.getItem(cacheKey);
+
+    if (trans) {
+      trans = JSON.parse(trans);
+    } else {
+      try {
+        const res = await fetch("/Sp3/datas/translate.json");
+        trans = await res.json();
+        sessionStorage.setItem(cacheKey, JSON.stringify(trans));
+      } catch (e) {
+        console.error("翻訳データの取得失敗:", e);
+        return;
+      }
+    }
+
+    if (trans && trans.ja && trans.ja.weapons) {
+      // 既存の内容をクリア（「選択してください」などの初期値を残したい場合は調整してね）
+      const currentVal = UIs.weapon.value;
+      UIs.weapon.innerHTML = '<option value="">武器を選択...</option>';
+      
+      const fragment = document.createDocumentFragment();
+      trans.ja.weapons.forEach(w => {
+        const opt = document.createElement("option");
+        opt.value = w;
+        opt.textContent = w;
+        fragment.appendChild(opt);
+      });
+      UIs.weapon.appendChild(fragment);
+      
+      // 値を戻す
+      if (currentVal) UIs.weapon.value = currentVal;
+    }
+  }
+
+  // ============================
+  // 設定ロード関数
   // ============================
   async function loadSettings() {
+    // 武器リストを先に作っておく
+    await setupWeaponList();
+
     const db = window.SetDB;
     if (!db) return;
 
-    const { default: saved} = await db.get();
+    const { default: saved } = await db.get();
     if (!saved) return;
 
-    // weapon → placeholder
+    // weapon → 反映
     if (saved.weapon) {
-      UIs.weapon.placeholder = `現在: ${saved.weapon}`;
+      UIs.weapon.value = saved.weapon;
     }
 
     // match → select の最初の option を書き換え
@@ -43,10 +85,8 @@ export function init() {
   // DB ready を待つ
   // ============================
   if (window.SetDB) {
-    // すでに初期化済みなら即ロード
     loadSettings();
   } else {
-    // まだならイベントを待つ
     window.addEventListener("sp3settings-ready", loadSettings);
   }
 
@@ -73,8 +113,6 @@ export function init() {
     try {
       await db.set(record);
       alert("設定を保存しました！");
-
-      // 保存後に placeholder を更新
       loadSettings();
     } catch (err) {
       console.error(err);
