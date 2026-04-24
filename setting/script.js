@@ -45,9 +45,9 @@ export function init() {
       UIs.weapon.innerHTML = '<option value="">武器を選択...</option>';
       
       const fragment = document.createDocumentFragment();
-      trans.ja.weapons.forEach(w => {
+      trans.ja.weapons.forEach((w,i) => {
         const opt = document.createElement("option");
-        opt.value = w;
+        opt.value = i;
         opt.textContent = w;
         fragment.appendChild(opt);
       });
