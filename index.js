@@ -2,6 +2,9 @@ const $ = s => document.getElementById(s);
 let UIs = {};
 let formInitialized = false;
 
+// ★ 初期ステージ options を保存する
+let initialStageOptions = [];
+
 const map = {
   "regular": "regular",
   "anarchy-o": "bankara_open",
@@ -93,10 +96,13 @@ async function getStagesData() {
   return result;
 }
 
-function reorderStageOptions(stageSelect, stageNames) {
-  const options = Array.from(stageSelect.options);
+// ===============================
+// ★ 初期 options を基準に並べ替える関数
+// ===============================
+function reorderStageOptionsFromInitial(stageSelect, stageNames) {
+  // 初期 options をクローンして使う
+  const options = initialStageOptions.map(opt => opt.cloneNode(true));
 
-  // 1. API の 2 ステージに一致する option を抽出
   const matched = [];
   const others = [];
 
@@ -108,16 +114,19 @@ function reorderStageOptions(stageSelect, stageNames) {
     }
   });
 
-  // 2. matched → others の順で並べ直す
+  // 並べ替え
   stageSelect.innerHTML = "";
   [...matched, ...others].forEach(opt => stageSelect.appendChild(opt));
 
-  // 3. 先頭のステージを選択状態にする
+  // 先頭を選択
   if (matched.length > 0) {
     stageSelect.value = matched[0].value;
   }
 }
 
+// ===============================
+// ルール更新（match変更時）
+// ===============================
 async function updateUI() {
   const content = await getStagesData();
   const match = UIs.match.value;
@@ -133,14 +142,12 @@ async function updateUI() {
     UIs.rule.value = "";
   }
 
-  // ★ ステージを先頭 2 つに入れ替える ★
+  // ★ 初期 options を基準にステージ並び替え
   if (data.stages && Array.isArray(data.stages)) {
     const stageNames = data.stages.map(s => s.name);
-    reorderStageOptions(UIs.stage, stageNames);
+    reorderStageOptionsFromInitial(UIs.stage, stageNames);
   }
 }
-
-
 
 // ===============================
 // フォーム初期化
@@ -171,6 +178,9 @@ async function setupForm() {
   if (trans && trans.ja) {
     populateSelect(UIs.weapon, trans.ja.weapons);
     populateSelect(UIs.stage, trans.ja.stages);
+
+    // ★ 初期 options を保存
+    initialStageOptions = Array.from(UIs.stage.options).map(opt => opt.cloneNode(true));
   }
 
   async function formReset() {
