@@ -93,6 +93,31 @@ async function getStagesData() {
   return result;
 }
 
+function reorderStageOptions(stageSelect, stageNames) {
+  const options = Array.from(stageSelect.options);
+
+  // 1. API の 2 ステージに一致する option を抽出
+  const matched = [];
+  const others = [];
+
+  options.forEach(opt => {
+    if (stageNames.includes(opt.textContent)) {
+      matched.push(opt);
+    } else {
+      others.push(opt);
+    }
+  });
+
+  // 2. matched → others の順で並べ直す
+  stageSelect.innerHTML = "";
+  [...matched, ...others].forEach(opt => stageSelect.appendChild(opt));
+
+  // 3. 先頭のステージを選択状態にする
+  if (matched.length > 0) {
+    stageSelect.value = matched[0].value;
+  }
+}
+
 async function updateUI() {
   const content = await getStagesData();
   const match = UIs.match.value;
@@ -108,12 +133,13 @@ async function updateUI() {
     UIs.rule.value = "";
   }
 
-  // ★ ここからステージ 2 択更新 ★
+  // ★ ステージを先頭 2 つに入れ替える ★
   if (data.stages && Array.isArray(data.stages)) {
     const stageNames = data.stages.map(s => s.name);
-    populateSelect(UIs.stage, stageNames);
+    reorderStageOptions(UIs.stage, stageNames);
   }
 }
+
 
 
 // ===============================
