@@ -31,7 +31,6 @@ async function loadJsonWithVersion(url, key, requiredVersion) {
 
   const data = await res.json();
 
-  // 保存形式：{ VERSION, data }
   const saveObj = {
     VERSION: requiredVersion,
     data
