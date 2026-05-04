@@ -1,0 +1,223 @@
+{
+  "weapons": {
+    "shooter": {
+      "bold": {
+        "variants": ["base","neo"]
+      },
+      "wakaba": {
+        "variants": ["base","momiji"]
+      },
+      "sharp": {
+        "variants": ["base","neo","geck"]
+      },
+      "modeler": {
+        "variants": ["mg","rg","sai"]
+      },
+      "spla": {
+        "variants": ["base","collab","ko","hero","okuta","order"]
+      },
+      "52gal": {
+        "variants": ["base","deco"]
+      },
+      "zap": {
+        "variants": ["85","89"]
+      },
+      "prime": {
+        "variants": ["base","collab","frzn"]
+      },
+      "96gal": {
+        "variants": ["base","deco","so"]
+      },
+      "jet": {
+        "variants": ["base","custom","cobr"]
+      },
+      "space": {
+        "variants": ["base","collab"]
+      },
+      "l3": {
+        "variants": ["base","d","haku"]
+      },
+      "h3": {
+        "variants": ["base","d","snak"]
+      },
+      "bottle": {
+        "variants": ["base","foil"]
+      }
+    },
+    "roller": {
+      "carbon": {
+        "variants": ["base","deco","angl"]
+      },
+      "spla": {
+        "variants": ["base","collab","order"]
+      },
+      "dynamo": {
+        "variants": ["base","tesla","mei"]
+      },
+      "variable": {
+        "variants": ["base","foil"]
+      },
+      "wide": {
+        "variants": ["base","collab","waku"]
+      }
+    },
+    "charger": {
+      "squicklin": {
+        "variants": ["a","b"]
+      },
+      "spla": {
+        "variants": ["base","collab","frst","order"]
+      },
+      "ritter": {
+        "variants": ["base","custom"]
+      },
+      "bamboo": {
+        "variants": ["ko","otsu"]
+      },
+      "soituber": {
+        "variants": ["base","custom"]
+      },
+      "pen": {
+        "variants": ["5h","5b"]
+      }
+    },
+    "scope": {
+      "spla": {
+        "variants": ["base","collab","frst","order"]
+      },
+      "ritter": {
+        "variants": ["base","custom"]
+      }
+    },
+    "bucket": {
+      "bucket": {
+        "variants": ["base","deco","order"]
+      },
+      "hissen": {
+        "variants": ["base","hue","ash"]
+      },
+      "screw": {
+        "variants": ["base","neo"]
+      },
+      "over": {
+        "variants": ["base","deco"]
+      },
+      "eks": {
+        "variants": ["base","custom"]
+      },
+      "moplin": {
+        "variants": ["base","d","kaku"]
+      }
+    },
+    "spinner": {
+      "spla": {
+        "variants": ["base","collab","pytn"]
+      },
+      "barrel": {
+        "variants": ["base","deco","order"]
+      },
+      "hydra": {
+        "variants": ["base","custom","atsu"]
+      },
+      "kugel": {
+        "variants": ["base","hue"]
+      },
+      "nautilus": {
+        "variants": ["47","79"]
+      },
+      "examiner": {
+        "variants": ["base","hue"]
+      }
+    },
+    "maneuver": {
+      "sputtery": {
+        "variants": ["base","hue","owl"]
+      },
+      "spla": {
+        "variants": ["base","collab","yo","order"]
+      },
+      "calvin": {
+        "variants": ["base","deco"]
+      },
+      "dual": {
+        "variants": ["base","custom","tei"]
+      },
+      "quad": {
+        "variants": ["black","white"]
+      },
+      "gaen": {
+        "variants": ["base","custom"]
+      }
+    },
+    "shelter": {
+      "para": {
+        "variants": ["base","solera","order"]
+      },
+      "camp": {
+        "variants": ["base","solera"]
+      },
+      "spy": {
+        "variants": ["base","solera","ryo"]
+      },
+      "wagasa": {
+        "variants": ["ko","otsu"]
+      }
+    },
+    "blaster": {
+      "nova": {
+        "variants": ["base","neo","order"]
+      },
+      "hot": {
+        "variants": ["base","custom","tsuya"]
+      },
+      "long": {
+        "variants": ["base","custom"]
+      },
+      "crash": {
+        "variants": ["base","neo"]
+      },
+      "rapid": {
+        "variants": ["base","deco"]
+      },
+      "elite": {
+        "variants": ["base","deco"]
+      },
+      "s": {
+        "variants": ["92","91"]
+      }
+    },
+    "brush": {
+      "ink": {
+        "variants": ["base","hue"]
+      },
+      "octo": {
+        "variants": ["base","hue","sui","order"]
+      },
+      "finncent": {
+        "variants": ["base","hue","brnz"]
+      }
+    },
+    "stringer": {
+      "tri": {
+        "variants": ["base","collab","to","order"]
+      },
+      "lact": {
+        "variants": ["base","deco","milk"]
+      },
+      "fluid": {
+        "variants": ["base","custom"]
+      }
+    },
+    "wiper": {
+      "jim": {
+        "variants": ["base","hue","fu","order"]
+      },
+      "drive": {
+        "variants": ["base","deco","rust"]
+      },
+      "dental": {
+        "variants": ["mint","ink"]
+      }
+    }
+  }
+}
