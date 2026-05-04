@@ -1,4 +1,4 @@
 window.SETTINGS = {
-  "WEAPON_VERSION": 1,
-  "STAGE_VERSION": 1
+  "IDS_VERSION": 1,
+  "TRANSLATE_VERSION": 1
 };
