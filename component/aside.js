@@ -175,7 +175,6 @@ class aside extends HTMLElement {
 
 <aside id="aside">
   <div class="aside-content">
-  
     <a href="/Sp3/">
       <i data-lucide="home"></i>
       トップ
