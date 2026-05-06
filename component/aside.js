@@ -175,11 +175,6 @@ class aside extends HTMLElement {
 
 <aside id="aside">
   <div class="aside-content">
-    <div class="searchBar">
-      <i data-lucide="search"></i>
-      <input class="searchInput" type="text">
-      <kbd>Ctrl</kbd><kbd>K</kbd>
-    </div>
   
     <a href="/Sp3/">
       <i data-lucide="home"></i>
