@@ -1,4 +1,4 @@
 window.SETTINGS = {
   "IDS_VERSION": 1.1,
-  "TRANSLATE_VERSION": 1.1
+  "TRANSLATE_VERSION": 1.2
 };
