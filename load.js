@@ -9,7 +9,7 @@ createIcons({ icons });
 import { init } from '/Sp3/db.js';
 init();
 
-(async function loadInitialDatas() {
+(async () => {
   await Promise.all([
     loadJsonWithVersion("/Sp3/datas/ids.json", "ids", window.SETTINGS.IDS_VERSION),
     loadJsonWithVersion("/Sp3/datas/translate.json", "translate", window.SETTINGS.TRANSLATE_VERSION)
