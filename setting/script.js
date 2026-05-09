@@ -125,4 +125,77 @@ export function init() {
       alert("保存に失敗しました");
     }
   });
+
+  async function exportSetDB() {
+    // SetDB に保存されている全データを取得
+    const settings = await window.SetDB.get(); // "settings" の中身
+  
+    // 他の key も含めたい場合はここで追加
+    const extraKeys = ["settings"]; // 必要なら増やす
+    const all = {};
+  
+    for (const key of extraKeys) {
+      const value = await window.SetDB.getItem(key);
+      all[key] = value;
+    }
+  
+    // JSON をダウンロード
+    const blob = new Blob([JSON.stringify(all, null, 2)], {
+      type: "application/json"
+    });
+  
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "sp3-settings.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+  
+  // ---- Import ----
+  async function importSetDB(json) {
+    // 既存データを全部削除
+    await window.SetDB.clear();
+  
+    // JSON の内容をすべて書き戻す
+    for (const key in json) {
+      await window.SetDB.setItem(key, json[key]);
+    }
+  }
+  
+  // ---- JSON 読み込み ----
+  function readJSON(file) {
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(JSON.parse(reader.result));
+      reader.readAsText(file);
+    });
+  }
+  
+  // ===============================
+  // ボタンイベント
+  // ===============================
+  
+  document.getElementById("data-export").addEventListener("click", async () => {
+    await exportSetDB();
+    alert("設定データをエクスポートしました");
+  });
+  
+  document.getElementById("data-import").addEventListener("click", () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/json";
+  
+    input.onchange = async e => {
+      const file = e.target.files[0];
+      if (!file) return;
+  
+      const json = await readJSON(file);
+      await importSetDB(json);
+  
+      alert("設定データをインポートしました");
+    };
+  
+    input.click();
+  });
 }
