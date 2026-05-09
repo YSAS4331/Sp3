@@ -15,7 +15,7 @@ console.log("%c[Debug] 1. 静的インポート完了", "color: orange; font-wei
 
     try {
         // DBの初期化
-        init();
+        await init();
         createIcons({ icons });
         console.log("[Debug] 3. DB初期化 & アイコン生成完了");
 
