@@ -16,7 +16,7 @@
       "spla": {
         "variants": ["base","collab","ko","hero","okuta","order"]
       },
-      "52gal": {
+      "gal52": {
         "variants": ["base","deco"]
       },
       "zap": {
@@ -25,7 +25,7 @@
       "prime": {
         "variants": ["base","collab","frzn"]
       },
-      "96gal": {
+      "gal52": {
         "variants": ["base","deco","so"]
       },
       "jet": {
