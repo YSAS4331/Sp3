@@ -31,7 +31,9 @@ export async function init() {
 
   (async () => {
     await convertRulesToEnglish();
-    console.log('Rules to Englished');
+    console.log("Rules to Englished");
+
+    await migrateWeaponNames(); // ← 修正済み
   })();
 }
 
@@ -47,7 +49,6 @@ async function initBattleDB() {
         const db = event.target.result;
         let store;
 
-        // 既存ストアがあるか？
         if (db.objectStoreNames.contains(BATTLE_STORE_NAME)) {
           store = event.target.transaction.objectStore(BATTLE_STORE_NAME);
         } else {
@@ -57,7 +58,6 @@ async function initBattleDB() {
           });
         }
 
-        // 既存インデックスが無ければ作成
         if (!store.indexNames.contains("weapon"))
           store.createIndex("weapon", "weapon");
 
@@ -70,7 +70,6 @@ async function initBattleDB() {
         if (!store.indexNames.contains("result"))
           store.createIndex("result", "result");
 
-        // ★ v2 追加：match
         if (!store.indexNames.contains("match"))
           store.createIndex("match", "match");
 
@@ -98,7 +97,6 @@ async function initBattleDB() {
 
   await openDB();
 
-  // API 公開
   window.Sp3DB = {
     addRecord,
     getAllRecords,
@@ -228,7 +226,6 @@ async function initSettingsDB() {
 
   await openSettingsDB();
 
-  // API 公開
   window.SetDB = {
     get: getSettings,
     set: setSettings,
@@ -303,6 +300,9 @@ function deleteItem(key) {
   });
 }
 
+/* ============================================================
+   ルール名 → 英語変換
+============================================================ */
 async function convertRulesToEnglish() {
   const map = {
     "ナワバリ": "TurfWar",
@@ -320,4 +320,67 @@ async function convertRulesToEnglish() {
       await updateRecord(rec.id, { rule: map[jp] });
     }
   }
+}
+
+/* ============================================================
+   武器名 → 内部ID 変換（移行処理）
+============================================================ */
+async function migrateWeaponNames() {
+  console.log("[MIGRATE] Start weapon ID migration");
+
+  const idsObj = await window.SetDB.getItem("ids");
+  const trObj  = await window.SetDB.getItem("translate");
+
+  if (!idsObj || !trObj) {
+    console.warn("[MIGRATE] Dictionary not loaded → skip");
+    return;
+  }
+
+  const ids = idsObj.data.weapons;
+  const tr  = trObj.data.ja.weapons;
+
+  const reverse = {};
+
+  for (const category in ids) {
+    for (const weapon in ids[category]) {
+      const variants = ids[category][weapon].variants;
+
+      for (const variant of variants) {
+        const jp = tr?.[category]?.[weapon]?.[variant];
+        if (!jp) continue;
+
+        const internalId = `${category}.${weapon}.${variant}`;
+        reverse[jp] = internalId;
+      }
+    }
+  }
+
+  console.log("[MIGRATE] Reverse map generated", reverse);
+
+  const tx = battleDB.transaction(BATTLE_STORE_NAME, "readwrite");
+  const store = tx.objectStore(BATTLE_STORE_NAME);
+
+  const req = store.openCursor();
+  req.onsuccess = (e) => {
+    const cursor = e.target.result;
+    if (!cursor) {
+      console.log("[MIGRATE] Completed");
+      return;
+    }
+
+    const data = cursor.value;
+
+    if (data.weapon && data.weapon.includes(".")) {
+      cursor.continue();
+      return;
+    }
+
+    if (reverse[data.weapon]) {
+      data.weapon = reverse[data.weapon];
+      cursor.update(data);
+      console.log(`[MIGRATE] Updated: ${data.weapon}`);
+    }
+
+    cursor.continue();
+  };
 }
