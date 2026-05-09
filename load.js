@@ -6,15 +6,13 @@ import { createIcons, icons } from "https://esm.sh/lucide";
 createIcons({ icons });
 
 import { init } from '/Sp3/db.js';
+init();
 
 (async () => {
   await Promise.all([
     loadJsonWithVersion("/Sp3/datas/ids.json", "ids", window.SETTINGS.IDS_VERSION),
     loadJsonWithVersion("/Sp3/datas/translate.json", "translate", window.SETTINGS.TRANSLATE_VERSION)
   ]);
-
-  // ★ 辞書ロード完了後に DB 初期化
-  init();
 })();
 
 async function loadJsonWithVersion(url, key, requiredVersion) {
