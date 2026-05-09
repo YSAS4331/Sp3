@@ -1,0 +1,102 @@
+/* -----------------------------------
+   データ管理ボタン（Export / Import）
+----------------------------------- */
+#data-export,
+#data-import {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+
+  padding: 10px 18px;
+  margin-right: 8px;
+  margin-top: 6px;
+
+  border-radius: var(--radius);
+  border: 1px solid var(--glass-border-1);
+
+  background: var(--glass-bg-1);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--glass-inner-shadow);
+
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.15s ease;
+}
+
+/* hover */
+#data-export:hover,
+#data-import:hover {
+  background: var(--glass-bg-2);
+  border-color: var(--glass-border-2);
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.08),
+    var(--glass-inner-shadow);
+  transform: translateY(-1px);
+}
+
+/* active */
+#data-export:active,
+#data-import:active {
+  transform: translateY(0);
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.06),
+    var(--glass-inner-shadow);
+}
+
+/* -----------------------------------
+   Export / Import の色味差分
+----------------------------------- */
+#data-export {
+  border-color: var(--accent-border);
+  background: linear-gradient(
+    135deg,
+    rgba(183, 245, 200, 0.35),
+    rgba(183, 245, 200, 0.18)
+  );
+}
+
+#data-export:hover {
+  border-color: var(--accent-border-strong);
+  background: linear-gradient(
+    135deg,
+    rgba(183, 245, 200, 0.45),
+    rgba(183, 245, 200, 0.28)
+  );
+}
+
+#data-import {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.18),
+    rgba(255, 255, 255, 0.10)
+  );
+}
+
+#data-import:hover {
+  border-color: rgba(255, 255, 255, 0.38);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.26),
+    rgba(255, 255, 255, 0.14)
+  );
+}
+
+/* -----------------------------------
+   モバイル対応
+----------------------------------- */
+@media (max-width: 600px) {
+  #data-export,
+  #data-import {
+    width: 100%;
+    margin-right: 0;
+  }
+}
