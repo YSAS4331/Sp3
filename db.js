@@ -357,6 +357,7 @@ async function migrateWeaponNames() {
 
   console.log("[MIGRATE] Reverse map generated", reverse);
 
+  // ★ 修正ポイント：battle_records を使う
   const tx = battleDB.transaction(BATTLE_STORE_NAME, "readwrite");
   const store = tx.objectStore(BATTLE_STORE_NAME);
 
