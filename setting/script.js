@@ -126,40 +126,75 @@ export function init() {
     }
   });
 
-  async function exportSetDB() {
-    // SetDB に保存されている全データを取得
-    const settings = await window.SetDB.get(); // "settings" の中身
+  function openIDB(name, version) {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(name, version);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function exportAll() {
+    // --- battle_records ---
+    const battleDB = await openIDB("sp3_battle_log", 2);
+    const battleTx = battleDB.transaction("battle_records", "readonly");
+    const battleStore = battleTx.objectStore("battle_records");
   
-    // 他の key も含めたい場合はここで追加
-    const extraKeys = ["settings"]; // 必要なら増やす
-    const all = {};
+    const battleRecords = await new Promise(resolve => {
+      const req = battleStore.getAll();
+      req.onsuccess = () => resolve(req.result);
+    });
   
-    for (const key of extraKeys) {
-      const value = await window.SetDB.getItem(key);
-      all[key] = value;
-    }
+    // --- settings (SetDB) ---
+    const settings = await window.SetDB.get(); // settings 全体
+    const settingsRaw = await window.SetDB.getItem("settings");
   
-    // JSON をダウンロード
-    const blob = new Blob([JSON.stringify(all, null, 2)], {
+    const data = {
+      battle_records: battleRecords,
+      settings: settingsRaw
+    };
+  
+    // JSON ダウンロード
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: "application/json"
     });
   
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "sp3-settings.json";
+    a.download = "sp3-backup.json";
     a.click();
     URL.revokeObjectURL(url);
   }
   
-  // ---- Import ----
-  async function importSetDB(json) {
-    // 既存データを全部削除
-    await window.SetDB.clear();
+  // ===============================
+  // Import
+  // ===============================
+  async function importAll(json) {
+    // --- battle_records ---
+    {
+      const battleDB = await openIDB("sp3_battle_log", 2);
+      const tx = battleDB.transaction("battle_records", "readwrite");
+      const store = tx.objectStore("battle_records");
   
-    // JSON の内容をすべて書き戻す
-    for (const key in json) {
-      await window.SetDB.setItem(key, json[key]);
+      // 全削除
+      await new Promise(resolve => {
+        const req = store.clear();
+        req.onsuccess = () => resolve();
+      });
+  
+      // 書き戻し
+      for (const item of json.battle_records ?? []) {
+        store.add(item);
+      }
+    }
+  
+    // --- settings ---
+    {
+      await window.SetDB.clear(); // 全削除
+      if (json.settings) {
+        await window.SetDB.setItem("settings", json.settings);
+      }
     }
   }
   
@@ -175,10 +210,9 @@ export function init() {
   // ===============================
   // ボタンイベント
   // ===============================
-  
   document.getElementById("data-export").addEventListener("click", async () => {
-    await exportSetDB();
-    alert("設定データをエクスポートしました");
+    await exportAll();
+    alert("データをエクスポートしました");
   });
   
   document.getElementById("data-import").addEventListener("click", () => {
@@ -191,9 +225,9 @@ export function init() {
       if (!file) return;
   
       const json = await readJSON(file);
-      await importSetDB(json);
+      await importAll(json);
   
-      alert("設定データをインポートしました");
+      alert("データをインポートしました");
     };
   
     input.click();
