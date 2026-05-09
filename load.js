@@ -5,9 +5,6 @@ import '/Sp3/SETTING.js';
 import { createIcons, icons } from "https://esm.sh/lucide";
 createIcons({ icons });
 
-import { init } from '/Sp3/db.js';
-init();
-
 (async function loadInitialDatas() {
   await Promise.all([
     loadJsonWithVersion("/Sp3/datas/ids.json", "ids", window.SETTINGS.IDS_VERSION),
@@ -39,3 +36,6 @@ async function loadJsonWithVersion(url, key, requiredVersion) {
   await window.SetDB.setItem(key, saveObj);
   console.log(`[${key}] saved with version ${requiredVersion}`);
 }
+
+import { init } from '/Sp3/db.js';
+init();
