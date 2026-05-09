@@ -332,7 +332,17 @@ async function migrateWeaponNames() {
   const trObj  = await window.SetDB.getItem("translate");
 
   if (!idsObj || !trObj) {
-    console.warn("[MIGRATE] Dictionary not loaded → skip");
+    let text = "[MIGRATE] 辞書が未ロードのためスキップ：";
+  
+    if (!idsObj && !trObj) {
+      text += " ids.json と translate.json の両方が未ロード";
+    } else if (!idsObj) {
+      text += " ids.json が未ロード";
+    } else {
+      text += " translate.json が未ロード";
+    }
+  
+    console.warn(text);
     return;
   }
 
