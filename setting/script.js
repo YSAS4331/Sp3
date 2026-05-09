@@ -155,7 +155,7 @@ export function init() {
     };
   
     // JSON ダウンロード
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
+    const blob = new Blob([JSON.stringify(data, null, 0)], {
       type: "application/json"
     });
   
