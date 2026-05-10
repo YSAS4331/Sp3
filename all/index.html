@@ -1,46 +1,36 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>全データサマリー - Splatoon3 Battle Logger</title>
-  <link rel="stylesheet" href="../style.css">
-  <link rel="stylesheet" href="/Sp3/all/style.css" data-page>
-  <link rel="stylesheet" href="/Sp3/card.css" data-page>
-
-  <link rel="icon" href="/imgs/favicon.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-
-  <script src="/Sp3/router.js" type="module"></script>
-
-  <page-script src="/Sp3/all/script.js"></page-script>
+  <link rel="stylesheet" href="/Sp3/style.css" />
+  <link rel="stylesheet" href="/Sp3/card.css" data-page />
+  <link rel="icon" href="/imgs/favicon.png" />
+  
+  <page-script src="./script.js"></page-script>
 </head>
-<body><main>
+<body>
+  <div id="aside-backdrop"></div>
+  
+  <sp3-header></sp3-header>
+  
+  <div id="app">
+    <sp3-aside></sp3-aside>
+    
+    <main>
+      <div class="container card glass">
+        <h2 class="section-title">
+          <i data-lucide="list"></i>
+          全データ一覧
+        </h2>
 
-<header class="header glass">
-  <div class="header-inner">
-    <i data-lucide="sword"></i>
-    <span>全データサマリー</span>
+        <div id="allList" class="common-list"></div>
+      </div>
+    </main>
   </div>
-</header>
 
-<div class="container card glass">
-
-  <h2 class="section-title">
-    <i data-lucide="list"></i>
-    全データ一覧
-  </h2>
-
-  <div id="allList" class="common-list">
-    <!-- JS で全データ一覧を生成 -->
-  </div>
-
-</div>
-
-<script type="module">
-  import { createIcons, icons } from "https://esm.sh/lucide";
-  createIcons({ icons });
-</script>
-</main>
+  <script src="/Sp3/load.js" type="module"></script>
 </body>
 </html>
