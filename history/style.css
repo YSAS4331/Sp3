@@ -1,0 +1,62 @@
+main h2 {
+  margin-bottom: 24px;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* バージョン見出し */
+section h3 {
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+  padding-left: 10px;
+  border-left: 4px solid var(--accent-border-strong);
+  color: var(--text-secondary);
+}
+
+/* リスト全体 */
+ul.changelog {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* 各項目（ガラスカード） */
+ul.changelog li {
+  background: var(--glass-bg-2);
+  border: 1px solid var(--glass-border-2);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    var(--glass-inner-shadow);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+/* ホバー時の浮遊感 */
+ul.changelog li:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.10),
+    var(--glass-inner-shadow);
+}
+
+/* タイトル（強調） */
+ul.changelog li .version {
+  font-weight: 700;
+  color: var(--accent-strong);
+  display: inline-block;
+  margin-bottom: 4px;
+  font-size: 1.05rem;
+}
+
+/* 説明文 */
+ul.changelog li p {
+  margin: 0;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
