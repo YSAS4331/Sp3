@@ -1,47 +1,36 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>マッチ別サマリー - Splatoon3 Battle Logger</title>
-  <link rel="stylesheet" href="/Sp3/style.css">
-  <link rel="stylesheet" href="/Sp3/card.css" data-page>
-
-  <link rel="icon" href="/imgs/favicon.png">
-
-  <script src="/Sp3/router.js" type="module"></script>
+  <title>ステージ別サマリー - Splatoon3 Battle Logger</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <page-script src="/Sp3/matches/script.js"></page-script>
+  <link rel="stylesheet" href="/Sp3/style.css" />
+  <link rel="stylesheet" href="/Sp3/card.css" data-page />
+  <link rel="icon" href="/imgs/favicon.png" />
+  
+  <page-script src="./script.js"></page-script>
 </head>
 <body>
+  <div id="aside-backdrop"></div>
+  
   <sp3-header></sp3-header>
-
+  
   <div id="app">
     <sp3-aside></sp3-aside>
     
     <main>
-      <header class="header glass">
-        <div class="header-inner">
-          <i data-lucide="list"></i>
-          <span>マッチ別サマリー</span>
-        </div>
-      </header>
-      
       <div class="container card glass">
-      
         <h2 class="section-title">
           <i data-lucide="list"></i>
-          マッチ一覧
+          マッチング一覧
         </h2>
-      
-        <div id="matchList" class="common-list">
-          <!-- JS でルール一覧を生成 -->
-        </div>
-      
+
+        <div id="matchList" class="common-list"></div>
       </div>
     </main>
   </div>
-  
-  <script type="module" src="/Sp3/load.js"></script>
+
+  <script src="/Sp3/load.js" type="module"></script>
 </body>
 </html>
